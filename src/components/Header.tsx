@@ -42,6 +42,9 @@ const Header = () => {
         <nav className="hidden lg:flex items-center space-x-1">
           <BitcoinPrice />
           <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
+            <Link to="/shop">Shop</Link>
+          </Button>
+          <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
             <Link to="/forum">
               <Users className="h-4 w-4 mr-2" />
               {t('nav.forum', 'Forum')}
@@ -173,6 +176,10 @@ const Header = () => {
 
                 {/* Mobile Navigation Links */}
                 <div className="flex flex-col space-y-3">
+                  <Button variant="ghost" className="justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/shop">Shop</Link>
+                  </Button>
+                  
                   <Button variant="ghost" className="justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
                     <Link to="/forum">
                       <Users className="h-4 w-4 mr-2" />
