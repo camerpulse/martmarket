@@ -13,7 +13,7 @@ const BitcoinPrice = () => {
           'https://392ca772-36d2-40da-a12e-4c74517dd52f.supabase.co/functions/v1/bitcoin-price',
           {
             headers: {
-              'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrZGhzcW5kY3Z3YmdsYnRyZ2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3NjIwMDEsImV4cCI6MjA2NzMzODAwMX0.jqO2_cen3Mbs-eOs_AHq6Yr-hCRSQwFcI9qAmp5hcG8'}`
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrZGhzcW5kY3Z3YmdsYnRyZ2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3NjIwMDEsImV4cCI6MjA2NzMzODAwMX0.jqO2_cen3Mbs-eOs_AHq6Yr-hCRSQwFcI9qAmp5hcG8`
             }
           }
         );
