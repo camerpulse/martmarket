@@ -57,7 +57,7 @@ const Header = () => {
                 </Link>
               </Button>
               <Button size="sm" className="bg-primary hover:bg-primary/90" asChild>
-                <Link to="/auth">Become Vendor</Link>
+                <Link to="/vendor/register">Become Vendor</Link>
               </Button>
             </>
           )}
