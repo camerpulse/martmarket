@@ -352,112 +352,123 @@ export function MessagingInterface() {
   }
 
   return (
-    <div className="flex h-[600px] border rounded-lg overflow-hidden">
-      {/* Thread List */}
-      <div className="w-1/3 border-r bg-muted/30">
-        <div className="p-4 border-b">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold flex items-center gap-2">
-              <MessageCircle className="h-4 w-4" />
-              Messages
-            </h3>
-            <Dialog open={isComposeOpen} onOpenChange={setIsComposeOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" variant="outline">
-                  <Plus className="h-4 w-4 mr-1" />
-                  New
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Start New Conversation</DialogTitle>
-                  <DialogDescription>
-                    Select an order to start messaging about
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <Select value={selectedOrderId} onValueChange={setSelectedOrderId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select an order" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableOrders.map((order) => (
-                        <SelectItem key={order.id} value={order.id}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{order.products?.title}</span>
-                            <span className="text-xs text-muted-foreground">
-                              Order #{order.id.slice(0, 8)} • {order.status}
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <div className="flex justify-end gap-2">
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setIsComposeOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      onClick={createNewThread}
-                      disabled={!selectedOrderId}
-                    >
-                      Start Conversation
-                    </Button>
-                  </div>
+    <div className="flex h-[700px] bg-background border rounded-lg overflow-hidden shadow-sm">
+      {/* Email-style Sidebar */}
+      <div className="w-80 border-r bg-card">
+        {/* Header with Compose */}
+        <div className="p-4 border-b bg-muted/20">
+          <Dialog open={isComposeOpen} onOpenChange={setIsComposeOpen}>
+            <DialogTrigger asChild>
+              <Button className="w-full justify-start gap-2 h-10 bg-primary hover:bg-primary/90">
+                <Plus className="h-4 w-4" />
+                Compose
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Start New Conversation</DialogTitle>
+                <DialogDescription>
+                  Select an order to start messaging about
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Select value={selectedOrderId} onValueChange={setSelectedOrderId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an order" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableOrders.map((order) => (
+                      <SelectItem key={order.id} value={order.id}>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{order.products?.title}</span>
+                          <span className="text-xs text-muted-foreground">
+                            Order #{order.id.slice(0, 8)} • {order.status}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="flex justify-end gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsComposeOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={createNewThread}
+                    disabled={!selectedOrderId}
+                  >
+                    Start Conversation
+                  </Button>
                 </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
-        <ScrollArea className="h-[calc(600px-60px)]">
+
+        {/* Inbox Label */}
+        <div className="px-4 py-2 border-b">
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Inbox ({threads.length})
+          </h2>
+        </div>
+        {/* Email List */}
+        <ScrollArea className="h-[calc(700px-140px)]">
           {threads.length === 0 ? (
-            <div className="p-4 text-center text-muted-foreground">
-              <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No conversations yet</p>
+            <div className="p-8 text-center text-muted-foreground">
+              <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <p className="text-sm">Your inbox is empty</p>
+              <p className="text-xs mt-1">Start a new conversation to get started</p>
             </div>
           ) : (
-            <div className="space-y-1 p-2">
+            <div className="divide-y">
               {threads.map((thread) => (
                 <div
                   key={thread.id}
-                  className={`p-3 rounded-md cursor-pointer transition-colors ${
+                  className={`p-4 cursor-pointer transition-all hover:bg-muted/30 ${
                     selectedThread?.id === thread.id 
-                      ? 'bg-primary/10 border border-primary/20' 
-                      : 'hover:bg-muted/50'
+                      ? 'bg-primary/5 border-r-2 border-primary' 
+                      : ''
                   }`}
                   onClick={() => setSelectedThread(thread)}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="text-xs">
-                          {getOtherParticipant(thread).charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">
-                          {getOtherParticipant(thread)}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {thread.orders?.products?.title || 'General Discussion'}
-                        </p>
+                  <div className="flex items-start gap-3">
+                    <Avatar className="h-10 w-10 flex-shrink-0">
+                      <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                        {getOtherParticipant(thread).charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className={`text-sm font-medium truncate ${
+                            getUnreadCount(thread) > 0 ? 'font-semibold' : ''
+                          }`}>
+                            {getOtherParticipant(thread)}
+                          </h4>
+                          {getUnreadCount(thread) > 0 && (
+                            <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {thread.is_encrypted && (
+                            <Lock className="h-3 w-3 text-muted-foreground" />
+                          )}
+                          <span className="text-xs text-muted-foreground whitespace-nowrap">
+                            {new Date(thread.last_message_at).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      {getUnreadCount(thread) > 0 && (
-                        <Badge variant="destructive" className="text-xs px-1 py-0 min-w-[16px] h-4">
-                          {getUnreadCount(thread)}
-                        </Badge>
-                      )}
-                      {thread.is_encrypted && (
-                        <Lock className="h-3 w-3 text-primary" />
-                      )}
-                      <span className="text-xs text-muted-foreground">
-                        {formatTime(thread.last_message_at)}
-                      </span>
+                      <p className={`text-sm mb-1 truncate ${
+                        getUnreadCount(thread) > 0 ? 'font-medium' : 'text-muted-foreground'
+                      }`}>
+                        {thread.subject || `Re: ${thread.orders?.products?.title || 'Order Discussion'}`}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        Order #{thread.orders?.id?.slice(0, 8) || 'N/A'} • {thread.orders?.status || 'Active'}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -467,31 +478,37 @@ export function MessagingInterface() {
         </ScrollArea>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
+      {/* Email Content Area */}
+      <div className="flex-1 flex flex-col bg-background">
         {selectedThread ? (
           <>
-            {/* Chat Header */}
-            <div className="p-4 border-b bg-muted/30">
+            {/* Email Header */}
+            <div className="px-6 py-4 border-b bg-card">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarFallback>
-                      {getOtherParticipant(selectedThread).charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h4 className="font-semibold">{getOtherParticipant(selectedThread)}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedThread.orders?.products?.title || 'General Discussion'}
-                    </p>
+                <div>
+                  <h1 className="text-lg font-semibold">
+                    {selectedThread.subject || `Re: ${selectedThread.orders?.products?.title || 'Order Discussion'}`}
+                  </h1>
+                  <div className="flex items-center gap-4 mt-1">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>From:</span>
+                      <Avatar className="h-5 w-5">
+                        <AvatarFallback className="text-xs">
+                          {getOtherParticipant(selectedThread).charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="font-medium">{getOtherParticipant(selectedThread)}</span>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Order #{selectedThread.orders?.id?.slice(0, 8) || 'N/A'}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {selectedThread.is_encrypted && (
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <Shield className="h-3 w-3" />
-                      Encrypted
+                      End-to-end Encrypted
                     </Badge>
                   )}
                   <Button variant="ghost" size="sm">
@@ -501,51 +518,75 @@ export function MessagingInterface() {
               </div>
             </div>
 
-            {/* Messages */}
-            <ScrollArea className="flex-1 p-4">
+            {/* Email Messages */}
+            <ScrollArea className="flex-1 px-6 py-4">
               {messages.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8">
-                  <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p>Start the conversation</p>
+                <div className="text-center text-muted-foreground py-12">
+                  <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  <p className="text-lg font-medium mb-2">No messages yet</p>
+                  <p className="text-sm">Start the conversation by sending a message below</p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${
-                        message.sender_id === user?.id ? 'justify-end' : 'justify-start'
-                      }`}
-                    >
-                      <div
-                        className={`max-w-[70%] rounded-lg p-3 ${
-                          message.sender_id === user?.id
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted'
-                        }`}
-                      >
-                        <p className="text-sm">{message.content}</p>
-                        <div className="flex items-center justify-between mt-2 text-xs opacity-70">
-                          <span>{formatTime(message.created_at)}</span>
-                          {message.reactions?.length > 0 && (
-                            <div className="flex gap-1">
-                              {message.reactions.map((reaction, idx) => (
-                                <span key={idx} className="px-1 rounded">
-                                  {reaction.reaction_type === 'like' && '👍'}
-                                  {reaction.reaction_type === 'heart' && '❤️'}
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                <div className="space-y-6">
+                  {messages.map((message, index) => (
+                    <div key={message.id} className="group">
+                      {/* Message Header */}
+                      <div className="flex items-center gap-3 mb-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                            {message.sender_id === user?.id 
+                              ? 'You'
+                              : getOtherParticipant(selectedThread).charAt(0).toUpperCase()
+                            }
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">
+                              {message.sender_id === user?.id 
+                                ? 'You' 
+                                : getOtherParticipant(selectedThread)
+                              }
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(message.created_at).toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                        {message.reactions?.length > 0 && (
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {message.reactions.map((reaction, idx) => (
+                              <span key={idx} className="text-sm px-2 py-1 bg-muted rounded-full">
+                                {reaction.reaction_type === 'like' && '👍'}
+                                {reaction.reaction_type === 'heart' && '❤️'}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Message Content */}
+                      <div className="ml-11 mb-4">
+                        <div className="bg-card border rounded-lg p-4 shadow-sm">
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                            {message.content}
+                          </p>
                         </div>
                       </div>
+                      
+                      {index < messages.length - 1 && <Separator className="my-6" />}
                     </div>
                   ))}
                   
                   {/* Typing Indicators */}
                   {typingUsers.filter(t => t.is_typing).length > 0 && (
-                    <div className="flex justify-start">
-                      <div className="bg-muted rounded-lg p-3">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          {getOtherParticipant(selectedThread).charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="bg-muted rounded-lg px-4 py-2">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <div className="flex gap-1">
                             <div className="w-2 h-2 bg-current rounded-full animate-bounce" />
@@ -563,45 +604,64 @@ export function MessagingInterface() {
               )}
             </ScrollArea>
 
-            {/* Message Input */}
-            <div className="p-4 border-t bg-muted/30">
+            {/* Reply Area */}
+            <div className="border-t bg-card">
               {selectedThread.is_encrypted && (
-                <Alert className="mb-3">
-                  <Shield className="h-4 w-4" />
-                  <AlertDescription className="text-xs">
-                    Messages in this conversation are end-to-end encrypted
-                  </AlertDescription>
-                </Alert>
+                <div className="px-6 py-2 bg-primary/5 border-b">
+                  <div className="flex items-center gap-2 text-xs text-primary">
+                    <Shield className="h-3 w-3" />
+                    <span>This conversation is end-to-end encrypted</span>
+                  </div>
+                </div>
               )}
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm">
-                  <Paperclip className="h-4 w-4" />
-                </Button>
-                <Input
-                  placeholder="Type your message..."
-                  value={newMessage}
-                  onChange={(e) => handleTyping(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  disabled={isSending}
-                />
-                <Button variant="ghost" size="sm">
-                  <Smile className="h-4 w-4" />
-                </Button>
-                <Button 
-                  onClick={sendMessage}
-                  disabled={!newMessage.trim() || isSending}
-                  size="sm"
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
+              <div className="p-6">
+                <div className="flex items-start gap-3">
+                  <Avatar className="h-8 w-8 mt-1">
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                      You
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-3">
+                    <Input
+                      placeholder="Type your reply..."
+                      value={newMessage}
+                      onChange={(e) => handleTyping(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+                      disabled={isSending}
+                      className="border-none shadow-none focus-visible:ring-1 text-base px-0"
+                    />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm" className="h-8">
+                          <Paperclip className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-8">
+                          <Smile className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <Button 
+                        onClick={sendMessage}
+                        disabled={!newMessage.trim() || isSending}
+                        size="sm"
+                        className="gap-2"
+                      >
+                        <Send className="h-4 w-4" />
+                        Send
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
+          <div className="flex-1 flex items-center justify-center bg-muted/20">
             <div className="text-center">
-              <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Select a conversation to start messaging</p>
+              <MessageCircle className="h-16 w-16 mx-auto mb-6 opacity-20" />
+              <h3 className="text-lg font-medium mb-2">Select a conversation</h3>
+              <p className="text-muted-foreground max-w-sm">
+                Choose a conversation from your inbox to view messages and reply
+              </p>
             </div>
           </div>
         )}
