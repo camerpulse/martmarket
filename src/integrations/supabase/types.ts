@@ -315,6 +315,39 @@ export type Database = {
         }
         Relationships: []
       }
+      fraud_detection_rules: {
+        Row: {
+          action: string
+          conditions: Json
+          created_at: string
+          id: string
+          is_active: boolean | null
+          rule_name: string
+          rule_type: string
+          threat_score: number | null
+        }
+        Insert: {
+          action?: string
+          conditions: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          rule_name: string
+          rule_type: string
+          threat_score?: number | null
+        }
+        Update: {
+          action?: string
+          conditions?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          rule_name?: string
+          rule_type?: string
+          threat_score?: number | null
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -369,6 +402,60 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      mfa_settings: {
+        Row: {
+          backup_codes: string[] | null
+          created_at: string
+          failed_attempts: number | null
+          id: string
+          is_pgp_enabled: boolean | null
+          is_sms_enabled: boolean | null
+          is_totp_enabled: boolean | null
+          last_totp_verify: string | null
+          locked_until: string | null
+          pgp_fingerprint: string | null
+          pgp_public_key: string | null
+          sms_phone: string | null
+          totp_secret: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          backup_codes?: string[] | null
+          created_at?: string
+          failed_attempts?: number | null
+          id?: string
+          is_pgp_enabled?: boolean | null
+          is_sms_enabled?: boolean | null
+          is_totp_enabled?: boolean | null
+          last_totp_verify?: string | null
+          locked_until?: string | null
+          pgp_fingerprint?: string | null
+          pgp_public_key?: string | null
+          sms_phone?: string | null
+          totp_secret?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          backup_codes?: string[] | null
+          created_at?: string
+          failed_attempts?: number | null
+          id?: string
+          is_pgp_enabled?: boolean | null
+          is_sms_enabled?: boolean | null
+          is_totp_enabled?: boolean | null
+          last_totp_verify?: string | null
+          locked_until?: string | null
+          pgp_fingerprint?: string | null
+          pgp_public_key?: string | null
+          sms_phone?: string | null
+          totp_secret?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       orders: {
         Row: {
@@ -519,6 +606,47 @@ export type Database = {
             columns: ["vendor_bond_id"]
             isOneToOne: false
             referencedRelation: "vendor_bonds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pgp_messages: {
+        Row: {
+          created_at: string
+          encrypted_content: string
+          id: string
+          is_verified: boolean | null
+          message_hash: string
+          order_id: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_content: string
+          id?: string
+          is_verified?: boolean | null
+          message_hash: string
+          order_id?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_content?: string
+          id?: string
+          is_verified?: boolean | null
+          message_hash?: string
+          order_id?: string | null
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pgp_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
@@ -725,6 +853,96 @@ export type Database = {
         }
         Relationships: []
       }
+      security_events: {
+        Row: {
+          blocked: boolean | null
+          created_at: string
+          event_data: Json | null
+          event_level: string
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          location_data: Json | null
+          threat_score: number | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          blocked?: boolean | null
+          created_at?: string
+          event_data?: Json | null
+          event_level?: string
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          location_data?: Json | null
+          threat_score?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          blocked?: boolean | null
+          created_at?: string
+          event_data?: Json | null
+          event_level?: string
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          location_data?: Json | null
+          threat_score?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      security_settings: {
+        Row: {
+          allowed_ip_ranges: unknown[] | null
+          auto_logout_minutes: number | null
+          blocked_countries: string[] | null
+          created_at: string
+          email_on_login: boolean | null
+          email_on_suspicious: boolean | null
+          id: string
+          max_sessions: number | null
+          password_expires_days: number | null
+          require_mfa_for_login: boolean | null
+          require_mfa_for_transactions: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          allowed_ip_ranges?: unknown[] | null
+          auto_logout_minutes?: number | null
+          blocked_countries?: string[] | null
+          created_at?: string
+          email_on_login?: boolean | null
+          email_on_suspicious?: boolean | null
+          id?: string
+          max_sessions?: number | null
+          password_expires_days?: number | null
+          require_mfa_for_login?: boolean | null
+          require_mfa_for_transactions?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          allowed_ip_ranges?: unknown[] | null
+          auto_logout_minutes?: number | null
+          blocked_countries?: string[] | null
+          created_at?: string
+          email_on_login?: boolean | null
+          email_on_suspicious?: boolean | null
+          id?: string
+          max_sessions?: number | null
+          password_expires_days?: number | null
+          require_mfa_for_login?: boolean | null
+          require_mfa_for_transactions?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       system_config: {
         Row: {
           config_key: string
@@ -806,6 +1024,45 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      user_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          ip_address: unknown
+          is_active: boolean | null
+          last_activity: string | null
+          location_data: Json | null
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          ip_address: unknown
+          is_active?: boolean | null
+          last_activity?: string | null
+          location_data?: Json | null
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip_address?: unknown
+          is_active?: boolean | null
+          last_activity?: string | null
+          location_data?: Json | null
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       vendor_bonds: {
         Row: {
@@ -969,6 +1226,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_threat_score: {
+        Args: { user_id: string; event_type: string; event_data: Json }
+        Returns: number
+      }
       get_trending_opportunities: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -978,6 +1239,10 @@ export type Database = {
           search_volume: number
           related_terms: string[]
         }[]
+      }
+      requires_mfa_check: {
+        Args: { user_id: string; action_type?: string }
+        Returns: boolean
       }
     }
     Enums: {
