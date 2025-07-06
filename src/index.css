@@ -188,4 +188,20 @@
   .hero-bg {
     background: radial-gradient(ellipse at center, hsl(var(--primary) / 0.1), transparent 70%);
   }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .container {
+      @apply px-3 sm:px-4;
+    }
+  }
+
+  /* Ensure dropdowns have proper background on mobile */
+  [data-radix-popper-content-wrapper] {
+    z-index: 100 !important;
+  }
+
+  .sheet-content {
+    @apply bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95;
+  }
 }

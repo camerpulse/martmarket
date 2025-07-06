@@ -6,18 +6,18 @@ const Footer = () => {
   
   return (
     <footer className="bg-card border-t border-border">
-      <div className="container px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container px-4 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {/* Logo & Description */}
-          <div className="col-span-1 md:col-span-2">
+          <div className="col-span-1 sm:col-span-2 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <Bitcoin className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold bitcoin-gradient">OpesMarket</span>
+              <Bitcoin className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <span className="text-xl sm:text-2xl font-bold bitcoin-gradient">OpesMarket</span>
             </div>
-            <p className="text-muted-foreground mb-4 max-w-md">
+            <p className="text-sm sm:text-base text-muted-foreground mb-4 max-w-md">
               {t('footer.description', 'The world\'s most secure anonymous marketplace. Trade with confidence using Bitcoin, verified vendors, and AI-powered security systems.')}
             </p>
-            <div className="flex space-x-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               <div className="flex items-center space-x-2 text-sm">
                 <Shield className="h-4 w-4 text-verified" />
                 <span>{t('vendor.verified', 'Verified Vendors')}</span>
