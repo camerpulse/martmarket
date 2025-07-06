@@ -216,12 +216,19 @@ serve(async (req) => {
       }
 
       // Generate new PGP key pair
-      const { privateKey, publicKey } = await openpgp.generateKey({
-        type: 'rsa',
+      const keyOptions = {
+        type: 'rsa' as const,
         rsaBits: 2048,
         userIDs: [{ name: name, email: email }],
-        format: 'armored'
-      });
+        format: 'armored' as const
+      };
+
+      // Add passphrase if provided
+      if (passphrase) {
+        keyOptions.passphrase = passphrase;
+      }
+
+      const { privateKey, publicKey } = await openpgp.generateKey(keyOptions);
 
       // Log security event only if user is authenticated
       if (user) {
