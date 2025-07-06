@@ -82,6 +82,11 @@ const Forum = () => {
     content: '',
     is_anonymous: false
   });
+  const [newReply, setNewReply] = useState({
+    content: '',
+    is_anonymous: false
+  });
+  const [replyDialogOpen, setReplyDialogOpen] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -239,6 +244,145 @@ const Forum = () => {
     }
   };
 
+  const createReply = async () => {
+    if (!user || !selectedTopic || !newReply.content.trim()) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('forum_replies')
+        .insert({
+          topic_id: selectedTopic.id,
+          content: newReply.content,
+          author_id: user.id,
+          is_anonymous: newReply.is_anonymous
+        });
+
+      if (error) throw error;
+
+      // Update topic reply count
+      await supabase
+        .from('forum_topics')
+        .update({ 
+          reply_count: (selectedTopic.reply_count || 0) + 1,
+          last_reply_at: new Date().toISOString(),
+          last_reply_by: user.id
+        })
+        .eq('id', selectedTopic.id);
+
+      toast.success('Reply posted successfully');
+      setReplyDialogOpen(false);
+      setNewReply({ content: '', is_anonymous: false });
+      loadReplies(selectedTopic.id);
+      
+      // Refresh the topic to update reply count
+      setSelectedTopic(prev => prev ? { ...prev, reply_count: (prev.reply_count || 0) + 1 } : null);
+    } catch (error) {
+      console.error('Error creating reply:', error);
+      toast.error('Failed to post reply');
+    }
+  };
+
+  const toggleLike = async (replyId: string, currentLikeCount: number) => {
+    if (!user) {
+      toast.error('Please log in to like posts');
+      return;
+    }
+
+    try {
+      // Check if user already liked this reply
+      const { data: existingLike } = await supabase
+        .from('forum_likes')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('reply_id', replyId)
+        .single();
+
+      if (existingLike) {
+        // Unlike
+        await supabase
+          .from('forum_likes')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('reply_id', replyId);
+
+        // Update reply like count
+        await supabase
+          .from('forum_replies')
+          .update({ like_count: Math.max(0, currentLikeCount - 1) })
+          .eq('id', replyId);
+
+        // Update local state
+        setReplies(prev => prev.map(reply => 
+          reply.id === replyId 
+            ? { ...reply, like_count: Math.max(0, reply.like_count - 1) }
+            : reply
+        ));
+      } else {
+        // Like
+        await supabase
+          .from('forum_likes')
+          .insert({
+            user_id: user.id,
+            reply_id: replyId
+          });
+
+        // Update reply like count
+        await supabase
+          .from('forum_replies')
+          .update({ like_count: currentLikeCount + 1 })
+          .eq('id', replyId);
+
+        // Update local state
+        setReplies(prev => prev.map(reply => 
+          reply.id === replyId 
+            ? { ...reply, like_count: reply.like_count + 1 }
+            : reply
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast.error('Failed to update like');
+    }
+  };
+
+  const toggleSolution = async (replyId: string, currentStatus: boolean) => {
+    if (!user || !selectedTopic || selectedTopic.author_id !== user.id) {
+      toast.error('Only the topic author can mark solutions');
+      return;
+    }
+
+    try {
+      // If marking as solution, first unmark any existing solutions
+      if (!currentStatus) {
+        await supabase
+          .from('forum_replies')
+          .update({ is_solution: false })
+          .eq('topic_id', selectedTopic.id);
+      }
+
+      // Toggle this reply's solution status
+      await supabase
+        .from('forum_replies')
+        .update({ is_solution: !currentStatus })
+        .eq('id', replyId);
+
+      // Update local state
+      setReplies(prev => prev.map(reply => 
+        reply.id === replyId 
+          ? { ...reply, is_solution: !currentStatus }
+          : { ...reply, is_solution: false } // Unmark others
+      ));
+
+      toast.success(currentStatus ? 'Solution unmarked' : 'Solution marked');
+    } catch (error) {
+      console.error('Error toggling solution:', error);
+      toast.error('Failed to update solution status');
+    }
+  };
+
   const renderCategories = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {categories.map((category) => (
@@ -390,6 +534,48 @@ const Forum = () => {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Topics
         </Button>
+        
+        {user && (
+          <Dialog open={replyDialogOpen} onOpenChange={setReplyDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Reply className="h-4 w-4 mr-2" />
+                Reply to Topic
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Reply to Topic</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="reply-content">Your Reply</Label>
+                  <Textarea
+                    id="reply-content"
+                    value={newReply.content}
+                    onChange={(e) => setNewReply({ ...newReply, content: e.target.value })}
+                    placeholder="Share your thoughts..."
+                    rows={6}
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="reply-anonymous"
+                    checked={newReply.is_anonymous}
+                    onCheckedChange={(checked) => setNewReply({ ...newReply, is_anonymous: checked })}
+                  />
+                  <Label htmlFor="reply-anonymous">Post anonymously</Label>
+                </div>
+                <div className="flex space-x-2">
+                  <Button onClick={createReply}>Post Reply</Button>
+                  <Button variant="outline" onClick={() => setReplyDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {/* Topic */}
@@ -418,9 +604,11 @@ const Forum = () => {
 
       {/* Replies */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">
-          Replies ({replies.length})
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">
+            Replies ({replies.length})
+          </h3>
+        </div>
         
         {replies.map((reply) => (
           <Card key={reply.id}>
@@ -437,26 +625,58 @@ const Forum = () => {
                     </Badge>
                   )}
                 </div>
-                <span className="text-xs text-muted-foreground">
-                  {new Date(reply.created_at).toLocaleDateString()}
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(reply.created_at).toLocaleDateString()}
+                  </span>
+                  {user && selectedTopic?.author_id === user.id && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleSolution(reply.id, reply.is_solution)}
+                      className="h-6 px-2"
+                    >
+                      <CheckCircle className={`h-3 w-3 ${reply.is_solution ? 'text-green-600' : 'text-muted-foreground'}`} />
+                    </Button>
+                  )}
+                </div>
               </div>
               
               <div className="whitespace-pre-wrap mb-3">{reply.content}</div>
               
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => toggleLike(reply.id, reply.like_count)}
+                  className="hover:text-red-500"
+                >
                   <Heart className="h-4 w-4 mr-1" />
                   {reply.like_count}
                 </Button>
-                <Button variant="ghost" size="sm">
-                  <Reply className="h-4 w-4 mr-1" />
-                  Reply
-                </Button>
+                {user && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setReplyDialogOpen(true)}
+                  >
+                    <Reply className="h-4 w-4 mr-1" />
+                    Reply
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
         ))}
+        
+        {replies.length === 0 && (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">No replies yet. Be the first to reply!</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
