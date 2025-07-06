@@ -29,6 +29,8 @@ import ProductDetail from "./pages/ProductDetail";
 import VendorProfile from "./pages/VendorProfile";
 import OrderTracking from "./pages/OrderTracking";
 import OpesPGP from "./pages/OpesPGP";
+import Cart from "./pages/Cart";
+import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +54,8 @@ const App = () => (
             <Route path="/forum" element={<Forum />} />
             <Route path="/affiliate" element={<Affiliate />} />
             <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/order/:orderId" element={<OrderConfirmation />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/orders" element={<OrderHistory />} />

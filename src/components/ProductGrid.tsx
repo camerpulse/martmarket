@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Bitcoin, Eye, ShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -9,6 +9,7 @@ import TrustIndicator from "./TrustIndicator";
 import PurchaseDialog from "./PurchaseDialog";
 import WishlistButton from "./WishlistButton";
 import { useCart } from "@/hooks/useCart";
+import { useToast } from "@/hooks/use-toast";
 
 interface Product {
   id: string;
@@ -43,10 +44,26 @@ interface ProductGridProps {
 
 const ProductGrid = ({ searchFilters }: ProductGridProps) => {
   const { addToCart } = useCart();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
+
+  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart(product, 1);
+    toast({
+      title: "Added to Cart",
+      description: `${product.title} has been added to your cart.`,
+      action: (
+        <Button variant="outline" size="sm" onClick={() => navigate("/cart")}>
+          View Cart
+        </Button>
+      ),
+    });
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -227,10 +244,7 @@ const ProductGrid = ({ searchFilters }: ProductGridProps) => {
                         size="sm" 
                         variant="outline"
                         className="flex-1 sm:flex-none text-xs sm:text-sm px-2 sm:px-3"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(product, 1);
-                        }}
+                        onClick={(e) => handleAddToCart(product, e)}
                       >
                         <span className="hidden sm:inline">Add to Cart</span>
                         <span className="sm:hidden">Cart</span>

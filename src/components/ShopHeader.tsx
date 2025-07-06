@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, Package, Bell } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
+import { useCart } from "@/hooks/useCart";
+import { useToast } from "@/hooks/use-toast";
 
 interface ShopHeaderProps {
   onSearchChange: (search: string) => void;
@@ -11,8 +14,24 @@ interface ShopHeaderProps {
 }
 
 const ShopHeader = ({ onSearchChange, searchValue }: ShopHeaderProps) => {
-  const [cartCount] = useState(3); // Mock cart count
+  const navigate = useNavigate();
+  const { items } = useCart();
+  const { toast } = useToast();
   const [notifications] = useState(2); // Mock notifications
+  
+  const cartCount = items.length;
+
+  const handleCartClick = () => {
+    navigate("/cart");
+  };
+
+  const handleNotificationsClick = () => {
+    navigate("/notifications");
+  };
+
+  const handleTrackOrderClick = () => {
+    navigate("/track-order");
+  };
 
   return (
     <Card className="mb-4 sm:mb-8">
@@ -35,13 +54,23 @@ const ShopHeader = ({ onSearchChange, searchValue }: ShopHeaderProps) => {
           {/* Action Buttons - Prominent on mobile */}
           <div className="flex items-center justify-center sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto">
             {/* Track Order - Icon only on mobile */}
-            <Button variant="outline" size="sm" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3"
+              onClick={handleTrackOrderClick}
+            >
               <Package className="h-4 w-4" />
               <span className="hidden sm:inline text-sm">Track Order</span>
             </Button>
 
             {/* Notifications - Always visible */}
-            <Button variant="outline" size="sm" className="relative p-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="relative p-2"
+              onClick={handleNotificationsClick}
+            >
               <Bell className="h-4 w-4" />
               {notifications > 0 && (
                 <Badge 
@@ -54,7 +83,12 @@ const ShopHeader = ({ onSearchChange, searchValue }: ShopHeaderProps) => {
             </Button>
 
             {/* Shopping Cart - Always prominent */}
-            <Button variant="outline" size="sm" className="relative p-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="relative p-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              onClick={handleCartClick}
+            >
               <ShoppingCart className="h-4 w-4" />
               {cartCount > 0 && (
                 <Badge 
