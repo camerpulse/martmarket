@@ -15,7 +15,11 @@ import {
   Paperclip,
   MoreVertical,
   Clock,
-  Plus
+  Plus,
+  Inbox,
+  SendIcon,
+  FileText,
+  Archive
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -56,6 +60,15 @@ interface TypingIndicator {
   is_typing: boolean;
 }
 
+type FolderType = 'inbox' | 'sent' | 'drafts' | 'archived';
+
+interface Folder {
+  id: FolderType;
+  name: string;
+  icon: any;
+  count?: number;
+}
+
 export function MessagingInterface() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -70,8 +83,16 @@ export function MessagingInterface() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [availableOrders, setAvailableOrders] = useState<any[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
+  const [currentFolder, setCurrentFolder] = useState<FolderType>('inbox');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const folders: Folder[] = [
+    { id: 'inbox', name: 'Inbox', icon: Inbox, count: threads.length },
+    { id: 'sent', name: 'Sent', icon: SendIcon, count: 0 },
+    { id: 'drafts', name: 'Drafts', icon: FileText, count: 0 },
+    { id: 'archived', name: 'Archived', icon: Archive, count: 0 },
+  ];
 
   useEffect(() => {
     if (user) {
@@ -408,21 +429,85 @@ export function MessagingInterface() {
           </Dialog>
         </div>
 
-        {/* Inbox Label */}
+        {/* Folder Navigation */}
+        <div className="p-2 border-b">
+          <nav className="space-y-1">
+            {folders.map((folder) => {
+              const IconComponent = folder.icon;
+              return (
+                <button
+                  key={folder.id}
+                  onClick={() => setCurrentFolder(folder.id)}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors ${
+                    currentFolder === folder.id
+                      ? 'bg-primary text-primary-foreground'
+                      : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <IconComponent className="h-4 w-4" />
+                    <span className="font-medium">{folder.name}</span>
+                  </div>
+                  {folder.count !== undefined && folder.count > 0 && (
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full ${
+                        currentFolder === folder.id
+                          ? 'bg-primary-foreground/20 text-primary-foreground'
+                          : 'bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {folder.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Current Folder Label */}
         <div className="px-4 py-2 border-b">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-            Inbox ({threads.length})
+            {folders.find(f => f.id === currentFolder)?.name} ({
+              currentFolder === 'inbox' ? threads.length : 0
+            })
           </h2>
         </div>
         {/* Email List */}
-        <ScrollArea className="h-[calc(700px-140px)]">
-          {threads.length === 0 ? (
+        <ScrollArea className="h-[calc(700px-220px)]">
+          {currentFolder === 'inbox' && threads.length === 0 && (
             <div className="p-8 text-center text-muted-foreground">
-              <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <Inbox className="h-12 w-12 mx-auto mb-4 opacity-30" />
               <p className="text-sm">Your inbox is empty</p>
               <p className="text-xs mt-1">Start a new conversation to get started</p>
             </div>
-          ) : (
+          )}
+          
+          {currentFolder === 'sent' && (
+            <div className="p-8 text-center text-muted-foreground">
+              <SendIcon className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <p className="text-sm">No sent messages</p>
+              <p className="text-xs mt-1">Messages you send will appear here</p>
+            </div>
+          )}
+          
+          {currentFolder === 'drafts' && (
+            <div className="p-8 text-center text-muted-foreground">
+              <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <p className="text-sm">No drafts</p>
+              <p className="text-xs mt-1">Save drafts to continue later</p>
+            </div>
+          )}
+          
+          {currentFolder === 'archived' && (
+            <div className="p-8 text-center text-muted-foreground">
+              <Archive className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <p className="text-sm">No archived conversations</p>
+              <p className="text-xs mt-1">Archive conversations to keep your inbox clean</p>
+            </div>
+          )}
+
+          {currentFolder === 'inbox' && threads.length > 0 && (
             <div className="divide-y">
               {threads.map((thread) => (
                 <div
