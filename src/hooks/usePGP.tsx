@@ -42,9 +42,10 @@ export const usePGP = () => {
         keyType: data.key_type,
         fingerprint: await getKeyFingerprint(data.public_key)
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating PGP key pair:', error);
-      toast.error('Failed to generate PGP key pair');
+      const errorMessage = error?.message || error?.details || 'Failed to generate PGP key pair';
+      toast.error(`PGP Generation Error: ${errorMessage}`);
       throw error;
     } finally {
       setLoading(false);

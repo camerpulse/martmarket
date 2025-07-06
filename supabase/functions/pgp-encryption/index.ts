@@ -356,12 +356,13 @@ serve(async (req) => {
 
     throw new Error('Invalid action specified');
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('PGP Encryption Error:', error);
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message,
+        error: error?.message || 'Unknown error occurred',
+        details: error?.stack || error?.toString(),
         timestamp: new Date().toISOString()
       }),
       {

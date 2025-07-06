@@ -277,7 +277,7 @@ const OpesPGP = () => {
   return (
     <div className="bg-background text-foreground">
       {/* SEO Meta Tags */}
-      <title>Opes PGP - Free PGP Key Generator & Encryption Tools | OpesMarket</title>
+      <title>PGP Generator - Free PGP Key Generator & Encryption Tools | OpesMarket</title>
 
       <div className="container mx-auto p-6 max-w-6xl">
         {/* Header */}
@@ -292,7 +292,7 @@ const OpesPGP = () => {
           </div>
           
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4 bitcoin-gradient">Opes PGP</h1>
+            <h1 className="text-4xl font-bold mb-4 bitcoin-gradient">PGP Generator</h1>
             <p className="text-xl text-muted-foreground mb-4">
               Free PGP Key Generator & Encryption Tools
             </p>
