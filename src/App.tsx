@@ -12,6 +12,8 @@ import VendorProducts from "./pages/VendorProducts";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import UserProfile from "./pages/UserProfile";
 import OrderHistory from "./pages/OrderHistory";
+import SecuritySettings from "./pages/SecuritySettings";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/order/:orderId" element={<OrderConfirmation />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/orders" element={<OrderHistory />} />
+            <Route path="/security" element={<SecuritySettings />} />
+            <Route path="/messages" element={<Messages />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

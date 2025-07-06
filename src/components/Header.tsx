@@ -1,4 +1,4 @@
-import { Bitcoin, Search, User, ShoppingBag, Shield, LogOut } from "lucide-react";
+import { Bitcoin, Search, User, ShoppingBag, Shield, LogOut, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -49,6 +49,12 @@ const Header = () => {
               {/* User Profile & Orders Links */}
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/orders">My Orders</Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/messages">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Messages
+                </Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/profile">Profile</Link>

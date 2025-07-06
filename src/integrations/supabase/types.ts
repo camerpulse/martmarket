@@ -440,6 +440,135 @@ export type Database = {
         }
         Relationships: []
       }
+      message_attachments: {
+        Row: {
+          created_at: string
+          encrypted_file_url: string
+          encryption_key: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          id: string
+          is_image: boolean | null
+          message_id: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_file_url: string
+          encryption_key?: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          id?: string
+          is_image?: boolean | null
+          message_id: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_file_url?: string
+          encryption_key?: string | null
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          is_image?: boolean | null
+          message_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_attachments_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          message_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_id?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_threads: {
+        Row: {
+          buyer_id: string
+          buyer_unread_count: number | null
+          created_at: string
+          id: string
+          is_archived: boolean | null
+          is_encrypted: boolean | null
+          last_message_at: string | null
+          order_id: string | null
+          subject: string | null
+          updated_at: string
+          vendor_id: string
+          vendor_unread_count: number | null
+        }
+        Insert: {
+          buyer_id: string
+          buyer_unread_count?: number | null
+          created_at?: string
+          id?: string
+          is_archived?: boolean | null
+          is_encrypted?: boolean | null
+          last_message_at?: string | null
+          order_id?: string | null
+          subject?: string | null
+          updated_at?: string
+          vendor_id: string
+          vendor_unread_count?: number | null
+        }
+        Update: {
+          buyer_id?: string
+          buyer_unread_count?: number | null
+          created_at?: string
+          id?: string
+          is_archived?: boolean | null
+          is_encrypted?: boolean | null
+          last_message_at?: string | null
+          order_id?: string | null
+          subject?: string | null
+          updated_at?: string
+          vendor_id?: string
+          vendor_unread_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_threads_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -450,6 +579,7 @@ export type Database = {
           order_id: string | null
           recipient_id: string
           sender_id: string
+          thread_id: string | null
         }
         Insert: {
           content: string
@@ -460,6 +590,7 @@ export type Database = {
           order_id?: string | null
           recipient_id: string
           sender_id: string
+          thread_id?: string | null
         }
         Update: {
           content?: string
@@ -470,6 +601,7 @@ export type Database = {
           order_id?: string | null
           recipient_id?: string
           sender_id?: string
+          thread_id?: string | null
         }
         Relationships: [
           {
@@ -492,6 +624,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "message_threads"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1167,6 +1306,38 @@ export type Database = {
           },
         ]
       }
+      typing_indicators: {
+        Row: {
+          id: string
+          is_typing: boolean | null
+          thread_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          is_typing?: boolean | null
+          thread_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          is_typing?: boolean | null
+          thread_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "typing_indicators_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "message_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_sessions: {
         Row: {
           created_at: string
@@ -1389,6 +1560,10 @@ export type Database = {
           search_volume: number
           related_terms: string[]
         }[]
+      }
+      mark_thread_as_read: {
+        Args: { thread_id_param: string; user_id_param: string }
+        Returns: undefined
       }
       requires_mfa_check: {
         Args: { user_id: string; action_type?: string }
