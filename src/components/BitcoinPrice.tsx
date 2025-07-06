@@ -10,7 +10,7 @@ const BitcoinPrice = () => {
     const fetchPrice = async () => {
       try {
         const response = await fetch(
-          'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true'
+          'https://392ca772-36d2-40da-a12e-4c74517dd52f.supabase.co/functions/v1/bitcoin-price'
         );
         const data = await response.json();
         
