@@ -20,34 +20,33 @@ serve(async (req) => {
     const { action, name, email, passphrase } = body;
 
     if (action === 'generate_keypair') {
-      console.log('🔑 Generating simple mock keypair for:', name, email);
+      console.log('🔑 Generating PGP keypair for:', name, email);
       
       if (!name || !email) {
         throw new Error('Name and email are required');
       }
 
-      // Generate a simple mock keypair for now to test the connection
-      const mockPublicKey = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+      // Import OpenPGP dynamically to avoid startup issues
+      console.log('📦 Loading OpenPGP library...');
+      const openpgp = await import("https://esm.sh/openpgp@5.11.0");
+      console.log('✅ OpenPGP library loaded');
 
-mQENBGExample...
-[Mock Public Key Content]
-...
------END PGP PUBLIC KEY BLOCK-----`;
+      console.log('🔐 Starting key generation...');
+      const keyPair = await openpgp.generateKey({
+        type: 'rsa',
+        rsaBits: 2048,
+        userIDs: [{ name, email }],
+        passphrase: passphrase || undefined,
+        format: 'armored'
+      });
 
-      const mockPrivateKey = `-----BEGIN PGP PRIVATE KEY BLOCK-----
-
-lQOYBGExample...
-[Mock Private Key Content]
-...
------END PGP PRIVATE KEY BLOCK-----`;
-
-      console.log('✅ Mock PGP keypair generated successfully');
+      console.log('✅ Real PGP keypair generated successfully');
 
       return new Response(JSON.stringify({
         success: true,
-        public_key: mockPublicKey,
-        private_key: mockPrivateKey,
-        key_type: 'RSA 2048-bit (Mock)'
+        public_key: keyPair.publicKey,
+        private_key: keyPair.privateKey,
+        key_type: 'RSA 2048-bit'
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
