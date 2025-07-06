@@ -77,9 +77,11 @@ interface User {
 
 interface Vendor {
   id: string;
-  user_id: string;
-  business_name: string;
-  status: string;
+  vendor_id: string;
+  store_name: string;
+  description: string;
+  trust_score: number;
+  is_verified: boolean;
   created_at: string;
   is_banned?: boolean;
   ban_reason?: string;
@@ -163,6 +165,12 @@ export default function AdminDashboard() {
   const [translationsManagementOpen, setTranslationsManagementOpen] = useState(false);
   const [ordersManagementOpen, setOrdersManagementOpen] = useState(false);
   const [disputesManagementOpen, setDisputesManagementOpen] = useState(false);
+  
+  // Selected items for dialogs
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null);
+  const [userManagementDialogOpen, setUserManagementDialogOpen] = useState(false);
+  const [vendorManagementDialogOpen, setVendorManagementDialogOpen] = useState(false);
   
   // Settings state
   const [platformFee, setPlatformFee] = useState("2.5");
@@ -332,6 +340,52 @@ export default function AdminDashboard() {
     }
   };
 
+  const loadUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, user_id, display_name, user_type, created_at')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+      setUsers(data || []);
+    } catch (error) {
+      console.error('Error loading users:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load users",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  const loadVendors = async () => {
+    setLoadingVendors(true);
+    try {
+      const { data, error } = await supabase
+        .from('vendor_profiles')
+        .select('id, vendor_id, store_name, description, trust_score, is_verified, created_at, is_banned, ban_reason')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+      setVendors(data || []);
+    } catch (error) {
+      console.error('Error loading vendors:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load vendors",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingVendors(false);
+    }
+  };
+
   const loadDashboardMetrics = async () => {
     try {
       const { data, error } = await supabase.rpc('get_dashboard_metrics');
@@ -481,7 +535,7 @@ export default function AdminDashboard() {
 
         {/* Management Actions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => setUserManagementOpen(true)}>
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => { setUserManagementOpen(true); loadUsers(); }}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Users className="h-5 w-5 text-primary" />
@@ -499,7 +553,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => setVendorManagementOpen(true)}>
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => { setVendorManagementOpen(true); loadVendors(); }}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <ShoppingBag className="h-5 w-5 text-primary" />
@@ -1339,6 +1393,31 @@ export default function AdminDashboard() {
             </div>
           </TabsContent>
         </Tabs>
+        {/* User and Vendor Management Dialogs */}
+        <UserManagementDialog 
+          user={users.find(u => u.id === selectedUserId) || null}
+          open={userManagementDialogOpen}
+          onOpenChange={setUserManagementDialogOpen}
+          onUserUpdated={loadUsers}
+        />
+        
+        <VendorManagementDialog 
+          vendor={vendors.find(v => v.id === selectedVendorId) || null}
+          open={vendorManagementDialogOpen}
+          onOpenChange={setVendorManagementDialogOpen}
+          onVendorUpdated={loadVendors}
+        />
+
+        {/* Management Dialogs */}
+        <CategoryManagement
+          open={categoriesManagementOpen}
+          onClose={() => setCategoriesManagementOpen(false)}
+        />
+        
+        <TranslationManagement
+          open={translationsManagementOpen}
+          onClose={() => setTranslationsManagementOpen(false)}
+        />
       </div>
     </div>
   );

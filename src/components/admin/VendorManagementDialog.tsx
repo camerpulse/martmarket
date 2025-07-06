@@ -12,14 +12,14 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface Vendor {
   id: string;
-  user_id: string;
-  business_name: string;
-  status: string;
-  verification_status: string;
+  vendor_id: string;
+  store_name: string;
+  description: string;
+  trust_score: number;
+  is_verified: boolean;
   created_at: string;
   is_banned?: boolean;
   ban_reason?: string;
-  business_description?: string;
 }
 
 interface VendorManagementDialogProps {
@@ -32,10 +32,9 @@ interface VendorManagementDialogProps {
 export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpdated }: VendorManagementDialogProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [businessName, setBusinessName] = useState(vendor?.business_name || '');
-  const [businessDescription, setBusinessDescription] = useState(vendor?.business_description || '');
-  const [status, setStatus] = useState(vendor?.status || 'pending');
-  const [verificationStatus, setVerificationStatus] = useState(vendor?.verification_status || 'pending');
+  const [storeName, setStoreName] = useState(vendor?.store_name || '');
+  const [description, setDescription] = useState(vendor?.description || '');
+  const [isVerified, setIsVerified] = useState(vendor?.is_verified || false);
   const [banReason, setBanReason] = useState(vendor?.ban_reason || '');
 
   const handleUpdateVendor = async () => {
@@ -43,16 +42,14 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
     
     setLoading(true);
     try {
-      const supabaseClient = supabase as any;
-      const { error } = await supabaseClient
+      const { error } = await supabase
         .from('vendor_profiles')
         .update({
-          business_name: businessName,
-          business_description: businessDescription,
-          status: status,
-          verification_status: verificationStatus
+          store_name: storeName,
+          description: description,
+          is_verified: isVerified
         })
-        .eq('user_id', vendor.user_id);
+        .eq('vendor_id', vendor.vendor_id);
 
       if (error) throw error;
 
@@ -80,20 +77,18 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
 
     setLoading(true);
     try {
-      const supabaseClient = supabase as any;
-      const { error } = await supabaseClient
+      const { error } = await supabase
         .from('vendor_profiles')
         .update({
-          status: 'approved',
-          verification_status: 'verified'
+          is_verified: true
         })
-        .eq('user_id', vendor.user_id);
+        .eq('vendor_id', vendor.vendor_id);
 
       if (error) throw error;
 
       toast({
         title: "Vendor Approved",
-        description: `${vendor.business_name} has been approved successfully.`,
+        description: `${vendor.store_name} has been approved successfully.`,
       });
       
       onVendorUpdated();
@@ -130,13 +125,13 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
           verification_status: 'rejected',
           ban_reason: banReason
         })
-        .eq('user_id', vendor.user_id);
+        .eq('vendor_id', vendor.vendor_id);
 
       if (error) throw error;
 
       toast({
         title: "Vendor Rejected",
-        description: `${vendor.business_name} application has been rejected.`,
+        description: `${vendor.store_name} application has been rejected.`,
       });
       
       onVendorUpdated();
@@ -166,33 +161,22 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
     setLoading(true);
     try {
       const currentUser = await supabase.auth.getUser();
-      const supabaseClient = supabase as any;
       
-      const { error } = await supabaseClient
+      const { error } = await supabase
         .from('vendor_profiles')
         .update({
           is_banned: true,
           ban_reason: banReason,
           banned_at: new Date().toISOString(),
-          banned_by: currentUser.data.user?.id,
-          status: 'banned'
+          banned_by: currentUser.data.user?.id
         })
-        .eq('user_id', vendor.user_id);
+        .eq('vendor_id', vendor.vendor_id);
 
       if (error) throw error;
 
-      // Also create a ban record
-      await supabaseClient
-        .from('user_bans')
-        .insert({
-          user_id: vendor.user_id,
-          banned_by: currentUser.data.user?.id,
-          ban_reason: `Vendor banned: ${banReason}`
-        });
-
       toast({
         title: "Vendor Banned",
-        description: `${vendor.business_name} has been banned.`,
+        description: `${vendor.store_name} has been banned.`,
       });
       
       onVendorUpdated();
@@ -214,23 +198,21 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
 
     setLoading(true);
     try {
-      const supabaseClient = supabase as any;
-      const { error } = await supabaseClient
+      const { error } = await supabase
         .from('vendor_profiles')
         .update({
           is_banned: false,
           ban_reason: null,
           banned_at: null,
-          banned_by: null,
-          status: 'approved'
+          banned_by: null
         })
-        .eq('user_id', vendor.user_id);
+        .eq('vendor_id', vendor.vendor_id);
 
       if (error) throw error;
 
       toast({
         title: "Vendor Unbanned",
-        description: `${vendor.business_name} has been unbanned.`,
+        description: `${vendor.store_name} has been unbanned.`,
       });
       
       onVendorUpdated();
@@ -274,7 +256,7 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5" />
-            Manage Vendor: {vendor.business_name}
+            Manage Vendor: {vendor.store_name}
           </DialogTitle>
           <DialogDescription>
             View and manage vendor account details and verification status
@@ -286,17 +268,17 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
               <div>
-                <p className="font-medium text-sm">Status</p>
-                <Badge variant={getStatusColor(vendor.status)}>
-                  {vendor.status?.charAt(0).toUpperCase() + vendor.status?.slice(1)}
+                <p className="font-medium text-sm">Verified</p>
+                <Badge variant={vendor.is_verified ? "default" : "secondary"}>
+                  {vendor.is_verified ? "Verified" : "Unverified"}
                 </Badge>
               </div>
             </div>
             <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
               <div>
-                <p className="font-medium text-sm">Verification</p>
-                <Badge variant={getVerificationColor(vendor.verification_status)}>
-                  {vendor.verification_status?.charAt(0).toUpperCase() + vendor.verification_status?.slice(1)}
+                <p className="font-medium text-sm">Trust Score</p>
+                <Badge variant="outline">
+                  {vendor.trust_score?.toFixed(1) || "0.0"}
                 </Badge>
               </div>
             </div>
@@ -312,66 +294,46 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
           {/* Edit Vendor Details */}
           <div className="space-y-3">
             <div>
-              <Label htmlFor="businessName">Business Name</Label>
+              <Label htmlFor="storeName">Store Name</Label>
               <Input
-                id="businessName"
-                value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
-                placeholder="Business name"
+                id="storeName"
+                value={storeName}
+                onChange={(e) => setStoreName(e.target.value)}
+                placeholder="Store name"
               />
             </div>
 
             <div>
-              <Label htmlFor="businessDescription">Business Description</Label>
+              <Label htmlFor="description">Description</Label>
               <Textarea
-                id="businessDescription"
-                value={businessDescription}
-                onChange={(e) => setBusinessDescription(e.target.value)}
-                placeholder="Business description..."
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Store description..."
                 rows={3}
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label htmlFor="status">Status</Label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
-                    <SelectItem value="banned">Banned</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="verificationStatus">Verification</Label>
-                <Select value={verificationStatus} onValueChange={setVerificationStatus}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="verified">Verified</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="isVerified"
+                checked={isVerified}
+                onChange={(e) => setIsVerified(e.target.checked)}
+                className="rounded"
+              />
+              <Label htmlFor="isVerified">Verified Vendor</Label>
             </div>
 
-            {/* Reason Input (for rejection/banning) */}
-            {(vendor.status === 'pending' || !vendor.is_banned) && (
+            {/* Reason Input (for banning) */}
+            {!vendor.is_banned && (
               <div>
-                <Label htmlFor="banReason">Rejection/Ban Reason</Label>
+                <Label htmlFor="banReason">Ban Reason</Label>
                 <Textarea
                   id="banReason"
                   value={banReason}
                   onChange={(e) => setBanReason(e.target.value)}
-                  placeholder="Reason for rejection or banning..."
+                  placeholder="Reason for banning..."
                   rows={3}
                 />
               </div>
@@ -391,27 +353,16 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
               Update
             </Button>
             
-            {vendor.status === 'pending' && (
-              <>
-                <Button
-                  variant="outline"
-                  onClick={handleApproveVendor}
-                  disabled={loading}
-                  className="flex-1 text-green-600 hover:bg-green-50"
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Approve
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleRejectVendor}
-                  disabled={loading || !banReason.trim()}
-                  className="flex-1 text-red-600 hover:bg-red-50"
-                >
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Reject
-                </Button>
-              </>
+            {!vendor.is_verified && (
+              <Button
+                variant="outline"
+                onClick={handleApproveVendor}
+                disabled={loading}
+                className="flex-1 text-green-600 hover:bg-green-50"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Verify
+              </Button>
             )}
             
             {vendor.is_banned ? (
@@ -425,17 +376,15 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
                 Unban
               </Button>
             ) : (
-              vendor.status !== 'pending' && (
-                <Button
-                  variant="outline"
-                  onClick={handleBanVendor}
-                  disabled={loading || !banReason.trim()}
-                  className="flex-1 text-red-600 hover:bg-red-50"
-                >
-                  <Ban className="h-4 w-4 mr-2" />
-                  Ban
-                </Button>
-              )
+              <Button
+                variant="outline"
+                onClick={handleBanVendor}
+                disabled={loading || !banReason.trim()}
+                className="flex-1 text-red-600 hover:bg-red-50"
+              >
+                <Ban className="h-4 w-4 mr-2" />
+                Ban
+              </Button>
             )}
           </div>
           
