@@ -14,12 +14,15 @@ import {
   Smile, 
   Paperclip,
   MoreVertical,
-  Clock
+  Clock,
+  Plus
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Message {
   id: string;
@@ -64,12 +67,16 @@ export function MessagingInterface() {
   const [isSending, setIsSending] = useState(false);
   const [typingUsers, setTypingUsers] = useState<TypingIndicator[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [availableOrders, setAvailableOrders] = useState<any[]>([]);
+  const [selectedOrderId, setSelectedOrderId] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if (user) {
       loadThreads();
+      loadAvailableOrders();
       setupRealtimeSubscriptions();
     }
   }, [user]);
@@ -169,6 +176,66 @@ export function MessagingInterface() {
       }
     } catch (error) {
       console.error('Error loading messages:', error);
+    }
+  };
+
+  const loadAvailableOrders = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          id,
+          status,
+          products(id, title),
+          vendor_id,
+          buyer_id,
+          profiles!orders_vendor_id_fkey(display_name),
+          profiles!orders_buyer_id_fkey(display_name)
+        `)
+        .or(`buyer_id.eq.${user?.id},vendor_id.eq.${user?.id}`)
+        .in('status', ['pending', 'processing', 'shipped', 'completed'])
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setAvailableOrders(data || []);
+    } catch (error) {
+      console.error('Error loading orders:', error);
+    }
+  };
+
+  const createNewThread = async () => {
+    if (!selectedOrderId) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('secure-messaging', {
+        body: { 
+          action: 'create_thread', 
+          order_id: selectedOrderId,
+          subject: `Order Discussion - ${selectedOrderId}`
+        }
+      });
+
+      if (error) throw error;
+      if (data.success) {
+        setIsComposeOpen(false);
+        setSelectedOrderId('');
+        await loadThreads();
+        
+        // Select the new thread
+        const newThread = threads.find(t => t.orders?.id === selectedOrderId);
+        if (newThread) setSelectedThread(newThread);
+        
+        toast({
+          title: "Success",
+          description: "New conversation started",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create conversation",
+        variant: "destructive",
+      });
     }
   };
 
@@ -289,10 +356,61 @@ export function MessagingInterface() {
       {/* Thread List */}
       <div className="w-1/3 border-r bg-muted/30">
         <div className="p-4 border-b">
-          <h3 className="font-semibold flex items-center gap-2">
-            <MessageCircle className="h-4 w-4" />
-            Messages
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold flex items-center gap-2">
+              <MessageCircle className="h-4 w-4" />
+              Messages
+            </h3>
+            <Dialog open={isComposeOpen} onOpenChange={setIsComposeOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="outline">
+                  <Plus className="h-4 w-4 mr-1" />
+                  New
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Start New Conversation</DialogTitle>
+                  <DialogDescription>
+                    Select an order to start messaging about
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Select value={selectedOrderId} onValueChange={setSelectedOrderId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an order" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableOrders.map((order) => (
+                        <SelectItem key={order.id} value={order.id}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{order.products?.title}</span>
+                            <span className="text-xs text-muted-foreground">
+                              Order #{order.id.slice(0, 8)} • {order.status}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsComposeOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      onClick={createNewThread}
+                      disabled={!selectedOrderId}
+                    >
+                      Start Conversation
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
         <ScrollArea className="h-[calc(600px-60px)]">
           {threads.length === 0 ? (
