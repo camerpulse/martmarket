@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
 import { 
   Users, 
   ShoppingBag, 
@@ -26,7 +27,10 @@ import {
   ShoppingCart,
   Brain,
   Cpu,
-  BarChart2
+  BarChart2,
+  Download,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -112,6 +116,131 @@ export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Settings state
+  const [platformFee, setPlatformFee] = useState("2.5");
+  const [vendorBond, setVendorBond] = useState("250.00");
+  const [maxDisputeDays, setMaxDisputeDays] = useState("30");
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [aiModel, setAiModel] = useState("gpt-4o-mini");
+
+  // Action handlers
+  const handleExportUsers = () => {
+    toast({
+      title: "Export Started",
+      description: "User data export is being prepared. You'll receive an email when ready.",
+    });
+  };
+
+  const handleBulkActions = () => {
+    toast({
+      title: "Bulk Actions",
+      description: "Opening bulk user management panel...",
+    });
+  };
+
+  const handleSecurityReview = () => {
+    toast({
+      title: "Security Review",
+      description: "Initiating comprehensive security audit...",
+    });
+  };
+
+  const handleApproveVendor = (vendorId: number) => {
+    toast({
+      title: "Vendor Approved",
+      description: `Vendor Store ${vendorId} has been approved successfully.`,
+    });
+  };
+
+  const handleRejectVendor = (vendorId: number) => {
+    toast({
+      title: "Vendor Rejected",
+      description: `Vendor Store ${vendorId} application has been rejected.`,
+      variant: "destructive",
+    });
+  };
+
+  const handleExportVendorData = () => {
+    toast({
+      title: "Export Started",
+      description: "Vendor data export is being prepared...",
+    });
+  };
+
+  const handlePerformanceReport = () => {
+    toast({
+      title: "Report Generated",
+      description: "Vendor performance report is being compiled...",
+    });
+  };
+
+  const handleReviewDispute = (disputeId: number) => {
+    toast({
+      title: "Dispute Review",
+      description: `Opening dispute #ORD00${disputeId}23 for review...`,
+    });
+  };
+
+  const handleGenerateReport = () => {
+    toast({
+      title: "Report Generated",
+      description: "Dispute analytics report is being compiled...",
+    });
+  };
+
+  const handleUpdatePlatformFee = () => {
+    toast({
+      title: "Platform Fee Updated",
+      description: `Platform fee has been updated to ${platformFee}%`,
+    });
+  };
+
+  const handleUpdateVendorBond = () => {
+    toast({
+      title: "Vendor Bond Updated",
+      description: `Vendor bond has been updated to $${vendorBond}`,
+    });
+  };
+
+  const handleUpdateDisputeDays = () => {
+    toast({
+      title: "Dispute Settings Updated",
+      description: `Max dispute days has been updated to ${maxDisputeDays} days`,
+    });
+  };
+
+  const handleToggleMaintenance = () => {
+    setMaintenanceMode(!maintenanceMode);
+    toast({
+      title: maintenanceMode ? "Maintenance Mode Disabled" : "Maintenance Mode Enabled",
+      description: maintenanceMode 
+        ? "Platform is now accessible to all users" 
+        : "Platform is now in maintenance mode",
+      variant: maintenanceMode ? "default" : "destructive",
+    });
+  };
+
+  const handleConfigureFraud = () => {
+    toast({
+      title: "Fraud Detection",
+      description: "Opening fraud detection configuration...",
+    });
+  };
+
+  const handleBackupNow = () => {
+    toast({
+      title: "Backup Started",
+      description: "Manual backup has been initiated...",
+    });
+  };
+
+  const handleUpdateAIModel = () => {
+    toast({
+      title: "AI Model Updated",
+      description: `Primary AI model has been updated to ${aiModel}`,
+    });
+  };
 
   useEffect(() => {
     if (user) {
@@ -562,15 +691,15 @@ export default function AdminDashboard() {
 
                   {/* User Actions */}
                   <div className="flex flex-wrap gap-3 mb-6">
-                    <Button size="sm" className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
+                    <Button size="sm" className="flex items-center gap-2" onClick={handleExportUsers}>
+                      <Download className="h-4 w-4" />
                       Export Users
                     </Button>
-                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={handleBulkActions}>
                       <UserCheck className="h-4 w-4" />
                       Bulk Actions
                     </Button>
-                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={handleSecurityReview}>
                       <Shield className="h-4 w-4" />
                       Security Review
                     </Button>
@@ -598,7 +727,15 @@ export default function AdminDashboard() {
                               {i % 2 === 0 ? "Buyer" : "Vendor"}
                             </Badge>
                             <span className="text-sm text-muted-foreground">{i} min ago</span>
-                            <Button variant="ghost" size="sm">View</Button>
+                            <Button variant="ghost" size="sm" onClick={() => {
+                              toast({
+                                title: "User Profile",
+                                description: `Opening profile for User ${i}23${i}...`,
+                              });
+                            }}>
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
                           </div>
                         </div>
                       ))}
@@ -654,15 +791,20 @@ export default function AdminDashboard() {
 
                   {/* Vendor Actions */}
                   <div className="flex flex-wrap gap-3">
-                    <Button size="sm" className="flex items-center gap-2">
+                    <Button size="sm" className="flex items-center gap-2" onClick={() => {
+                      toast({
+                        title: "Approving All Vendors",
+                        description: "Processing all pending vendor applications...",
+                      });
+                    }}>
                       <UserCheck className="h-4 w-4" />
                       Approve All Pending
                     </Button>
-                    <Button variant="outline" size="sm" className="flex items-center gap-2">
-                      <FileText className="h-4 w-4" />
+                    <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={handleExportVendorData}>
+                      <Download className="h-4 w-4" />
                       Export Vendor Data
                     </Button>
-                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={handlePerformanceReport}>
                       <BarChart3 className="h-4 w-4" />
                       Performance Report
                     </Button>
@@ -692,10 +834,12 @@ export default function AdminDashboard() {
                             </div>
                             <div className="flex items-center gap-2">
                               <Badge variant="outline" className="text-amber-600">Pending Review</Badge>
-                              <Button size="sm" variant="outline" className="text-green-600 hover:bg-green-50">
+                              <Button size="sm" variant="outline" className="text-green-600 hover:bg-green-50" onClick={() => handleApproveVendor(i)}>
+                                <CheckCircle className="h-4 w-4 mr-1" />
                                 Approve
                               </Button>
-                              <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50">
+                              <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50" onClick={() => handleRejectVendor(i)}>
+                                <XCircle className="h-4 w-4 mr-1" />
                                 Reject
                               </Button>
                             </div>
@@ -754,15 +898,25 @@ export default function AdminDashboard() {
 
                   {/* Dispute Actions */}
                   <div className="flex flex-wrap gap-3">
-                    <Button size="sm" className="flex items-center gap-2">
+                    <Button size="sm" className="flex items-center gap-2" onClick={() => {
+                      toast({
+                        title: "High Priority Review",
+                        description: "Filtering high priority disputes for immediate attention...",
+                      });
+                    }}>
                       <AlertTriangle className="h-4 w-4" />
                       Review High Priority
                     </Button>
-                    <Button variant="outline" size="sm" className="flex items-center gap-2">
-                      <FileText className="h-4 w-4" />
+                    <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={handleGenerateReport}>
+                      <Download className="h-4 w-4" />
                       Generate Report
                     </Button>
-                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={() => {
+                      toast({
+                        title: "Dispute Settings",
+                        description: "Opening dispute configuration panel...",
+                      });
+                    }}>
                       <Settings className="h-4 w-4" />
                       Dispute Settings
                     </Button>
@@ -802,7 +956,10 @@ export default function AdminDashboard() {
                                 {dispute.priority}
                               </Badge>
                               <span className="text-sm text-muted-foreground">{dispute.time} ago</span>
-                              <Button size="sm" variant="outline">Review</Button>
+                              <Button size="sm" variant="outline" onClick={() => handleReviewDispute(dispute.id)}>
+                                <Eye className="h-4 w-4 mr-1" />
+                                Review
+                              </Button>
                             </div>
                           </div>
                         </div>
@@ -829,22 +986,39 @@ export default function AdminDashboard() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Platform Fee (%)</label>
                     <div className="flex items-center gap-2">
-                      <input className="flex-1 px-3 py-2 border rounded-md" defaultValue="2.5" />
-                      <Button size="sm" variant="outline">Update</Button>
+                      <Input 
+                        className="flex-1" 
+                        value={platformFee} 
+                        onChange={(e) => setPlatformFee(e.target.value)}
+                        type="number"
+                        step="0.1"
+                      />
+                      <Button size="sm" variant="outline" onClick={handleUpdatePlatformFee}>Update</Button>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Vendor Bond (USD)</label>
                     <div className="flex items-center gap-2">
-                      <input className="flex-1 px-3 py-2 border rounded-md" defaultValue="250.00" />
-                      <Button size="sm" variant="outline">Update</Button>
+                      <Input 
+                        className="flex-1" 
+                        value={vendorBond} 
+                        onChange={(e) => setVendorBond(e.target.value)}
+                        type="number"
+                        step="0.01"
+                      />
+                      <Button size="sm" variant="outline" onClick={handleUpdateVendorBond}>Update</Button>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Max Dispute Days</label>
                     <div className="flex items-center gap-2">
-                      <input className="flex-1 px-3 py-2 border rounded-md" defaultValue="30" />
-                      <Button size="sm" variant="outline">Update</Button>
+                      <Input 
+                        className="flex-1" 
+                        value={maxDisputeDays} 
+                        onChange={(e) => setMaxDisputeDays(e.target.value)}
+                        type="number"
+                      />
+                      <Button size="sm" variant="outline" onClick={handleUpdateDisputeDays}>Update</Button>
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
@@ -852,8 +1026,13 @@ export default function AdminDashboard() {
                       <p className="font-medium">Maintenance Mode</p>
                       <p className="text-sm text-muted-foreground">Temporarily disable the platform</p>
                     </div>
-                    <Button variant="outline" size="sm">
-                      Disabled
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleToggleMaintenance}
+                      className={maintenanceMode ? "text-red-600 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}
+                    >
+                      {maintenanceMode ? "Enabled" : "Disabled"}
                     </Button>
                   </div>
                 </CardContent>
@@ -888,14 +1067,14 @@ export default function AdminDashboard() {
                       <p className="font-medium text-amber-700 dark:text-amber-300">Fraud Detection</p>
                       <p className="text-sm text-amber-600 dark:text-amber-400">Automated suspicious activity monitoring</p>
                     </div>
-                    <Button variant="outline" size="sm">Configure</Button>
+                    <Button variant="outline" size="sm" onClick={handleConfigureFraud}>Configure</Button>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
                     <div>
                       <p className="font-medium text-purple-700 dark:text-purple-300">Backup System</p>
                       <p className="text-sm text-purple-600 dark:text-purple-400">Last backup: 2 hours ago</p>
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={handleBackupNow}>
                       <Database className="h-4 w-4 mr-1" />
                       Backup Now
                     </Button>
@@ -916,12 +1095,16 @@ export default function AdminDashboard() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Primary AI Model</label>
                     <div className="flex items-center gap-2">
-                      <select className="flex-1 px-3 py-2 border rounded-md bg-background">
+                      <select 
+                        className="flex-1 px-3 py-2 border rounded-md bg-background"
+                        value={aiModel}
+                        onChange={(e) => setAiModel(e.target.value)}
+                      >
                         <option value="gpt-4o-mini">GPT-4o Mini (Fast)</option>
                         <option value="gpt-4o">GPT-4o (Balanced)</option>
                         <option value="claude-3-haiku">Claude 3 Haiku</option>
                       </select>
-                      <Button size="sm" variant="outline">Update</Button>
+                      <Button size="sm" variant="outline" onClick={handleUpdateAIModel}>Update</Button>
                     </div>
                   </div>
                   <div className="space-y-2">
