@@ -292,7 +292,7 @@ const PGPGenerator = () => {
           </div>
           
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4 bitcoin-gradient">PGP Generator</h1>
+            <h1 className="text-4xl font-bold mb-4 bitcoin-gradient">PGP Key Generator</h1>
             <p className="text-xl text-muted-foreground mb-4">
               Free PGP Key Generator & Encryption Tools
             </p>

@@ -27,7 +27,7 @@ export const usePGP = () => {
     try {
       console.log('🔄 Starting PGP key generation...', { name, email, hasPassphrase: !!passphrase });
       
-      const { data, error } = await supabase.functions.invoke('pgp-tools', {
+      const { data, error } = await supabase.functions.invoke('pgp-generator', {
         body: {
           action: 'generate_keypair',
           name,
