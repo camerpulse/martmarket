@@ -349,7 +349,7 @@ export function AutoDeployment() {
           if (updatedSteps.length > 0) {
             updatedSteps[0] = {
               ...updatedSteps[0],
-              status: 'running',
+              status: 'running' as const,
               startTime: new Date(),
               logs: [`🚀 Starting ${updatedSteps[0].name}...`]
             };

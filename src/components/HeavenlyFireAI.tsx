@@ -36,6 +36,7 @@ import { PredictiveAnalytics } from './PredictiveAnalytics';
 import { RealTimeMonitor } from './RealTimeMonitor';
 import { AutoDeployment } from './AutoDeployment';
 import { SelfHealing } from './SelfHealing';
+import { AIMemorySystem } from './AIMemorySystem';
 
 interface AIConfig {
   id?: string;
@@ -457,10 +458,11 @@ export function HeavenlyFireAI() {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="activity" className="w-full">
-        <TabsList className="grid w-full grid-cols-9">
-          <TabsTrigger value="activity">Activity</TabsTrigger>
+      <Tabs defaultValue="chat" className="w-full">
+        <TabsList className="grid w-full grid-cols-10">
           <TabsTrigger value="chat">AI Chat</TabsTrigger>
+          <TabsTrigger value="memory">Memory</TabsTrigger>
+          <TabsTrigger value="activity">Activity</TabsTrigger>
           <TabsTrigger value="threats">Threats</TabsTrigger>
           <TabsTrigger value="fixes">Auto-Fix</TabsTrigger>
           <TabsTrigger value="evolution">Evolution</TabsTrigger>
@@ -533,6 +535,10 @@ export function HeavenlyFireAI() {
 
         <TabsContent value="chat">
           <AIChat />
+        </TabsContent>
+
+        <TabsContent value="memory">
+          <AIMemorySystem />
         </TabsContent>
 
         <TabsContent value="threats">

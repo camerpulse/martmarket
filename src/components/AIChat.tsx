@@ -30,29 +30,110 @@ interface ChatMessage {
   timestamp: Date;
   type?: 'message' | 'action' | 'analysis' | 'notification';
   metadata?: any;
+  importance?: number;
+  tags?: string[];
+  context?: any;
 }
 
 export function AIChat() {
   const { toast } = useToast();
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      role: 'ai',
-      content: '🔥 Heavenly Fire AI is online and ready to assist. I can analyze issues, fix problems, monitor security, and evolve autonomously. How can I help you today?',
-      timestamp: new Date(),
-      type: 'notification'
-    }
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [conversationHistory, setConversationHistory] = useState<ChatMessage[]>([]);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [sessionContext, setSessionContext] = useState<any>({});
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [aiStatus, setAiStatus] = useState<any>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    loadAIStatus();
-    const interval = setInterval(loadAIStatus, 10000); // Check status every 10 seconds
+    initializeAIChat();
+    const interval = setInterval(loadAIStatus, 10000);
     return () => clearInterval(interval);
   }, []);
+
+  const initializeAIChat = async () => {
+    await loadAIStatus();
+    await loadConversationHistory();
+    await loadUserProfile();
+    
+    // Initialize with personalized greeting
+    const greeting = generatePersonalizedGreeting();
+    const initialMessage: ChatMessage = {
+      id: '1',
+      role: 'ai',
+      content: greeting,
+      timestamp: new Date(),
+      type: 'notification',
+      importance: 8,
+      tags: ['greeting', 'initialization'],
+      context: { session_start: true }
+    };
+    
+    setMessages([initialMessage]);
+  };
+
+  const loadConversationHistory = async () => {
+    try {
+      const { data } = await supabase
+        .from('ai_conversation_memory')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      if (data) {
+        setConversationHistory(data.map(item => ({
+          id: item.id,
+          role: item.message_type as 'user' | 'ai',
+          content: item.content,
+          timestamp: new Date(item.created_at),
+          importance: item.importance,
+          tags: item.tags,
+          context: item.context
+        })));
+      }
+    } catch (error) {
+      console.error('Error loading conversation history:', error);
+    }
+  };
+
+  const loadUserProfile = async () => {
+    try {
+      const { data } = await supabase
+        .from('ai_user_profiles')
+        .select('*')
+        .single();
+      
+      if (data) {
+        setUserProfile(data);
+        setSessionContext(prev => ({
+          ...prev,
+          user_preferences: data.preferences,
+          interaction_style: data.preferred_style,
+          expertise_level: data.technical_level
+        }));
+      }
+    } catch (error) {
+      // Create default profile
+      setUserProfile({
+        id: 'default',
+        preferences: ['detailed_explanations', 'technical_focus'],
+        preferred_style: 'professional_helpful',
+        technical_level: 'intermediate'
+      });
+    }
+  };
+
+  const generatePersonalizedGreeting = () => {
+    const greetings = [
+      "🔥 Heavenly Fire AI is back online! I remember our previous conversations and I'm ready to continue where we left off. What can I help you with today?",
+      "✨ Hello again! I've been learning and evolving since we last spoke. I have full memory of our interactions and I'm excited to assist you further.",
+      "🧠 Welcome back! My memory systems are fully operational - I remember everything we've discussed and I'm ready to provide even more personalized assistance.",
+      "🚀 Great to see you again! I've retained all our conversation history and learned from our interactions. How can I help you today?"
+    ];
+    
+    return greetings[Math.floor(Math.random() * greetings.length)];
+  };
 
   useEffect(() => {
     // Auto-scroll to bottom when new messages arrive
@@ -133,25 +214,284 @@ export function AIChat() {
   };
 
   const processAIMessage = async (message: string): Promise<{content: string, type?: string, actions?: any[], metadata?: any}> => {
-    // Analyze user intent and generate appropriate response
+    // Store user message in memory first
+    await storeMessageInMemory(message, 'user');
+    
+    // Analyze message with full context
+    const contextualAnalysis = await analyzeMessageWithContext(message);
     const intent = analyzeUserIntent(message.toLowerCase());
     
+    // Generate response based on user's history and preferences
+    let response;
     switch (intent.type) {
       case 'status':
-        return await handleStatusRequest();
+        response = await handleStatusRequest();
+        break;
       case 'analysis':
-        return await handleAnalysisRequest(message);
+        response = await handleAnalysisRequest(message);
+        break;
       case 'fix':
-        return await handleFixRequest(message);
+        response = await handleFixRequest(message);
+        break;
       case 'security':
-        return await handleSecurityRequest(message);
+        response = await handleSecurityRequest(message);
+        break;
       case 'evolution':
-        return await handleEvolutionRequest();
+        response = await handleEvolutionRequest();
+        break;
       case 'autonomous':
-        return await handleAutonomousRequest(message);
+        response = await handleAutonomousRequest(message);
+        break;
+      case 'memory':
+        response = await handleMemoryRequest(message);
+        break;
+      case 'personal':
+        response = await handlePersonalRequest(message);
+        break;
       default:
-        return await handleGeneralRequest(message);
+        response = await handleGeneralRequest(message);
     }
+
+    // Add contextual enhancements to response
+    response = await enhanceResponseWithContext(response, contextualAnalysis);
+    
+    // Store AI response in memory
+    await storeMessageInMemory(response.content, 'ai', response.metadata);
+    
+    return response;
+  };
+
+  const analyzeMessageWithContext = async (message: string) => {
+    // Analyze current message in context of conversation history
+    const recentMessages = conversationHistory.slice(0, 5);
+    const topics = extractTopicsFromHistory(recentMessages);
+    const userMood = detectUserMood(message);
+    const complexityLevel = assessQuestionComplexity(message);
+    
+    return {
+      recent_topics: topics,
+      user_mood: userMood,
+      complexity: complexityLevel,
+      requires_memory: checkIfRequiresMemory(message),
+      continuation_of: findRelatedConversation(message, recentMessages)
+    };
+  };
+
+  const storeMessageInMemory = async (content: string, role: 'user' | 'ai', metadata?: any) => {
+    const importance = calculateImportance(content, role);
+    const tags = extractTags(content);
+    
+    const memoryEntry = {
+      content,
+      message_type: role,
+      importance,
+      tags,
+      context: {
+        session_id: sessionContext.session_id || 'default',
+        user_mood: sessionContext.current_mood,
+        topic: sessionContext.current_topic,
+        ...metadata
+      }
+    };
+
+    try {
+      await supabase
+        .from('ai_conversation_memory')
+        .insert(memoryEntry);
+        
+      // Update conversation history
+      setConversationHistory(prev => [
+        {
+          id: Date.now().toString(),
+          role,
+          content,
+          timestamp: new Date(),
+          importance,
+          tags,
+          context: memoryEntry.context
+        },
+        ...prev.slice(0, 19)
+      ]);
+      
+    } catch (error) {
+      console.error('Error storing message in memory:', error);
+    }
+  };
+
+  const calculateImportance = (content: string, role: 'user' | 'ai'): number => {
+    let importance = 5; // base importance
+    
+    // Increase importance for certain keywords
+    const highImportanceKeywords = ['error', 'problem', 'fix', 'security', 'urgent', 'help'];
+    const mediumImportanceKeywords = ['status', 'analyze', 'explain', 'how'];
+    
+    if (highImportanceKeywords.some(keyword => content.toLowerCase().includes(keyword))) {
+      importance += 3;
+    } else if (mediumImportanceKeywords.some(keyword => content.toLowerCase().includes(keyword))) {
+      importance += 1;
+    }
+    
+    // Questions are generally more important
+    if (content.includes('?')) importance += 1;
+    
+    // AI responses to high-importance queries are also important
+    if (role === 'ai' && sessionContext.last_user_importance > 7) {
+      importance += 2;
+    }
+    
+    return Math.min(10, importance);
+  };
+
+  const extractTags = (content: string): string[] => {
+    const tags = [];
+    const lowerContent = content.toLowerCase();
+    
+    // Technical tags
+    if (lowerContent.includes('ai') || lowerContent.includes('artificial intelligence')) tags.push('ai');
+    if (lowerContent.includes('security') || lowerContent.includes('secure')) tags.push('security');
+    if (lowerContent.includes('error') || lowerContent.includes('problem')) tags.push('troubleshooting');
+    if (lowerContent.includes('fix') || lowerContent.includes('repair')) tags.push('fixing');
+    if (lowerContent.includes('deploy') || lowerContent.includes('deployment')) tags.push('deployment');
+    if (lowerContent.includes('monitor') || lowerContent.includes('monitoring')) tags.push('monitoring');
+    
+    // Intent tags
+    if (lowerContent.includes('?')) tags.push('question');
+    if (lowerContent.includes('explain') || lowerContent.includes('how')) tags.push('explanation');
+    if (lowerContent.includes('help') || lowerContent.includes('assist')) tags.push('help_request');
+    
+    return tags.length > 0 ? tags : ['general'];
+  };
+
+  const enhanceResponseWithContext = async (response: any, context: any) => {
+    // Add personal touches based on user history
+    if (context.continuation_of) {
+      response.content = `Continuing our previous discussion about ${context.continuation_of.topic}: ${response.content}`;
+    }
+    
+    // Adjust response style based on user preferences
+    if (userProfile?.preferred_style === 'casual') {
+      response.content = response.content.replace(/I can/g, "I can definitely").replace(/\./g, "! 😊");
+    }
+    
+    // Add memory references when relevant
+    if (context.recent_topics.length > 0) {
+      response.metadata = {
+        ...response.metadata,
+        related_topics: context.recent_topics,
+        memory_enhanced: true
+      };
+    }
+    
+    return response;
+  };
+
+  const handleMemoryRequest = async (message: string) => {
+    return {
+      content: `🧠 **My Memory Status**
+
+I remember ${conversationHistory.length} of our previous conversations, including:
+
+**Recent Topics We've Discussed:**
+${conversationHistory.slice(0, 3).map(msg => `• ${msg.tags?.join(', ') || 'General conversation'}`).join('\n')}
+
+**What I Know About You:**
+${userProfile ? `• Preferred interaction style: ${userProfile.preferred_style}
+• Technical level: ${userProfile.technical_level}
+• Areas of interest: ${userProfile.preferences?.join(', ')}` : '• Still learning your preferences'}
+
+**My Learning:**
+• I continuously learn from our interactions
+• I remember important conversations with high accuracy
+• I adapt my responses based on your preferences
+• I can reference our conversation history at any time
+
+Is there something specific from our past conversations you'd like me to recall?`,
+      type: 'analysis' as const,
+      metadata: { 
+        memory_request: true,
+        history_items: conversationHistory.length,
+        user_profile: userProfile 
+      }
+    };
+  };
+
+  const handlePersonalRequest = async (message: string) => {
+    return {
+      content: `👤 **Personal Context**
+
+Based on our interactions, I've learned:
+
+**Your Communication Style:**
+• You prefer ${userProfile?.preferred_style || 'detailed'} explanations
+• Technical level: ${userProfile?.technical_level || 'intermediate'}
+• Most asked about: ${getMostDiscussedTopics().join(', ')}
+
+**Our Relationship:**
+• We've had ${conversationHistory.length} meaningful exchanges
+• I remember the important topics you care about
+• I've adapted my responses to match your preferences
+• I continue to learn and improve our interactions
+
+**What Makes You Unique:**
+• Your questions show deep curiosity about AI systems
+• You value both technical accuracy and practical applications
+• You appreciate when I remember context from previous conversations
+
+I'm here to provide the most personalized assistance possible! 🚀`,
+      type: 'analysis' as const,
+      metadata: { 
+        personalization: true,
+        relationship_depth: conversationHistory.length 
+      }
+    };
+  };
+
+  const getMostDiscussedTopics = (): string[] => {
+    const topicCount: Record<string, number> = {};
+    
+    conversationHistory.forEach(msg => {
+      msg.tags?.forEach(tag => {
+        topicCount[tag] = (topicCount[tag] || 0) + 1;
+      });
+    });
+    
+    return Object.entries(topicCount)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 3)
+      .map(([topic]) => topic);
+  };
+
+  const extractTopicsFromHistory = (messages: ChatMessage[]): string[] => {
+    const topics = new Set<string>();
+    messages.forEach(msg => {
+      msg.tags?.forEach(tag => topics.add(tag));
+    });
+    return Array.from(topics).slice(0, 5);
+  };
+
+  const detectUserMood = (message: string): string => {
+    if (message.includes('!') || message.includes('urgent') || message.includes('problem')) return 'urgent';
+    if (message.includes('thanks') || message.includes('great') || message.includes('awesome')) return 'positive';
+    if (message.includes('?')) return 'curious';
+    return 'neutral';
+  };
+
+  const assessQuestionComplexity = (message: string): string => {
+    if (message.split(' ').length > 20 || message.includes('explain') || message.includes('how')) return 'complex';
+    if (message.includes('?') && message.split(' ').length > 10) return 'medium';
+    return 'simple';
+  };
+
+  const checkIfRequiresMemory = (message: string): boolean => {
+    const memoryKeywords = ['remember', 'previous', 'before', 'earlier', 'last', 'history'];
+    return memoryKeywords.some(keyword => message.toLowerCase().includes(keyword));
+  };
+
+  const findRelatedConversation = (message: string, history: ChatMessage[]): any => {
+    // Simple similarity check
+    return history.find(msg => 
+      msg.tags?.some(tag => message.toLowerCase().includes(tag))
+    );
   };
 
   const analyzeUserIntent = (message: string) => {
@@ -161,7 +501,9 @@ export function AIChat() {
       { type: 'fix', keywords: ['fix', 'repair', 'solve', 'resolve', 'debug'] },
       { type: 'security', keywords: ['security', 'threat', 'attack', 'protect', 'secure'] },
       { type: 'evolution', keywords: ['evolve', 'learn', 'improve', 'upgrade', 'enhance'] },
-      { type: 'autonomous', keywords: ['autonomous', 'auto', 'automatic', 'self', 'independent'] }
+      { type: 'autonomous', keywords: ['autonomous', 'auto', 'automatic', 'self', 'independent'] },
+      { type: 'memory', keywords: ['remember', 'memory', 'recall', 'history', 'previous', 'before'] },
+      { type: 'personal', keywords: ['about me', 'personal', 'preferences', 'relationship', 'know me'] }
     ];
 
     for (const intent of intents) {
