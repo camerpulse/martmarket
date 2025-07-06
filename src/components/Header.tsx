@@ -5,12 +5,14 @@ import { Input } from "./ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useVendorStatus } from "@/hooks/useVendorStatus";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
+import { useTranslation } from "@/hooks/useTranslation";
 import LanguageSelector from "./LanguageSelector";
 
 const Header = () => {
   const { user, signOut } = useAuth();
   const { isVendor, hasActiveBond, loading } = useVendorStatus();
   const { isAdmin, loading: adminLoading } = useAdminStatus();
+  const { t } = useTranslation();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -26,18 +28,18 @@ const Header = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Search products, vendors..."
+              placeholder={t('nav.search', 'Search products, vendors...')}
               className="pl-10 bg-muted/50 border-border focus:border-primary"
             />
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex items-center space-x-4">
+        <nav className="flex items-center space-x-2">
           <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
             <Link to="/forum">
               <Users className="h-4 w-4 mr-2" />
-              Forum
+              {t('nav.forum', 'Forum')}
             </Link>
           </Button>
           {user && (
@@ -45,20 +47,20 @@ const Header = () => {
               <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
                 <Link to="/wishlist">
                   <Heart className="h-4 w-4 mr-2" />
-                  Wishlist
+                  {t('nav.wishlist', 'Wishlist')}
                 </Link>
               </Button>
               <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
                 <Link to="/affiliate">
                   <DollarSign className="h-4 w-4 mr-2" />
-                  Affiliate
+                  {t('nav.affiliate', 'Affiliate')}
                 </Link>
               </Button>
             </>
           )}
           <LanguageSelector />
           {user ? (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <div className="flex items-center space-x-2 text-sm">
                 <User className="h-4 w-4" />
                 <span className="text-muted-foreground">Welcome back!</span>
@@ -66,16 +68,16 @@ const Header = () => {
               
               {/* User Profile & Orders Links */}
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/orders">My Orders</Link>
+                <Link to="/orders">{t('nav.orders', 'My Orders')}</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/messages">
                   <MessageCircle className="h-4 w-4 mr-2" />
-                  Messages
+                  {t('nav.messages', 'Messages')}
                 </Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/profile">Profile</Link>
+                <Link to="/profile">{t('nav.profile', 'Profile')}</Link>
               </Button>
               
               {/* Admin Dashboard Link */}
@@ -92,7 +94,7 @@ const Header = () => {
               {!loading && (
                 <>
                   {isVendor ? (
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       {hasActiveBond ? (
                         <>
                           <Button variant="outline" size="sm" asChild>

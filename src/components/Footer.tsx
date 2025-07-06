@@ -1,6 +1,9 @@
 import { Bitcoin, Shield, Lock, Zap } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const Footer = () => {
+  const { t } = useTranslation();
+  
   return (
     <footer className="bg-card border-t border-border">
       <div className="container px-4 py-12">
@@ -12,21 +15,20 @@ const Footer = () => {
               <span className="text-2xl font-bold bitcoin-gradient">OpesMarket</span>
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">
-              The world's most secure anonymous marketplace. Trade with confidence using Bitcoin,
-              verified vendors, and AI-powered security systems.
+              {t('footer.description', 'The world\'s most secure anonymous marketplace. Trade with confidence using Bitcoin, verified vendors, and AI-powered security systems.')}
             </p>
             <div className="flex space-x-4">
               <div className="flex items-center space-x-2 text-sm">
                 <Shield className="h-4 w-4 text-verified" />
-                <span>Verified Vendors</span>
+                <span>{t('vendor.verified', 'Verified Vendors')}</span>
               </div>
               <div className="flex items-center space-x-2 text-sm">
                 <Lock className="h-4 w-4 text-trust-high" />
-                <span>End-to-End Encrypted</span>
+                <span>{t('footer.encrypted', 'End-to-End Encrypted')}</span>
               </div>
               <div className="flex items-center space-x-2 text-sm">
                 <Zap className="h-4 w-4 text-secondary" />
-                <span>AI-Powered</span>
+                <span>{t('footer.ai_powered', 'AI-Powered')}</span>
               </div>
             </div>
           </div>
@@ -47,11 +49,11 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="/about" className="hover:text-primary transition-colors">About Us</a></li>
+              <li><a href="/contact" className="hover:text-primary transition-colors">Contact</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Security Guide</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Vendor Application</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
             </ul>
           </div>
         </div>
