@@ -244,6 +244,13 @@ serve(async (req) => {
         return await applyFix(supabaseClient, data);
       case 'get_status':
         return await getSystemStatus(supabaseClient);
+      case 'rollback_fix':
+      case 'reapply_fix':
+      case 'block_threat':
+        // Delegate to rollback manager
+        return await supabaseClient.functions.invoke('heavenly-fire-rollback', {
+          body: { action, data }
+        });
       default:
         throw new Error(`Unknown action: ${action}`);
     }

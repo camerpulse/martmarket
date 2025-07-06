@@ -21,10 +21,15 @@ import {
   Clock,
   TrendingUp,
   FileText,
-  Bug
+  Bug,
+  Code,
+  Undo2,
+  Play
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { LogDetailsDialog } from './LogDetailsDialog';
+import { ThreatMonitoringPanel } from './ThreatMonitoringPanel';
 
 interface AIConfig {
   id?: string;
@@ -44,6 +49,7 @@ interface AILog {
   created_at: string;
   success: boolean;
   risk_level: number;
+  rollback_available?: boolean;
 }
 
 interface SystemMetric {
@@ -247,6 +253,54 @@ export function HeavenlyFireAI() {
     );
   }
 
+  const handleRollback = async (logId: string) => {
+    try {
+      const { data } = await supabase.functions.invoke('heavenly-fire-ai', {
+        body: { 
+          action: 'rollback_fix',
+          data: { log_id: logId }
+        }
+      });
+
+      toast({
+        title: "Rollback Initiated",
+        description: "Rolling back the automated fix",
+      });
+      
+      loadAIData();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to rollback fix",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReApply = async (logId: string) => {
+    try {
+      const { data } = await supabase.functions.invoke('heavenly-fire-ai', {
+        body: { 
+          action: 'reapply_fix',
+          data: { log_id: logId }
+        }
+      });
+
+      toast({
+        title: "Fix Re-applied",
+        description: "The fix has been re-applied successfully",
+      });
+      
+      loadAIData();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to re-apply fix",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* AI Status Header */}
@@ -397,88 +451,171 @@ export function HeavenlyFireAI() {
         </CardContent>
       </Card>
 
-      {/* Recent AI Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
-            Recent AI Activity
-          </CardTitle>
-          <CardDescription>Latest actions performed by Heavenly Fire AI</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {logs.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">
-                No AI activity recorded yet. The system is monitoring in the background.
-              </p>
-            ) : (
-              logs.map((log) => (
-                <div key={log.id} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
-                  <div className="mt-1">
-                    {log.success ? (
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <XCircle className="h-4 w-4 text-red-500" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium">{log.title}</span>
-                      <Badge className={getSeverityColor(log.severity)} variant="secondary">
-                        {log.severity}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        Risk: {log.risk_level}/10
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{log.description}</p>
-                    <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
-                      {new Date(log.created_at).toLocaleString()}
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="activity" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="activity">AI Activity</TabsTrigger>
+          <TabsTrigger value="threats">Threat Monitor</TabsTrigger>
+          <TabsTrigger value="fixes">Auto-Fix History</TabsTrigger>
+          <TabsTrigger value="metrics">System Health</TabsTrigger>
+        </TabsList>
 
-      {/* System Health Metrics */}
-      {metrics.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              System Health Metrics
-            </CardTitle>
-            <CardDescription>Real-time platform performance data</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {metrics.map((metric) => (
-                <div key={metric.id} className="p-4 bg-muted/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium capitalize">
-                      {metric.metric_type.replace('_', ' ')}
-                    </span>
-                    {getStatusIcon(metric.status)}
-                  </div>
-                  <div className="text-2xl font-bold mb-1">
-                    {metric.metric_value.toFixed(1)}
-                    {metric.metric_type.includes('percentage') || metric.metric_type.includes('usage') ? '%' : ''}
-                  </div>
-                  <Progress 
-                    value={Math.min(metric.metric_value, 100)} 
-                    className="h-2" 
-                  />
+        <TabsContent value="activity">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5" />
+                Recent AI Activity
+              </CardTitle>
+              <CardDescription>Latest actions performed by Heavenly Fire AI</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {logs.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-8">
+                    No AI activity recorded yet. The system is monitoring in the background.
+                  </p>
+                ) : (
+                  logs.map((log) => (
+                    <div key={log.id} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+                      <div className="mt-1">
+                        {log.success ? (
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium">{log.title}</span>
+                          <Badge className={getSeverityColor(log.severity)} variant="secondary">
+                            {log.severity}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            Risk: {log.risk_level}/10
+                          </span>
+                          {log.rollback_available && (
+                            <Badge variant="outline" className="text-amber-600">
+                              Rollback Available
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">{log.description}</p>
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <Clock className="h-3 w-3" />
+                            {new Date(log.created_at).toLocaleString()}
+                          </div>
+                          <LogDetailsDialog 
+                            log={log} 
+                            onRollback={handleRollback}
+                            onReApply={handleReApply}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="threats">
+          <ThreatMonitoringPanel />
+        </TabsContent>
+
+        <TabsContent value="fixes">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Code className="h-5 w-5" />
+                Auto-Fix History
+              </CardTitle>
+              <CardDescription>History of automated fixes applied by Heavenly Fire AI</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {logs.filter(log => log.action_type.includes('fix')).length === 0 ? (
+                  <p className="text-muted-foreground text-center py-8">
+                    No auto-fixes have been applied yet.
+                  </p>
+                ) : (
+                  logs.filter(log => log.action_type.includes('fix')).map((log) => (
+                    <div key={log.id} className="p-4 bg-muted/30 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{log.title}</span>
+                          <Badge className={getSeverityColor(log.severity)} variant="secondary">
+                            {log.severity}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {log.rollback_available && (
+                            <Button size="sm" variant="outline" onClick={() => handleRollback(log.id)}>
+                              <Undo2 className="h-4 w-4 mr-1" />
+                              Rollback
+                            </Button>
+                          )}
+                          <Button size="sm" variant="outline" onClick={() => handleReApply(log.id)}>
+                            <Play className="h-4 w-4 mr-1" />
+                            Re-apply
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">{log.description}</p>
+                      <div className="text-xs text-muted-foreground">
+                        Applied: {new Date(log.created_at).toLocaleString()}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="metrics">
+          {/* System Health Metrics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                System Health Metrics
+              </CardTitle>
+              <CardDescription>Real-time platform performance data</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {metrics.length === 0 ? (
+                <p className="text-muted-foreground text-center py-8">
+                  No health metrics available yet. The monitoring system is initializing.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {metrics.map((metric) => (
+                    <div key={metric.id} className="p-4 bg-muted/30 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium capitalize">
+                          {metric.metric_type.replace('_', ' ')}
+                        </span>
+                        {getStatusIcon(metric.status)}
+                      </div>
+                      <div className="text-2xl font-bold mb-1">
+                        {metric.metric_value.toFixed(1)}
+                        {metric.metric_type.includes('percentage') || metric.metric_type.includes('usage') ? '%' : ''}
+                      </div>
+                      <Progress 
+                        value={Math.min(metric.metric_value, 100)} 
+                        className="h-2" 
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
     </div>
   );
 }
