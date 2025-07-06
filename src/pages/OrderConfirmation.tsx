@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Package, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import PaymentStatus from "@/components/PaymentStatus";
+import { PaymentStatus } from "@/components/PaymentStatus";
 import ReviewSystem from "@/components/ReviewSystem";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -192,10 +192,8 @@ const OrderConfirmation = () => {
           <div>
             <PaymentStatus 
               orderId={order.id}
-              onPaymentComplete={() => {
-                // Refresh order status
-                window.location.reload();
-              }}
+              buyerId={user.id}
+              vendorId={order.vendor_id}
             />
           </div>
         </div>
