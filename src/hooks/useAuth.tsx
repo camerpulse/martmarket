@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = async (email: string, password: string, userType: 'buyer' | 'vendor', displayName: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpResult, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -52,6 +52,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
     });
+
+    // Auto-generate PGP keys for new users
+    if (!error && signUpResult.user) {
+      try {
+        const { data: keyData, error: keyError } = await supabase.functions.invoke('pgp-encryption', {
+          body: {
+            action: 'generate_keypair',
+            name: displayName || email.split('@')[0],
+            email: email
+          }
+        });
+
+        if (!keyError && keyData) {
+          await supabase.from('pgp_keys').insert({
+            user_id: signUpResult.user.id,
+            public_key: keyData.public_key,
+            private_key_encrypted: btoa(keyData.private_key),
+            key_fingerprint: keyData.fingerprint || 'auto-generated'
+          });
+        }
+      } catch (pgpError) {
+        console.error('Failed to auto-generate PGP keys:', pgpError);
+      }
+    }
+    
     return { error };
   };
 

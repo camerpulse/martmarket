@@ -28,6 +28,7 @@ import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import VendorProfile from "./pages/VendorProfile";
 import OrderTracking from "./pages/OrderTracking";
+import OpesPGP from "./pages/OpesPGP";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const App = () => (
             <Route path="/product/:productId" element={<ProductDetail />} />
             <Route path="/vendor/:vendorId" element={<VendorProfile />} />
             <Route path="/track-order" element={<OrderTracking />} />
+            <Route path="/pgp" element={<OpesPGP />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
