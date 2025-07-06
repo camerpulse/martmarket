@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Brain, TrendingUp, Lightbulb, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tables } from '@/integrations/supabase/types';
 
@@ -28,6 +28,11 @@ const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [newTag, setNewTag] = useState('');
+  const [aiInsights, setAiInsights] = useState<any>(null);
+  const [loadingAI, setLoadingAI] = useState(false);
+  const [showAIPanel, setShowAIPanel] = useState(false);
+  const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]);
+  const [marketOpportunities, setMarketOpportunities] = useState<any[]>([]);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -145,6 +150,114 @@ const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) => {
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
+  };
+
+  // Load AI insights and market intelligence
+  const loadAIInsights = async () => {
+    setLoadingAI(true);
+    try {
+      // Get trending keywords and market opportunities
+      const { data: trends, error: trendsError } = await supabase
+        .from('search_intelligence')
+        .select('*')
+        .gte('opportunity_score', 0.6)
+        .eq('trend_direction', 'rising')
+        .order('opportunity_score', { ascending: false })
+        .limit(10);
+
+      if (trendsError) throw trendsError;
+
+      // Get market opportunities from AI knowledge base
+      const { data: opportunities, error: opportunitiesError } = await supabase
+        .from('ai_knowledge_base')
+        .select('*')
+        .eq('knowledge_type', 'market_insight')
+        .gte('confidence_score', 0.7)
+        .order('learned_at', { ascending: false })
+        .limit(5);
+
+      if (opportunitiesError) throw opportunitiesError;
+
+      setTrendingKeywords(trends?.map(t => t.search_term) || []);
+      setMarketOpportunities(opportunities || []);
+      setShowAIPanel(true);
+
+      toast({
+        title: "AI Insights Loaded",
+        description: `Found ${trends?.length || 0} trending keywords and ${opportunities?.length || 0} market opportunities`,
+      });
+    } catch (error) {
+      console.error('Error loading AI insights:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load AI insights",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAI(false);
+    }
+  };
+
+  // Apply autonomous AI optimization
+  const applyAIOptimization = async () => {
+    setLoadingAI(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-autonomous-optimizer', {
+        body: {
+          action: 'optimize_product',
+          product_data: {
+            title: formData.title,
+            description: formData.description,
+            category_id: formData.category_id,
+            tags: formData.tags
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.success && data.optimizations_applied > 0) {
+        // Apply AI suggestions to form data
+        if (data.seo_optimization) {
+          setFormData(prev => ({
+            ...prev,
+            title: data.seo_optimization.optimized_title || prev.title,
+            description: data.seo_optimization.optimized_description || prev.description,
+            tags: [...prev.tags, ...(data.seo_optimization.keywords?.slice(0, 3) || [])]
+          }));
+        }
+
+        setAiInsights(data);
+        toast({
+          title: "AI Optimization Applied",
+          description: `Applied ${data.optimizations_applied} optimizations to your product`,
+        });
+      }
+    } catch (error) {
+      console.error('Error applying AI optimization:', error);
+      toast({
+        title: "Error",
+        description: "Failed to apply AI optimization",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAI(false);
+    }
+  };
+
+  // Add trending keyword as tag
+  const addTrendingTag = (keyword: string) => {
+    if (!formData.tags.includes(keyword)) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, keyword]
+      }));
+      
+      toast({
+        title: "Trending Keyword Added",
+        description: `Added "${keyword}" to your product tags`,
+      });
+    }
   };
 
   return (
@@ -289,6 +402,132 @@ const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) => {
               <Label htmlFor="is_featured">Featured</Label>
             </div>
           </div>
+
+          {/* AI Intelligence Panel */}
+          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-secondary/5">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Brain className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-lg">AI Intelligence Assistant</CardTitle>
+                  <Badge variant="outline" className="text-xs">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Self-Learning
+                  </Badge>
+                </div>
+                <div className="flex space-x-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={loadAIInsights}
+                    disabled={loadingAI}
+                  >
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    {loadingAI ? 'Loading...' : 'Get Market Insights'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="default"
+                    size="sm"
+                    onClick={applyAIOptimization}
+                    disabled={loadingAI || !formData.title || !formData.description}
+                  >
+                    <Lightbulb className="h-4 w-4 mr-2" />
+                    {loadingAI ? 'Optimizing...' : 'Auto-Optimize'}
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            
+            {showAIPanel && (
+              <CardContent className="space-y-4">
+                {/* Trending Keywords Section */}
+                {trendingKeywords.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <TrendingUp className="h-4 w-4 text-green-500" />
+                      <Label className="font-semibold text-sm">Trending Keywords (Click to Add)</Label>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {trendingKeywords.map((keyword) => (
+                        <Badge
+                          key={keyword}
+                          variant="outline"
+                          className="cursor-pointer hover:bg-primary/10 transition-colors"
+                          onClick={() => addTrendingTag(keyword)}
+                        >
+                          <TrendingUp className="h-3 w-3 mr-1" />
+                          {keyword}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Market Opportunities Section */}
+                {marketOpportunities.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Lightbulb className="h-4 w-4 text-amber-500" />
+                      <Label className="font-semibold text-sm">AI-Discovered Market Opportunities</Label>
+                    </div>
+                    <div className="space-y-3">
+                      {marketOpportunities.slice(0, 3).map((opportunity, index) => (
+                        <div key={index} className="p-3 bg-background/50 rounded-md border border-border/50">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-medium text-sm">{opportunity.topic}</h4>
+                            <Badge variant="secondary" className="text-xs">
+                              {Math.round(opportunity.confidence_score * 100)}% Confidence
+                            </Badge>
+                          </div>
+                          {opportunity.content?.product_suggestion && (
+                            <div className="text-xs text-muted-foreground space-y-1">
+                              <p><strong>Suggestion:</strong> {opportunity.content.product_suggestion.title}</p>
+                              <p className="line-clamp-2">{opportunity.content.product_suggestion.description}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* AI Insights Display */}
+                {aiInsights && (
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Brain className="h-4 w-4 text-blue-500" />
+                      <Label className="font-semibold text-sm">Applied AI Optimizations</Label>
+                    </div>
+                    <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-md border border-green-200 dark:border-green-800">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                          {aiInsights.optimizations_applied} optimizations applied
+                        </span>
+                        <Badge variant="outline" className="text-green-600 border-green-300">
+                          Intelligence Level: {Math.round(aiInsights.autonomous_intelligence_level || 0)}%
+                        </Badge>
+                      </div>
+                      {aiInsights.performance_improvements?.length > 0 && (
+                        <div className="mt-2 text-xs text-green-700 dark:text-green-300">
+                          <strong>Improvements:</strong> {aiInsights.performance_improvements.map(imp => imp.type).join(', ')}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* AI Learning Status */}
+                <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="h-3 w-3" />
+                    <span>OpesMarket AI is continuously learning from market trends and user behavior to provide better recommendations.</span>
+                  </div>
+                </div>
+              </CardContent>
+            )}
+          </Card>
 
           <div className="flex space-x-4">
             <Button type="submit" disabled={loading}>
