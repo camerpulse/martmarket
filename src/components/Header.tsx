@@ -39,7 +39,7 @@ const Header = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-2">
+        <nav className="hidden lg:flex items-center space-x-1">
           <BitcoinPrice />
           <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
             <Link to="/forum">
@@ -65,7 +65,7 @@ const Header = () => {
           )}
           <LanguageSelector />
           {user ? (
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-0.5">
               <div className="flex items-center space-x-2 text-sm">
                 <User className="h-4 w-4" />
                 <span className="text-muted-foreground">Welcome back!</span>

@@ -1,4 +1,5 @@
 import { Shield, Zap, Lock, Award, Bitcoin } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -25,11 +26,11 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 animate-fade-in px-4">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary w-full sm:w-auto">
-              {t('hero.start_shopping', 'Start Shopping')}
+            <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary w-full sm:w-auto" asChild>
+              <Link to="/auth">{t('hero.start_shopping', 'Start Shopping')}</Link>
             </Button>
-            <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground w-full sm:w-auto">
-              {t('hero.become_vendor', 'Become a Vendor')}
+            <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground w-full sm:w-auto" asChild>
+              <Link to="/vendor/register">{t('hero.become_vendor', 'Become a Vendor')}</Link>
             </Button>
           </div>
 
