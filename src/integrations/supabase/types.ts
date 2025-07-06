@@ -9,6 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_optimization_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          input_data: Json
+          model_used: string
+          output_data: Json
+          processing_time: number
+          product_id: string | null
+          tokens_used: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          input_data: Json
+          model_used: string
+          output_data: Json
+          processing_time: number
+          product_id?: string | null
+          tokens_used?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          input_data?: Json
+          model_used?: string
+          output_data?: Json
+          processing_time?: number
+          product_id?: string | null
+          tokens_used?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       bitcoin_addresses: {
         Row: {
           address: string
