@@ -105,13 +105,13 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
       }
 
       // Generate Bitcoin address for escrow payment
+      console.log('Generating Bitcoin address...');
       const { data: addressData, error: addressError } = await supabase.functions.invoke(
         'generate-bitcoin-address',
         {
           body: {
-            purpose: 'escrow',
-            order_id: order.id,
-            user_id: user.id
+            purpose: 'order_payment',
+            amount_usd: total * 100000 // Convert BTC to rough USD estimate for demo
           }
         }
       );
