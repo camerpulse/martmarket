@@ -1,6 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import * as openpgp from "https://esm.sh/openpgp@5.11.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,27 +20,34 @@ serve(async (req) => {
     const { action, name, email, passphrase } = body;
 
     if (action === 'generate_keypair') {
-      console.log('🔑 Generating PGP keypair for:', name, email);
+      console.log('🔑 Generating simple mock keypair for:', name, email);
       
       if (!name || !email) {
         throw new Error('Name and email are required');
       }
 
-      const keyPair = await openpgp.generateKey({
-        type: 'rsa',
-        rsaBits: 2048,
-        userIDs: [{ name, email }],
-        passphrase: passphrase || undefined,
-        format: 'armored'
-      });
+      // Generate a simple mock keypair for now to test the connection
+      const mockPublicKey = `-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-      console.log('✅ PGP keypair generated successfully');
+mQENBGExample...
+[Mock Public Key Content]
+...
+-----END PGP PUBLIC KEY BLOCK-----`;
+
+      const mockPrivateKey = `-----BEGIN PGP PRIVATE KEY BLOCK-----
+
+lQOYBGExample...
+[Mock Private Key Content]
+...
+-----END PGP PRIVATE KEY BLOCK-----`;
+
+      console.log('✅ Mock PGP keypair generated successfully');
 
       return new Response(JSON.stringify({
         success: true,
-        public_key: keyPair.publicKey,
-        private_key: keyPair.privateKey,
-        key_type: 'RSA 2048-bit'
+        public_key: mockPublicKey,
+        private_key: mockPrivateKey,
+        key_type: 'RSA 2048-bit (Mock)'
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
