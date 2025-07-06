@@ -26,7 +26,18 @@ interface Product {
   };
 }
 
-const ProductGrid = () => {
+interface SearchFilters {
+  search: string;
+  category: string;
+  priceRange: string;
+  sortBy: string;
+}
+
+interface ProductGridProps {
+  searchFilters?: SearchFilters;
+}
+
+const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
