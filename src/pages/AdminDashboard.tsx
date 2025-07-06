@@ -48,6 +48,7 @@ import { UserManagementDialog } from '@/components/admin/UserManagementDialog';
 import { VendorManagementDialog } from '@/components/admin/VendorManagementDialog';
 import { CategoryManagement } from '@/components/admin/CategoryManagement';
 import { TranslationManagement } from '@/components/admin/TranslationManagement';
+import { HeavenlyFireAI } from '@/components/HeavenlyFireAI';
 
 interface DashboardMetrics {
   total_users: number;
@@ -646,7 +647,7 @@ export default function AdminDashboard() {
 
         {/* Admin Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 h-12 bg-muted/50 p-1">
+          <TabsList className="grid w-full grid-cols-5 h-12 bg-muted/50 p-1">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-background">
               <BarChart3 className="h-4 w-4" />
               Overview
@@ -658,6 +659,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="security" className="flex items-center gap-2 data-[state=active]:bg-background">
               <Shield className="h-4 w-4" />
               Security
+            </TabsTrigger>
+            <TabsTrigger value="heavenly-fire" className="flex items-center gap-2 data-[state=active]:bg-background">
+              <Brain className="h-4 w-4" />
+              Heavenly Fire AI
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2 data-[state=active]:bg-background">
               <Settings className="h-4 w-4" />
@@ -1391,6 +1396,10 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="heavenly-fire" className="space-y-6">
+            <HeavenlyFireAI />
           </TabsContent>
         </Tabs>
         {/* User and Vendor Management Dialogs */}
