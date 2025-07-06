@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useAuth } from "@/hooks/useAuth";
+import { useVendorStatus } from "@/hooks/useVendorStatus";
 
 const Header = () => {
   const { user, signOut } = useAuth();
+  const { isVendor, hasActiveBond, loading } = useVendorStatus();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -43,6 +45,41 @@ const Header = () => {
                 <User className="h-4 w-4" />
                 <span className="text-muted-foreground">Welcome back!</span>
               </div>
+              
+              {/* Vendor-specific buttons */}
+              {!loading && (
+                <>
+                  {isVendor ? (
+                    <div className="flex items-center space-x-2">
+                      {hasActiveBond ? (
+                        <>
+                          <Button variant="outline" size="sm" asChild>
+                            <Link to="/vendor/dashboard">
+                              <Shield className="h-4 w-4 mr-2" />
+                              Vendor Dashboard
+                            </Link>
+                          </Button>
+                          <Button variant="outline" size="sm" asChild>
+                            <Link to="/vendor/products">Manage Products</Link>
+                          </Button>
+                        </>
+                      ) : (
+                        <Button variant="outline" size="sm" asChild>
+                          <Link to="/vendor/register">
+                            <Shield className="h-4 w-4 mr-2" />
+                            Complete Setup
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <Button size="sm" className="bg-primary hover:bg-primary/90" asChild>
+                      <Link to="/vendor/register">Become Vendor</Link>
+                    </Button>
+                  )}
+                </>
+              )}
+              
               <Button variant="ghost" size="sm" onClick={signOut}>
                 <LogOut className="h-4 w-4 mr-1" />
                 Logout
