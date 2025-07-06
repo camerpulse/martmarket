@@ -39,9 +39,11 @@ interface PurchaseDialogProps {
   product: Product | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  selectedVariations?: Record<string, string>;
+  finalPrice?: number;
 }
 
-const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) => {
+const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, finalPrice }: PurchaseDialogProps) => {
   const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [shippingAddress, setShippingAddress] = useState("");
@@ -50,7 +52,8 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
 
   if (!product) return null;
 
-  const subtotal = product.price_btc * quantity;
+  const basePrice = finalPrice || product.price_btc;
+  const subtotal = basePrice * quantity;
   const platformFee = subtotal * 0.05; // 5% platform fee
   const total = subtotal + platformFee;
 
@@ -152,13 +155,30 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
                 <div className="text-right">
                   <div className="flex items-center space-x-2">
                     <Bitcoin className="h-4 w-4 text-primary" />
-                    <span className="font-bold text-primary">{product.price_btc} BTC</span>
+                    <span className="font-bold text-primary">{basePrice.toFixed(8)} BTC</span>
                   </div>
                   <p className="text-sm text-muted-foreground">Stock: {product.stock_quantity}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Selected Variations */}
+          {selectedVariations && Object.keys(selectedVariations).length > 0 && (
+            <Card>
+              <CardContent className="p-4">
+                <h4 className="font-semibold mb-3">Selected Options</h4>
+                <div className="space-y-2">
+                  {Object.entries(selectedVariations).map(([name, value]) => (
+                    <div key={name} className="flex justify-between">
+                      <span className="text-sm">{name}:</span>
+                      <Badge variant="outline">{value}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Quantity & Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

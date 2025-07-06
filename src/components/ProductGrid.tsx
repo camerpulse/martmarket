@@ -168,7 +168,7 @@ const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="group card-gradient shadow-card hover:shadow-primary/20 transition-all duration-300 hover:scale-105">
+            <Card key={product.id} className="group card-gradient shadow-card hover:shadow-primary/20 transition-all duration-300 hover:scale-105 cursor-pointer" onClick={() => window.location.href = `/product/${product.id}`}>
               <CardContent className="p-6">
                 {/* Product Image Placeholder */}
                 <div className="w-full h-48 bg-muted rounded-lg mb-4 flex items-center justify-center">
@@ -214,14 +214,19 @@ const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
                     <div className="flex items-center space-x-1 text-muted-foreground">
                       <span className="text-sm">Stock: {product.stock_quantity}</span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <WishlistButton productId={product.id} />
-                      <Button 
-                        size="sm" 
-                        className="bg-primary hover:bg-primary/90"
-                        onClick={() => handlePurchase(product)}
-                        disabled={product.stock_quantity === 0}
-                      >
+                     <div className="flex items-center space-x-2">
+                       <div onClick={(e) => e.stopPropagation()}>
+                         <WishlistButton productId={product.id} />
+                       </div>
+                        <Button 
+                          size="sm" 
+                          className="bg-primary hover:bg-primary/90"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePurchase(product);
+                          }}
+                          disabled={product.stock_quantity === 0}
+                        >
                         <ShoppingCart className="h-4 w-4 mr-1" />
                         Buy Now
                       </Button>
