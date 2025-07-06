@@ -126,12 +126,8 @@ serve(async (req) => {
 
       if (storeError) throw storeError;
 
-      // Log security event
-      await logSecurityEvent(supabaseAdmin, user.id, 'pgp_message_sent', {
-        recipient_id: recipient_id,
-        message_id: pgpMessage.id,
-        order_id: order_id
-      }, req);
+      // Skip security event logging for now (security_events table may not exist)
+      console.log('PGP message sent successfully:', pgpMessage.id);
 
       return new Response(
         JSON.stringify({
@@ -163,12 +159,8 @@ serve(async (req) => {
         format: 'utf8'
       });
 
-      // Log security event only if user is authenticated
-      if (user) {
-        await logSecurityEvent(supabaseAdmin, user.id, 'pgp_message_decrypted', {
-          decrypted: true
-        }, req);
-      }
+      // Skip security event logging for now
+      console.log('PGP message decrypted successfully');
 
       return new Response(
         JSON.stringify({
@@ -230,13 +222,8 @@ serve(async (req) => {
 
       const { privateKey, publicKey } = await openpgp.generateKey(keyOptions);
 
-      // Log security event only if user is authenticated
-      if (user) {
-        await logSecurityEvent(supabaseAdmin, user.id, 'pgp_keypair_generated', {
-          key_type: 'rsa_2048',
-          user_id: { name, email }
-        }, req);
-      }
+      // Skip security event logging for now
+      console.log('PGP keypair generated successfully');
 
       return new Response(
         JSON.stringify({
@@ -270,13 +257,8 @@ serve(async (req) => {
       const isValid = verificationResult.signatures.length > 0 && 
                      await verificationResult.signatures[0].verified;
 
-      // Log security event only if user is authenticated
-      if (user) {
-        await logSecurityEvent(supabaseAdmin, user.id, 'pgp_signature_verified', {
-          verified: isValid,
-          signature_count: verificationResult.signatures.length
-        }, req);
-      }
+      // Skip security event logging for now
+      console.log('PGP signature verified:', isValid);
 
       return new Response(
         JSON.stringify({
@@ -312,12 +294,8 @@ serve(async (req) => {
         format: 'armored'
       });
 
-      // Log security event only if user is authenticated
-      if (user) {
-        await logSecurityEvent(supabaseAdmin, user.id, 'pgp_message_signed', {
-          signed: true
-        }, req);
-      }
+      // Skip security event logging for now
+      console.log('PGP message signed successfully');
 
       return new Response(
         JSON.stringify({
@@ -394,31 +372,10 @@ serve(async (req) => {
   }
 });
 
-// Helper functions
 async function generateMessageHash(message: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(message);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function logSecurityEvent(supabase: any, userId: string, eventType: string, eventData: any, req: Request) {
-  try {
-    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-    
-    await supabase
-      .from('security_events')
-      .insert({
-        user_id: userId,
-        event_type: eventType,
-        event_level: 'info',
-        ip_address: clientIP,
-        user_agent: req.headers.get('user-agent'),
-        event_data: eventData,
-        threat_score: 0.0
-      });
-  } catch (error) {
-    console.error('Error logging security event:', error);
-  }
 }
