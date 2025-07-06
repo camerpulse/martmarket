@@ -16,6 +16,7 @@ export const useAdminStatus = () => {
 
     const checkAdminStatus = async () => {
       try {
+        console.log('Checking admin status for user:', user.id);
         const { data, error } = await supabase
           .from('admin_profiles')
           .select('admin_role, is_active')
@@ -23,9 +24,13 @@ export const useAdminStatus = () => {
           .eq('is_active', true)
           .single();
 
+        console.log('Admin check result:', { data, error });
+        
         if (error || !data) {
+          console.log('No admin profile found or error occurred');
           setIsAdmin(false);
         } else {
+          console.log('User is admin with role:', data.admin_role);
           setIsAdmin(true);
         }
       } catch (error) {
