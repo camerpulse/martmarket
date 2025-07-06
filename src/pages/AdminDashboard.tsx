@@ -87,6 +87,8 @@ export default function AdminDashboard() {
 
   const checkAdminAccess = async () => {
     try {
+      console.log('AdminDashboard: Checking admin access for user:', user?.id);
+      
       // Check if user is admin
       const { data: adminData, error: adminError } = await supabase
         .from('admin_profiles')
@@ -94,7 +96,10 @@ export default function AdminDashboard() {
         .eq('user_id', user?.id)
         .single();
 
+      console.log('AdminDashboard: Admin query result:', { adminData, adminError });
+
       if (adminError || !adminData?.is_active) {
+        console.log('AdminDashboard: Access denied - no admin profile or inactive');
         toast({
           title: "Access Denied",
           description: "You don't have admin privileges",
@@ -103,11 +108,12 @@ export default function AdminDashboard() {
         return;
       }
 
+      console.log('AdminDashboard: Access granted - user is admin with role:', adminData.admin_role);
       setAdminProfile(adminData);
       loadDashboardMetrics();
 
     } catch (error) {
-      console.error('Error checking admin access:', error);
+      console.error('AdminDashboard: Error checking admin access:', error);
       toast({
         title: "Error",
         description: "Failed to verify admin access",
