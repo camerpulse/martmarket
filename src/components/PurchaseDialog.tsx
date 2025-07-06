@@ -24,6 +24,7 @@ interface Product {
   price_btc: number;
   stock_quantity: number;
   shipping_info: string;
+  vendor_id: string; // Add vendor_id to interface
   vendor: {
     store_name: string;
     trust_score: number;
@@ -72,7 +73,7 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
         .from('orders')
         .insert({
           buyer_id: user.id,
-          vendor_id: product.vendor.store_name, // This should be vendor_id from product
+          vendor_id: product.vendor_id, // Use actual vendor_id
           product_id: product.id,
           quantity,
           total_btc: total,
@@ -113,10 +114,10 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
 
       if (paymentError) throw paymentError;
 
-      toast.success("Order created! You will receive payment instructions shortly.");
-      onOpenChange(false);
+      toast.success("Order created! Redirecting to payment...");
       
-      // TODO: Navigate to order confirmation page or show payment details
+      // Redirect to order confirmation page
+      window.location.href = `/order/${order.id}`;
       
     } catch (error) {
       console.error('Purchase error:', error);

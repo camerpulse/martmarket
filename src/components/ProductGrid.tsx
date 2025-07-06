@@ -15,6 +15,7 @@ interface Product {
   stock_quantity: number;
   is_featured: boolean;
   shipping_info: string;
+  vendor_id: string; // Add vendor_id
   vendor: {
     store_name: string;
     trust_score: number;
@@ -59,6 +60,7 @@ const ProductGrid = () => {
               stock_quantity: product.stock_quantity,
               is_featured: product.is_featured,
               shipping_info: product.shipping_info,
+              vendor_id: product.vendor_id, // Add vendor_id
               vendor: {
                 store_name: vendorResult.data?.store_name || 'Unknown Vendor',
                 trust_score: vendorResult.data?.trust_score || 0,
