@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import TrustIndicator from "./TrustIndicator";
 import PurchaseDialog from "./PurchaseDialog";
 import WishlistButton from "./WishlistButton";
+import { useCart } from "@/hooks/useCart";
 
 interface Product {
   id: string;
@@ -40,7 +41,8 @@ interface ProductGridProps {
   searchFilters?: SearchFilters;
 }
 
-import { useCart } from "@/hooks/useCart";
+const ProductGrid = ({ searchFilters }: ProductGridProps) => {
+  const { addToCart } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);

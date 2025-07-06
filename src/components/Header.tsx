@@ -1,6 +1,7 @@
 import { Bitcoin, Search, User, ShoppingBag, Shield, LogOut, MessageCircle, Settings, Heart, Users, DollarSign, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useVendorStatus } from "@/hooks/useVendorStatus";
@@ -19,6 +20,7 @@ const Header = () => {
   const { isAdmin, loading: adminLoading } = useAdminStatus();
   const { t } = useTranslation();
   const { itemCount, setIsOpen } = useCart();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
