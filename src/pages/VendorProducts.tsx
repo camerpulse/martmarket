@@ -5,8 +5,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Eye, EyeOff } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Plus, Edit, Eye, EyeOff, ArrowLeft, Search, Trash2, Copy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 import ProductForm from '@/components/ProductForm';
 import { Tables } from '@/integrations/supabase/types';
 
@@ -17,15 +19,30 @@ const VendorProducts = () => {
   const { isVendor, hasActiveBond, loading: vendorLoading } = useVendorStatus();
   const { toast } = useToast();
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (user && isVendor) {
       loadProducts();
     }
   }, [user, isVendor]);
+
+  // Filter products based on search term
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredProducts(products);
+    } else {
+      const filtered = products.filter(product =>
+        product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [products, searchTerm]);
 
   const loadProducts = async () => {
     if (!user) return;
@@ -120,12 +137,41 @@ const VendorProducts = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">My Products</h1>
-        <Button onClick={() => setShowForm(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Product
-        </Button>
+      {/* Header with navigation */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/vendor/dashboard">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold">My Products</h1>
+          </div>
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Product
+          </Button>
+        </div>
+
+        {/* Search and Stats */}
+        {products.length > 0 && (
+          <div className="flex items-center justify-between mb-6">
+            <div className="relative max-w-sm">
+              <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Showing {filteredProducts.length} of {products.length} products
+            </div>
+          </div>
+        )}
       </div>
 
       {products.length === 0 ? (
@@ -143,7 +189,7 @@ const VendorProducts = () => {
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <Card key={product.id} className="overflow-hidden">
               <CardHeader>
                 <div className="flex justify-between items-start">

@@ -1,14 +1,49 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useVendorStatus } from '@/hooks/useVendorStatus';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Package, DollarSign, Star, Users, TrendingUp } from 'lucide-react';
+import { Package, DollarSign, Star, Users, TrendingUp, ArrowLeft, Clock, ShoppingBag } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const VendorDashboard = () => {
   const { user } = useAuth();
   const { isVendor, hasActiveBond, vendorProfile, loading } = useVendorStatus();
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+
+  useEffect(() => {
+    if (user && isVendor) {
+      fetchRecentOrders();
+    }
+  }, [user, isVendor]);
+
+  const fetchRecentOrders = async () => {
+    try {
+      setOrdersLoading(true);
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          products(title, price_btc),
+          profiles!orders_buyer_id_fkey(display_name)
+        `)
+        .eq('vendor_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      setRecentOrders(data || []);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      toast.error('Failed to load recent orders');
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
 
   if (loading) {
     return <div className="container mx-auto p-6">Loading...</div>;
@@ -67,11 +102,20 @@ const VendorDashboard = () => {
 
   return (
     <div className="container mx-auto p-6">
+      {/* Header with navigation */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Vendor Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, {vendorProfile?.store_name}!</p>
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Marketplace
+              </Link>
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Vendor Dashboard</h1>
+              <p className="text-muted-foreground">Welcome back, {vendorProfile?.store_name}!</p>
+            </div>
           </div>
           <div className="flex items-center space-x-2">
             <Badge variant={vendorProfile?.is_verified ? "default" : "secondary"}>
@@ -192,6 +236,74 @@ const VendorDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent Orders */}
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <ShoppingBag className="h-5 w-5" />
+            <span>Recent Orders</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {ordersLoading ? (
+            <div className="text-center py-4">
+              <p className="text-muted-foreground">Loading orders...</p>
+            </div>
+          ) : recentOrders.length === 0 ? (
+            <div className="text-center py-8">
+              <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">No orders yet</h3>
+              <p className="text-muted-foreground">
+                Your recent orders will appear here once customers start purchasing your products.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentOrders.map((order) => (
+                <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0">
+                      <Package className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium">{order.products?.title || 'Product'}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        by {order.profiles?.display_name || 'Anonymous'}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(order.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <Badge variant={
+                        order.status === 'paid' ? 'default' :
+                        order.status === 'pending' ? 'secondary' :
+                        order.status === 'completed' ? 'default' : 'secondary'
+                      }>
+                        {order.status}
+                      </Badge>
+                    </div>
+                    <p className="text-sm font-medium">
+                      {order.products?.price_btc || order.total_btc} BTC
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Qty: {order.quantity}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              <div className="text-center pt-4">
+                <Button variant="outline" size="sm">
+                  View All Orders
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Store Info */}
       <Card className="mt-8">

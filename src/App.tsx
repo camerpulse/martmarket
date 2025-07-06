@@ -10,6 +10,7 @@ import VendorRegistration from "./pages/VendorRegistration";
 import VendorDashboard from "./pages/VendorDashboard";
 import VendorProducts from "./pages/VendorProducts";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import UserProfile from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
