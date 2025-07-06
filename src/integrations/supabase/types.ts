@@ -9,6 +9,129 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_knowledge_base: {
+        Row: {
+          confidence_score: number
+          content: Json
+          created_at: string
+          id: string
+          is_active: boolean | null
+          knowledge_type: string
+          last_validated: string | null
+          learned_at: string
+          source_urls: string[] | null
+          topic: string
+          updated_at: string
+          validation_count: number | null
+        }
+        Insert: {
+          confidence_score?: number
+          content: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          knowledge_type: string
+          last_validated?: string | null
+          learned_at?: string
+          source_urls?: string[] | null
+          topic: string
+          updated_at?: string
+          validation_count?: number | null
+        }
+        Update: {
+          confidence_score?: number
+          content?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          knowledge_type?: string
+          last_validated?: string | null
+          learned_at?: string
+          source_urls?: string[] | null
+          topic?: string
+          updated_at?: string
+          validation_count?: number | null
+        }
+        Relationships: []
+      }
+      ai_learning_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          data_sources: string[] | null
+          id: string
+          insights_generated: number | null
+          knowledge_updated: number | null
+          performance_metrics: Json | null
+          session_type: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          data_sources?: string[] | null
+          id?: string
+          insights_generated?: number | null
+          knowledge_updated?: number | null
+          performance_metrics?: Json | null
+          session_type: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          data_sources?: string[] | null
+          id?: string
+          insights_generated?: number | null
+          knowledge_updated?: number | null
+          performance_metrics?: Json | null
+          session_type?: string
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      ai_model_evolution: {
+        Row: {
+          created_at: string
+          evolved_at: string
+          id: string
+          improvement_type: string
+          is_active: boolean | null
+          learning_method: string | null
+          model_version: string
+          performance_after: Json | null
+          performance_before: Json | null
+          training_data_size: number | null
+        }
+        Insert: {
+          created_at?: string
+          evolved_at?: string
+          id?: string
+          improvement_type: string
+          is_active?: boolean | null
+          learning_method?: string | null
+          model_version: string
+          performance_after?: Json | null
+          performance_before?: Json | null
+          training_data_size?: number | null
+        }
+        Update: {
+          created_at?: string
+          evolved_at?: string
+          id?: string
+          improvement_type?: string
+          is_active?: boolean | null
+          learning_method?: string | null
+          model_version?: string
+          performance_after?: Json | null
+          performance_before?: Json | null
+          training_data_size?: number | null
+        }
+        Relationships: []
+      }
       ai_optimization_logs: {
         Row: {
           action: string
@@ -557,6 +680,51 @@ export type Database = {
           },
         ]
       }
+      search_intelligence: {
+        Row: {
+          captured_at: string
+          competition_level: string | null
+          created_at: string
+          id: string
+          market_category: string | null
+          opportunity_score: number | null
+          related_terms: string[] | null
+          search_term: string
+          search_volume: number | null
+          source: string
+          trend_direction: string | null
+          user_intent: Json | null
+        }
+        Insert: {
+          captured_at?: string
+          competition_level?: string | null
+          created_at?: string
+          id?: string
+          market_category?: string | null
+          opportunity_score?: number | null
+          related_terms?: string[] | null
+          search_term: string
+          search_volume?: number | null
+          source: string
+          trend_direction?: string | null
+          user_intent?: Json | null
+        }
+        Update: {
+          captured_at?: string
+          competition_level?: string | null
+          created_at?: string
+          id?: string
+          market_category?: string | null
+          opportunity_score?: number | null
+          related_terms?: string[] | null
+          search_term?: string
+          search_volume?: number | null
+          source?: string
+          trend_direction?: string | null
+          user_intent?: Json | null
+        }
+        Relationships: []
+      }
       system_config: {
         Row: {
           config_key: string
@@ -801,7 +969,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_trending_opportunities: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          search_term: string
+          opportunity_score: number
+          trend_direction: string
+          search_volume: number
+          related_terms: string[]
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
