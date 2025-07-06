@@ -25,9 +25,9 @@ export const usePGP = () => {
   const generateKeyPair = useCallback(async (name: string, email: string, passphrase?: string) => {
     setLoading(true);
     try {
-      console.log('Calling PGP function with:', { action: 'generate_keypair', name, email });
+      console.log('🔄 Starting PGP key generation...', { name, email, hasPassphrase: !!passphrase });
       
-      const { data, error } = await supabase.functions.invoke('pgp-encryption', {
+      const { data, error } = await supabase.functions.invoke('pgp-tools', {
         body: {
           action: 'generate_keypair',
           name,
@@ -36,17 +36,20 @@ export const usePGP = () => {
         }
       });
 
-      console.log('PGP function response:', { data, error });
+      console.log('📥 PGP function response:', { data, error });
 
       if (error) {
-        console.error('Supabase function error:', error);
+        console.error('❌ Supabase function error:', error);
         throw new Error(`Function failed: ${error.message || JSON.stringify(error)}`);
       }
 
       if (!data || !data.success) {
-        throw new Error(data?.error || 'PGP function returned no data');
+        console.error('❌ Invalid response data:', data);
+        throw new Error(data?.error || 'PGP function returned invalid data');
       }
 
+      console.log('✅ PGP key generation successful');
+      
       const fingerprint = await getKeyFingerprint(data.public_key);
       
       return {
@@ -56,7 +59,7 @@ export const usePGP = () => {
         fingerprint
       };
     } catch (error: any) {
-      console.error('Error generating PGP key pair:', error);
+      console.error('💥 Error generating PGP key pair:', error);
       const errorMessage = error?.message || 'Failed to generate PGP key pair';
       toast.error(`PGP Generation Error: ${errorMessage}`);
       throw error;
@@ -116,7 +119,7 @@ export const usePGP = () => {
   const validatePublicKey = useCallback(async (publicKey: string) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('pgp-encryption', {
+      const { data, error } = await supabase.functions.invoke('pgp-tools', {
         body: {
           action: 'validate_public_key',
           public_key_armored: publicKey
