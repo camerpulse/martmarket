@@ -730,6 +730,45 @@ export type Database = {
           },
         ]
       }
+      file_optimizations: {
+        Row: {
+          compression_ratio: number | null
+          created_at: string | null
+          format_converted_from: string | null
+          format_converted_to: string | null
+          id: string
+          optimization_status: string | null
+          optimized_file_path: string
+          optimized_size_bytes: number
+          original_file_path: string
+          original_size_bytes: number
+        }
+        Insert: {
+          compression_ratio?: number | null
+          created_at?: string | null
+          format_converted_from?: string | null
+          format_converted_to?: string | null
+          id?: string
+          optimization_status?: string | null
+          optimized_file_path: string
+          optimized_size_bytes: number
+          original_file_path: string
+          original_size_bytes: number
+        }
+        Update: {
+          compression_ratio?: number | null
+          created_at?: string | null
+          format_converted_from?: string | null
+          format_converted_to?: string | null
+          id?: string
+          optimization_status?: string | null
+          optimized_file_path?: string
+          optimized_size_bytes?: number
+          original_file_path?: string
+          original_size_bytes?: number
+        }
+        Relationships: []
+      }
       fraud_detection_rules: {
         Row: {
           action: string
@@ -2035,6 +2074,36 @@ export type Database = {
           },
         ]
       }
+      trust_score_history: {
+        Row: {
+          change_reason: string | null
+          contributing_factors: Json | null
+          id: string
+          recorded_at: string | null
+          score_change: number | null
+          trust_score: number
+          vendor_id: string
+        }
+        Insert: {
+          change_reason?: string | null
+          contributing_factors?: Json | null
+          id?: string
+          recorded_at?: string | null
+          score_change?: number | null
+          trust_score: number
+          vendor_id: string
+        }
+        Update: {
+          change_reason?: string | null
+          contributing_factors?: Json | null
+          id?: string
+          recorded_at?: string | null
+          score_change?: number | null
+          trust_score?: number
+          vendor_id?: string
+        }
+        Relationships: []
+      }
       typing_indicators: {
         Row: {
           id: string
@@ -2400,6 +2469,30 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      wishlists: {
+        Row: {
+          added_at: string | null
+          id: string
+          notes: string | null
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          id?: string
+          notes?: string | null
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string | null
+          id?: string
+          notes?: string | null
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

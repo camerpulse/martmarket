@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import VendorRegistration from "./pages/VendorRegistration";
 import VendorDashboard from "./pages/VendorDashboard";
 import VendorProducts from "./pages/VendorProducts";
+import TesterDashboard from "./pages/TesterDashboard";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import UserProfile from "./pages/UserProfile";
 import OrderHistory from "./pages/OrderHistory";
@@ -16,6 +17,7 @@ import SecuritySettings from "./pages/SecuritySettings";
 import Messages from "./pages/Messages";
 import Disputes from "./pages/Disputes";
 import AdminDashboard from "./pages/AdminDashboard";
+import Wishlist from "./pages/Wishlist";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +35,8 @@ const App = () => (
             <Route path="/vendor/register" element={<VendorRegistration />} />
             <Route path="/vendor/dashboard" element={<VendorDashboard />} />
             <Route path="/vendor/products" element={<VendorProducts />} />
+            <Route path="/tester/dashboard" element={<TesterDashboard />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/order/:orderId" element={<OrderConfirmation />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/orders" element={<OrderHistory />} />
