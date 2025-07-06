@@ -1,13 +1,15 @@
-import { Bitcoin, Search, User, ShoppingBag, Shield, LogOut, MessageCircle } from "lucide-react";
+import { Bitcoin, Search, User, ShoppingBag, Shield, LogOut, MessageCircle, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useVendorStatus } from "@/hooks/useVendorStatus";
+import { useAdminStatus } from "@/hooks/useAdminStatus";
 
 const Header = () => {
   const { user, signOut } = useAuth();
   const { isVendor, hasActiveBond, loading } = useVendorStatus();
+  const { isAdmin, loading: adminLoading } = useAdminStatus();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -59,6 +61,16 @@ const Header = () => {
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/profile">Profile</Link>
               </Button>
+              
+              {/* Admin Dashboard Link */}
+              {!adminLoading && isAdmin && (
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/admin">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Admin Dashboard
+                  </Link>
+                </Button>
+              )}
               
               {/* Vendor-specific buttons */}
               {!loading && (
