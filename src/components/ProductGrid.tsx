@@ -47,12 +47,52 @@ const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data: basicData, error: basicError } = await supabase
+        let query = supabase
           .from('products')
           .select('*')
-          .eq('is_active', true)
-          .order('created_at', { ascending: false })
-          .limit(12);
+          .eq('is_active', true);
+
+        // Apply search filter
+        if (searchFilters?.search) {
+          query = query.or(`title.ilike.%${searchFilters.search}%,description.ilike.%${searchFilters.search}%`);
+        }
+
+        // Apply category filter
+        if (searchFilters?.category && searchFilters.category !== 'all') {
+          query = query.eq('category_id', searchFilters.category);
+        }
+
+        // Apply price range filter
+        if (searchFilters?.priceRange && searchFilters.priceRange !== 'all') {
+          const [min, max] = searchFilters.priceRange.includes('+') 
+            ? [parseFloat(searchFilters.priceRange.replace('+', '')), null]
+            : searchFilters.priceRange.split('-').map(parseFloat);
+          
+          query = query.gte('price_btc', min);
+          if (max !== null) {
+            query = query.lte('price_btc', max);
+          }
+        }
+
+        // Apply sorting
+        switch (searchFilters?.sortBy) {
+          case 'oldest':
+            query = query.order('created_at', { ascending: true });
+            break;
+          case 'price-low':
+            query = query.order('price_btc', { ascending: true });
+            break;
+          case 'price-high':
+            query = query.order('price_btc', { ascending: false });
+            break;
+          case 'popular':
+            query = query.order('view_count', { ascending: false });
+            break;
+          default: // newest
+            query = query.order('created_at', { ascending: false });
+        }
+
+        const { data: basicData, error: basicError } = await query.limit(12);
 
         if (basicError) throw basicError;
         
@@ -94,7 +134,7 @@ const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
     };
 
     fetchProducts();
-  }, []);
+  }, [searchFilters]);
 
   const handlePurchase = (product: Product) => {
     setSelectedProduct(product);
