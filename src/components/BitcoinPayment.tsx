@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
+import { Progress } from '@/components/ui/progress';
+import { AlertCircle, CheckCircle, Clock, Copy, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { Bitcoin, Copy, RefreshCw, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface BitcoinPaymentProps {
   purpose: 'vendor_bond' | 'user_deposit' | 'order_payment';
@@ -60,30 +61,28 @@ const BitcoinPayment = ({ purpose, amountUsd, onPaymentComplete, showRefresh = t
     
     setChecking(true);
     try {
-      const { data, error } = await supabase.functions.invoke('check-bitcoin-payment', {
-        body: { payment_request_id: paymentData.payment_request_id }
+      const { data, error } = await supabase.functions.invoke('payment-processor', {
+        body: { 
+          action: 'check_confirmations',
+          payment_request_id: paymentData.payment_request_id
+        }
       });
 
       if (error) throw error;
 
-      setPaymentStatus(data.payment_status);
-      
-      if (data.payment_status === 'completed') {
-        toast({
-          title: "Payment received!",
-          description: "Your Bitcoin payment has been confirmed."
-        });
-        if (onPaymentComplete) {
-          onPaymentComplete();
+      if (data.success && data.confirmation) {
+        setPaymentStatus(data.is_confirmed ? 'completed' : 'pending');
+        
+        if (data.is_confirmed) {
+          toast({
+            title: "Payment Confirmed!",
+            description: "Your Bitcoin payment has been confirmed on the blockchain.",
+          });
+          if (onPaymentComplete) {
+            onPaymentComplete();
+          }
         }
-      } else if (data.payment_status === 'partial') {
-        toast({
-          title: "Partial payment received",
-          description: `Received ${data.balance_btc} BTC, waiting for full amount.`
-        });
       }
-
-      console.log('Payment status check:', data);
       
     } catch (error: any) {
       console.error('Payment check failed:', error);

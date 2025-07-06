@@ -241,6 +241,30 @@ export type Database = {
           },
         ]
       }
+      bitcoin_network_fees: {
+        Row: {
+          captured_at: string
+          estimated_confirmation_blocks: number
+          fee_rate_sat_per_vbyte: number
+          id: string
+          priority_level: string
+        }
+        Insert: {
+          captured_at?: string
+          estimated_confirmation_blocks: number
+          fee_rate_sat_per_vbyte: number
+          id?: string
+          priority_level: string
+        }
+        Update: {
+          captured_at?: string
+          estimated_confirmation_blocks?: number
+          fee_rate_sat_per_vbyte?: number
+          id?: string
+          priority_level?: string
+        }
+        Relationships: []
+      }
       bitcoin_transactions: {
         Row: {
           address_id: string
@@ -314,6 +338,74 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      escrow_transactions: {
+        Row: {
+          amount_satoshis: number
+          auto_release_at: string | null
+          buyer_id: string
+          created_at: string
+          dispute_started_at: string | null
+          escrow_address: string
+          funded_at: string | null
+          id: string
+          order_id: string
+          platform_fee_satoshis: number
+          refund_txid: string | null
+          release_txid: string | null
+          released_at: string | null
+          status: string
+          updated_at: string
+          vendor_fee_satoshis: number
+          vendor_id: string
+        }
+        Insert: {
+          amount_satoshis: number
+          auto_release_at?: string | null
+          buyer_id: string
+          created_at?: string
+          dispute_started_at?: string | null
+          escrow_address: string
+          funded_at?: string | null
+          id?: string
+          order_id: string
+          platform_fee_satoshis?: number
+          refund_txid?: string | null
+          release_txid?: string | null
+          released_at?: string | null
+          status?: string
+          updated_at?: string
+          vendor_fee_satoshis?: number
+          vendor_id: string
+        }
+        Update: {
+          amount_satoshis?: number
+          auto_release_at?: string | null
+          buyer_id?: string
+          created_at?: string
+          dispute_started_at?: string | null
+          escrow_address?: string
+          funded_at?: string | null
+          id?: string
+          order_id?: string
+          platform_fee_satoshis?: number
+          refund_txid?: string | null
+          release_txid?: string | null
+          released_at?: string | null
+          status?: string
+          updated_at?: string
+          vendor_fee_satoshis?: number
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escrow_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fraud_detection_rules: {
         Row: {
@@ -533,6 +625,56 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      payment_confirmations: {
+        Row: {
+          amount_received_satoshis: number
+          block_height: number | null
+          confirmations: number
+          confirmed_at: string | null
+          created_at: string
+          id: string
+          is_valid: boolean | null
+          payment_request_id: string
+          txid: string
+          updated_at: string
+          validation_errors: string[] | null
+        }
+        Insert: {
+          amount_received_satoshis: number
+          block_height?: number | null
+          confirmations?: number
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          is_valid?: boolean | null
+          payment_request_id: string
+          txid: string
+          updated_at?: string
+          validation_errors?: string[] | null
+        }
+        Update: {
+          amount_received_satoshis?: number
+          block_height?: number | null
+          confirmations?: number
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          is_valid?: boolean | null
+          payment_request_id?: string
+          txid?: string
+          updated_at?: string
+          validation_errors?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_confirmations_payment_request_id_fkey"
+            columns: ["payment_request_id"]
+            isOneToOne: false
+            referencedRelation: "payment_requests"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1226,8 +1368,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_release_expired_escrow: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       calculate_threat_score: {
         Args: { user_id: string; event_type: string; event_data: Json }
+        Returns: number
+      }
+      get_required_confirmations: {
+        Args: { amount_satoshis: number }
         Returns: number
       }
       get_trending_opportunities: {
