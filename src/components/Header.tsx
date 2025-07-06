@@ -1,10 +1,11 @@
-import { Bitcoin, Search, User, ShoppingBag, Shield, LogOut, MessageCircle, Settings } from "lucide-react";
+import { Bitcoin, Search, User, ShoppingBag, Shield, LogOut, MessageCircle, Settings, Heart, Users, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useVendorStatus } from "@/hooks/useVendorStatus";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
+import LanguageSelector from "./LanguageSelector";
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -33,14 +34,29 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" className="hover:text-primary">
-            <Shield className="h-4 w-4 mr-2" />
-            Verified Vendors
+          <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
+            <Link to="/forum">
+              <Users className="h-4 w-4 mr-2" />
+              Forum
+            </Link>
           </Button>
-          <Button variant="ghost" size="sm" className="hover:text-primary">
-            <ShoppingBag className="h-4 w-4 mr-2" />
-            Cart
-          </Button>
+          {user && (
+            <>
+              <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
+                <Link to="/wishlist">
+                  <Heart className="h-4 w-4 mr-2" />
+                  Wishlist
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
+                <Link to="/affiliate">
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Affiliate
+                </Link>
+              </Button>
+            </>
+          )}
+          <LanguageSelector />
           {user ? (
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-2 text-sm">

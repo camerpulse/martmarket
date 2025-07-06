@@ -6,6 +6,7 @@ import { Badge } from "./ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import TrustIndicator from "./TrustIndicator";
 import PurchaseDialog from "./PurchaseDialog";
+import WishlistButton from "./WishlistButton";
 
 interface Product {
   id: string;
@@ -172,15 +173,18 @@ const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
                     <div className="flex items-center space-x-1 text-muted-foreground">
                       <span className="text-sm">Stock: {product.stock_quantity}</span>
                     </div>
-                    <Button 
-                      size="sm" 
-                      className="bg-primary hover:bg-primary/90"
-                      onClick={() => handlePurchase(product)}
-                      disabled={product.stock_quantity === 0}
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-1" />
-                      Buy Now
-                    </Button>
+                    <div className="flex items-center space-x-2">
+                      <WishlistButton productId={product.id} />
+                      <Button 
+                        size="sm" 
+                        className="bg-primary hover:bg-primary/90"
+                        onClick={() => handlePurchase(product)}
+                        disabled={product.stock_quantity === 0}
+                      >
+                        <ShoppingCart className="h-4 w-4 mr-1" />
+                        Buy Now
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>

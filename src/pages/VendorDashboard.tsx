@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { Package, DollarSign, Star, Users, TrendingUp, ArrowLeft, Clock, ShoppingBag } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import TrustScoreChart from '@/components/TrustScoreChart';
 
 const VendorDashboard = () => {
   const { user } = useAuth();
@@ -182,6 +183,16 @@ const VendorDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Trust Score Chart */}
+      {vendorProfile && (
+        <TrustScoreChart 
+          vendorId={user?.id || ''} 
+          currentScore={vendorProfile.trust_score || 0} 
+          isVerified={vendorProfile.is_verified || false}
+          className="mb-8"
+        />
+      )}
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
