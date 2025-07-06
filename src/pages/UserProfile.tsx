@@ -45,14 +45,46 @@ const UserProfile = () => {
     if (!user) return;
 
     try {
+      console.log('Loading profile for user:', user.id);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No profile found, create one
+          console.log('No profile found, creating new profile...');
+          
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert({
+              user_id: user.id,
+              user_type: 'buyer', // Default to buyer
+              display_name: user.email?.split('@')[0] || 'Anonymous User',
+              two_factor_enabled: false,
+            })
+            .select()
+            .single();
 
+          if (createError) throw createError;
+          
+          setProfile(newProfile);
+          setFormData({
+            display_name: newProfile.display_name || '',
+            pgp_public_key: newProfile.pgp_public_key || '',
+            two_factor_enabled: newProfile.two_factor_enabled || false,
+          });
+          
+          toast.success('Profile created successfully');
+          return;
+        }
+        throw error;
+      }
+
+      console.log('Profile loaded:', data);
       setProfile(data);
       setFormData({
         display_name: data.display_name || '',
@@ -61,7 +93,7 @@ const UserProfile = () => {
       });
     } catch (error) {
       console.error('Error loading profile:', error);
-      toast.error('Failed to load profile');
+      toast.error(`Failed to load profile: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -73,7 +105,14 @@ const UserProfile = () => {
 
     setSaving(true);
     try {
-      const { error } = await supabase
+      console.log('Updating profile for user:', user.id);
+      console.log('Update data:', {
+        display_name: formData.display_name || null,
+        pgp_public_key: formData.pgp_public_key || null,
+        two_factor_enabled: formData.two_factor_enabled,
+      });
+
+      const { data, error } = await supabase
         .from('profiles')
         .update({
           display_name: formData.display_name || null,
@@ -81,15 +120,24 @@ const UserProfile = () => {
           two_factor_enabled: formData.two_factor_enabled,
           updated_at: new Date().toISOString(),
         })
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .select();
+
+      console.log('Update result:', { data, error });
 
       if (error) throw error;
+
+      if (data && data.length === 0) {
+        console.log('No rows updated - profile might not exist');
+        toast.error('Profile not found. Please refresh and try again.');
+        return;
+      }
 
       toast.success('Profile updated successfully');
       loadProfile(); // Reload to get updated data
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      toast.error(`Failed to update profile: ${error.message}`);
     } finally {
       setSaving(false);
     }

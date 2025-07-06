@@ -46,6 +46,14 @@ const Header = () => {
                 <span className="text-muted-foreground">Welcome back!</span>
               </div>
               
+              {/* User Profile & Orders Links */}
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/orders">My Orders</Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/profile">Profile</Link>
+              </Button>
+              
               {/* Vendor-specific buttons */}
               {!loading && (
                 <>
