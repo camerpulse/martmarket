@@ -31,6 +31,11 @@ import { useToast } from '@/hooks/use-toast';
 import { LogDetailsDialog } from './LogDetailsDialog';
 import { ThreatMonitoringPanel } from './ThreatMonitoringPanel';
 import { AIEvolutionDashboard } from './AIEvolutionDashboard';
+import { AIChat } from './AIChat';
+import { PredictiveAnalytics } from './PredictiveAnalytics';
+import { RealTimeMonitor } from './RealTimeMonitor';
+import { AutoDeployment } from './AutoDeployment';
+import { SelfHealing } from './SelfHealing';
 
 interface AIConfig {
   id?: string;
@@ -453,12 +458,16 @@ export function HeavenlyFireAI() {
       </Card>
 
       <Tabs defaultValue="activity" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="activity">AI Activity</TabsTrigger>
-          <TabsTrigger value="threats">Threat Monitor</TabsTrigger>
-          <TabsTrigger value="fixes">Auto-Fix History</TabsTrigger>
-          <TabsTrigger value="evolution">AI Evolution</TabsTrigger>
-          <TabsTrigger value="metrics">System Health</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-9">
+          <TabsTrigger value="activity">Activity</TabsTrigger>
+          <TabsTrigger value="chat">AI Chat</TabsTrigger>
+          <TabsTrigger value="threats">Threats</TabsTrigger>
+          <TabsTrigger value="fixes">Auto-Fix</TabsTrigger>
+          <TabsTrigger value="evolution">Evolution</TabsTrigger>
+          <TabsTrigger value="monitor">Monitor</TabsTrigger>
+          <TabsTrigger value="predict">Predict</TabsTrigger>
+          <TabsTrigger value="deploy">Deploy</TabsTrigger>
+          <TabsTrigger value="healing">Healing</TabsTrigger>
         </TabsList>
 
         <TabsContent value="activity">
@@ -522,6 +531,10 @@ export function HeavenlyFireAI() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="chat">
+          <AIChat />
+        </TabsContent>
+
         <TabsContent value="threats">
           <ThreatMonitoringPanel />
         </TabsContent>
@@ -578,6 +591,22 @@ export function HeavenlyFireAI() {
 
         <TabsContent value="evolution">
           <AIEvolutionDashboard />
+        </TabsContent>
+
+        <TabsContent value="monitor">
+          <RealTimeMonitor />
+        </TabsContent>
+
+        <TabsContent value="predict">
+          <PredictiveAnalytics />
+        </TabsContent>
+
+        <TabsContent value="deploy">
+          <AutoDeployment />
+        </TabsContent>
+
+        <TabsContent value="healing">
+          <SelfHealing />
         </TabsContent>
 
         <TabsContent value="metrics">
