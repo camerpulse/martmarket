@@ -79,11 +79,15 @@ serve(async (req) => {
         break;
       case "user_deposit":
         addressPath = "m/0";
-        amountSatoshis = amount_usd ? Math.floor(amount_usd * 100 / (parseInt(configMap.btc_usd_rate) || 100000)) : 0;
+        // More careful calculation to avoid overflow
+        const btcRate = parseInt(configMap.btc_usd_rate) || 100000;
+        amountSatoshis = amount_usd ? Math.floor((amount_usd * 100000000) / btcRate) : 0;
         break;
       case "order_payment":
         addressPath = "m/2";
-        amountSatoshis = amount_usd ? Math.floor(amount_usd * 100 / (parseInt(configMap.btc_usd_rate) || 100000)) : 0;
+        // More careful calculation to avoid overflow
+        const btcRateOrder = parseInt(configMap.btc_usd_rate) || 100000;
+        amountSatoshis = amount_usd ? Math.floor((amount_usd * 100000000) / btcRateOrder) : 0;
         break;
       default:
         throw new Error("Invalid purpose");
@@ -130,7 +134,7 @@ serve(async (req) => {
           user_id: userData.user.id,
           payment_type: purpose,
           amount_satoshis: amountSatoshis,
-          amount_usd: amount_usd || (amountSatoshis * (parseInt(configMap.btc_usd_rate) || 100000) / 100),
+          amount_usd: amount_usd || Math.floor((amountSatoshis * (parseInt(configMap.btc_usd_rate) || 100000)) / 100000000),
           bitcoin_address_id: addressData.id,
           status: "pending",
           expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
@@ -151,7 +155,7 @@ serve(async (req) => {
         address: bitcoinAddress,
         amount_satoshis: amountSatoshis,
         amount_btc: (amountSatoshis / 100000000).toFixed(8),
-        amount_usd: amount_usd || (amountSatoshis * (parseInt(configMap.btc_usd_rate) || 100000) / 100),
+        amount_usd: amount_usd || Math.floor((amountSatoshis * (parseInt(configMap.btc_usd_rate) || 100000)) / 100000000),
         expires_at: paymentRequest?.expires_at,
         payment_request_id: paymentRequest?.id,
         purpose: purpose
