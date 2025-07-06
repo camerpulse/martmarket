@@ -31,7 +31,7 @@ export function useVendorStatus() {
         .from('vendor_profiles')
         .select('*')
         .eq('vendor_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (!vendorError && vendorData) {
         setIsVendor(true);
