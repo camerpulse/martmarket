@@ -68,6 +68,9 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
     setProcessing(true);
     
     try {
+      console.log('Starting purchase process...');
+      console.log('User:', user);
+      console.log('Product:', product);
       console.log('Creating order with:', {
         buyer_id: user.id,
         vendor_id: product.vendor_id,
@@ -79,6 +82,7 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
       });
 
       // Create order with escrow
+      console.log('Attempting to create order...');
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -94,7 +98,11 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
         .select()
         .single();
 
-      if (orderError) throw orderError;
+      console.log('Order creation result:', { order, orderError });
+      if (orderError) {
+        console.error('Order creation failed:', orderError);
+        throw orderError;
+      }
 
       // Generate Bitcoin address for escrow payment
       const { data: addressData, error: addressError } = await supabase.functions.invoke(
