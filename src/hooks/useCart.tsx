@@ -7,11 +7,14 @@ interface CartItem {
   title: string;
   price_btc: number;
   quantity: number;
+  stock_quantity: number;
   selectedVariations?: Record<string, string>;
   finalPrice?: number;
   vendor: {
     store_name: string;
     vendor_id: string;
+    trust_score?: number;
+    is_verified?: boolean;
   };
   category: {
     name: string;
@@ -90,11 +93,14 @@ export const CartProvider = ({ children }: CartProviderProps) => {
           title: product.title,
           price_btc: product.price_btc,
           quantity,
+          stock_quantity: product.stock_quantity || 999,
           selectedVariations,
           finalPrice: finalPrice || product.price_btc,
           vendor: {
             store_name: product.vendor.store_name,
             vendor_id: product.vendor_id,
+            trust_score: product.vendor.trust_score,
+            is_verified: product.vendor.is_verified,
           },
           category: {
             name: product.category.name,
