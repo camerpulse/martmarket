@@ -9,6 +9,78 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_actions: {
+        Row: {
+          action_type: string
+          admin_id: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          target_id: string | null
+          target_type: string
+          user_agent: string | null
+        }
+        Insert: {
+          action_type: string
+          admin_id: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          target_id?: string | null
+          target_type: string
+          user_agent?: string | null
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          target_id?: string | null
+          target_type?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      admin_profiles: {
+        Row: {
+          admin_role: Database["public"]["Enums"]["admin_role"]
+          created_at: string | null
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          last_active: string | null
+          permissions: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_role?: Database["public"]["Enums"]["admin_role"]
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_active?: string | null
+          permissions?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_role?: Database["public"]["Enums"]["admin_role"]
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_active?: string | null
+          permissions?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_knowledge_base: {
         Row: {
           confidence_score: number
@@ -1183,6 +1255,36 @@ export type Database = {
           },
         ]
       }
+      platform_settings: {
+        Row: {
+          description: string | null
+          id: string
+          setting_key: string
+          setting_type: string | null
+          setting_value: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_type?: string | null
+          setting_value: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_type?: string | null
+          setting_value?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       product_ratings: {
         Row: {
           average_rating: number | null
@@ -1671,6 +1773,30 @@ export type Database = {
         }
         Relationships: []
       }
+      system_metrics: {
+        Row: {
+          id: string
+          metric_data: Json | null
+          metric_name: string
+          metric_value: number | null
+          recorded_at: string | null
+        }
+        Insert: {
+          id?: string
+          metric_data?: Json | null
+          metric_name: string
+          metric_value?: number | null
+          recorded_at?: string | null
+        }
+        Update: {
+          id?: string
+          metric_data?: Json | null
+          metric_name?: string
+          metric_value?: number | null
+          recorded_at?: string | null
+        }
+        Relationships: []
+      }
       trust_events: {
         Row: {
           created_at: string
@@ -1964,6 +2090,42 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_verifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          submitted_documents: Json | null
+          updated_at: string | null
+          vendor_id: string
+          verification_notes: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          submitted_documents?: Json | null
+          updated_at?: string | null
+          vendor_id: string
+          verification_notes?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          submitted_documents?: Json | null
+          updated_at?: string | null
+          vendor_id?: string
+          verification_notes?: string | null
+        }
+        Relationships: []
+      }
       wallet_balances: {
         Row: {
           balance_satoshis: number | null
@@ -2022,6 +2184,10 @@ export type Database = {
         Args: { user_id: string; event_type: string; event_data: Json }
         Returns: number
       }
+      get_dashboard_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_required_confirmations: {
         Args: { amount_satoshis: number }
         Returns: number
@@ -2035,6 +2201,20 @@ export type Database = {
           search_volume: number
           related_terms: string[]
         }[]
+      }
+      is_admin: {
+        Args: { user_id_param: string }
+        Returns: boolean
+      }
+      log_admin_action: {
+        Args: {
+          p_admin_id: string
+          p_action_type: string
+          p_target_type: string
+          p_target_id?: string
+          p_details?: Json
+        }
+        Returns: undefined
       }
       log_search: {
         Args: {
@@ -2055,6 +2235,7 @@ export type Database = {
       }
     }
     Enums: {
+      admin_role: "super_admin" | "admin" | "moderator" | "support_agent"
       dispute_category:
         | "item_not_received"
         | "item_not_as_described"
@@ -2191,6 +2372,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      admin_role: ["super_admin", "admin", "moderator", "support_agent"],
       dispute_category: [
         "item_not_received",
         "item_not_as_described",
