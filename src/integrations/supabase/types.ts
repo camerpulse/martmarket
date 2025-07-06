@@ -366,6 +366,57 @@ export type Database = {
         }
         Relationships: []
       }
+      auto_fix_history: {
+        Row: {
+          admin_approved: boolean | null
+          affected_files: string[] | null
+          applied_at: string | null
+          applied_successfully: boolean | null
+          code_diff: string | null
+          created_at: string
+          error_message: string
+          error_type: string
+          fix_strategy: string
+          id: string
+          rollback_completed: boolean | null
+          rolled_back_at: string | null
+          sandbox_tested: boolean | null
+          test_results: Json | null
+        }
+        Insert: {
+          admin_approved?: boolean | null
+          affected_files?: string[] | null
+          applied_at?: string | null
+          applied_successfully?: boolean | null
+          code_diff?: string | null
+          created_at?: string
+          error_message: string
+          error_type: string
+          fix_strategy: string
+          id?: string
+          rollback_completed?: boolean | null
+          rolled_back_at?: string | null
+          sandbox_tested?: boolean | null
+          test_results?: Json | null
+        }
+        Update: {
+          admin_approved?: boolean | null
+          affected_files?: string[] | null
+          applied_at?: string | null
+          applied_successfully?: boolean | null
+          code_diff?: string | null
+          created_at?: string
+          error_message?: string
+          error_type?: string
+          fix_strategy?: string
+          id?: string
+          rollback_completed?: boolean | null
+          rolled_back_at?: string | null
+          sandbox_tested?: boolean | null
+          test_results?: Json | null
+        }
+        Relationships: []
+      }
       bitcoin_addresses: {
         Row: {
           address: string
@@ -1069,6 +1120,99 @@ export type Database = {
           rule_name?: string
           rule_type?: string
           threat_score?: number | null
+        }
+        Relationships: []
+      }
+      heavenly_fire_config: {
+        Row: {
+          ai_mode: string
+          auto_fix_enabled: boolean | null
+          captcha_enabled: boolean | null
+          captcha_forced: boolean | null
+          created_at: string
+          ddos_protection_enabled: boolean | null
+          emergency_mode: boolean | null
+          id: string
+          max_auto_fixes_per_hour: number | null
+          updated_at: string
+        }
+        Insert: {
+          ai_mode?: string
+          auto_fix_enabled?: boolean | null
+          captcha_enabled?: boolean | null
+          captcha_forced?: boolean | null
+          created_at?: string
+          ddos_protection_enabled?: boolean | null
+          emergency_mode?: boolean | null
+          id?: string
+          max_auto_fixes_per_hour?: number | null
+          updated_at?: string
+        }
+        Update: {
+          ai_mode?: string
+          auto_fix_enabled?: boolean | null
+          captcha_enabled?: boolean | null
+          captcha_forced?: boolean | null
+          created_at?: string
+          ddos_protection_enabled?: boolean | null
+          emergency_mode?: boolean | null
+          id?: string
+          max_auto_fixes_per_hour?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      heavenly_fire_logs: {
+        Row: {
+          action_type: string
+          created_at: string
+          description: string | null
+          error_details: Json | null
+          execution_time_ms: number | null
+          fix_applied: Json | null
+          id: string
+          resolved_at: string | null
+          risk_level: number | null
+          rollback_available: boolean | null
+          rollback_data: Json | null
+          severity: string
+          success: boolean | null
+          target_system: string | null
+          title: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          description?: string | null
+          error_details?: Json | null
+          execution_time_ms?: number | null
+          fix_applied?: Json | null
+          id?: string
+          resolved_at?: string | null
+          risk_level?: number | null
+          rollback_available?: boolean | null
+          rollback_data?: Json | null
+          severity?: string
+          success?: boolean | null
+          target_system?: string | null
+          title: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          description?: string | null
+          error_details?: Json | null
+          execution_time_ms?: number | null
+          fix_applied?: Json | null
+          id?: string
+          resolved_at?: string | null
+          risk_level?: number | null
+          rollback_available?: boolean | null
+          rollback_data?: Json | null
+          severity?: string
+          success?: boolean | null
+          target_system?: string | null
+          title?: string
         }
         Relationships: []
       }
@@ -2198,6 +2342,57 @@ export type Database = {
         }
         Relationships: []
       }
+      security_incidents: {
+        Row: {
+          attack_pattern: string | null
+          blocked_requests: number | null
+          captcha_challenges: number | null
+          created_at: string
+          id: string
+          incident_type: string
+          mitigation_actions: Json | null
+          requests_count: number | null
+          resolved_at: string | null
+          severity: string
+          source_ip: unknown | null
+          started_at: string
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          attack_pattern?: string | null
+          blocked_requests?: number | null
+          captcha_challenges?: number | null
+          created_at?: string
+          id?: string
+          incident_type: string
+          mitigation_actions?: Json | null
+          requests_count?: number | null
+          resolved_at?: string | null
+          severity: string
+          source_ip?: unknown | null
+          started_at?: string
+          status?: string
+          user_agent?: string | null
+        }
+        Update: {
+          attack_pattern?: string | null
+          blocked_requests?: number | null
+          captcha_challenges?: number | null
+          created_at?: string
+          id?: string
+          incident_type?: string
+          mitigation_actions?: Json | null
+          requests_count?: number | null
+          resolved_at?: string | null
+          severity?: string
+          source_ip?: unknown | null
+          started_at?: string
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       security_settings: {
         Row: {
           allowed_ip_ranges: unknown[] | null
@@ -2270,6 +2465,36 @@ export type Database = {
           description?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      system_health_metrics: {
+        Row: {
+          captured_at: string
+          id: string
+          metric_type: string
+          metric_value: number
+          status: string
+          threshold_critical: number | null
+          threshold_warning: number | null
+        }
+        Insert: {
+          captured_at?: string
+          id?: string
+          metric_type: string
+          metric_value: number
+          status?: string
+          threshold_critical?: number | null
+          threshold_warning?: number | null
+        }
+        Update: {
+          captured_at?: string
+          id?: string
+          metric_type?: string
+          metric_value?: number
+          status?: string
+          threshold_critical?: number | null
+          threshold_warning?: number | null
         }
         Relationships: []
       }
