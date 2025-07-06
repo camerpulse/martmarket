@@ -339,6 +339,257 @@ export type Database = {
         }
         Relationships: []
       }
+      dispute_evidence: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          dispute_id: string
+          evidence_type: string | null
+          file_url: string | null
+          id: string
+          submitted_by: string
+          verification_status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          dispute_id: string
+          evidence_type?: string | null
+          file_url?: string | null
+          id?: string
+          submitted_by: string
+          verification_status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          dispute_id?: string
+          evidence_type?: string | null
+          file_url?: string | null
+          id?: string
+          submitted_by?: string
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dispute_evidence_dispute_id_fkey"
+            columns: ["dispute_id"]
+            isOneToOne: false
+            referencedRelation: "disputes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dispute_messages: {
+        Row: {
+          attachments: string[] | null
+          content: string
+          created_at: string | null
+          dispute_id: string
+          id: string
+          is_internal: boolean | null
+          message_type: string | null
+          sender_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          attachments?: string[] | null
+          content: string
+          created_at?: string | null
+          dispute_id: string
+          id?: string
+          is_internal?: boolean | null
+          message_type?: string | null
+          sender_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          attachments?: string[] | null
+          content?: string
+          created_at?: string | null
+          dispute_id?: string
+          id?: string
+          is_internal?: boolean | null
+          message_type?: string | null
+          sender_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dispute_messages_dispute_id_fkey"
+            columns: ["dispute_id"]
+            isOneToOne: false
+            referencedRelation: "disputes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dispute_resolutions: {
+        Row: {
+          admin_decision: boolean | null
+          buyer_agreed: boolean | null
+          created_at: string | null
+          dispute_id: string
+          expires_at: string | null
+          id: string
+          refund_amount_btc: number | null
+          resolution_details: Json | null
+          resolution_type: string | null
+          resolved_by: string | null
+          vendor_agreed: boolean | null
+        }
+        Insert: {
+          admin_decision?: boolean | null
+          buyer_agreed?: boolean | null
+          created_at?: string | null
+          dispute_id: string
+          expires_at?: string | null
+          id?: string
+          refund_amount_btc?: number | null
+          resolution_details?: Json | null
+          resolution_type?: string | null
+          resolved_by?: string | null
+          vendor_agreed?: boolean | null
+        }
+        Update: {
+          admin_decision?: boolean | null
+          buyer_agreed?: boolean | null
+          created_at?: string | null
+          dispute_id?: string
+          expires_at?: string | null
+          id?: string
+          refund_amount_btc?: number | null
+          resolution_details?: Json | null
+          resolution_type?: string | null
+          resolved_by?: string | null
+          vendor_agreed?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dispute_resolutions_dispute_id_fkey"
+            columns: ["dispute_id"]
+            isOneToOne: false
+            referencedRelation: "disputes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dispute_statistics: {
+        Row: {
+          average_resolution_days: number | null
+          dispute_rate_percentage: number | null
+          disputes_favor_buyer: number | null
+          disputes_favor_vendor: number | null
+          id: string
+          resolved_disputes: number | null
+          total_disputes: number | null
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          average_resolution_days?: number | null
+          dispute_rate_percentage?: number | null
+          disputes_favor_buyer?: number | null
+          disputes_favor_vendor?: number | null
+          id?: string
+          resolved_disputes?: number | null
+          total_disputes?: number | null
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          average_resolution_days?: number | null
+          dispute_rate_percentage?: number | null
+          disputes_favor_buyer?: number | null
+          disputes_favor_vendor?: number | null
+          id?: string
+          resolved_disputes?: number | null
+          total_disputes?: number | null
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: []
+      }
+      disputes: {
+        Row: {
+          admin_assigned: string | null
+          amount_disputed_btc: number | null
+          auto_close_at: string | null
+          buyer_id: string
+          category: Database["public"]["Enums"]["dispute_category"]
+          created_at: string | null
+          description: string
+          escalated_at: string | null
+          escalation_reason: string | null
+          evidence_urls: string[] | null
+          id: string
+          order_id: string
+          priority: Database["public"]["Enums"]["dispute_priority"] | null
+          resolution_deadline: string | null
+          resolution_notes: string | null
+          resolution_type: string | null
+          resolved_at: string | null
+          status: Database["public"]["Enums"]["dispute_status"] | null
+          title: string
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          admin_assigned?: string | null
+          amount_disputed_btc?: number | null
+          auto_close_at?: string | null
+          buyer_id: string
+          category: Database["public"]["Enums"]["dispute_category"]
+          created_at?: string | null
+          description: string
+          escalated_at?: string | null
+          escalation_reason?: string | null
+          evidence_urls?: string[] | null
+          id?: string
+          order_id: string
+          priority?: Database["public"]["Enums"]["dispute_priority"] | null
+          resolution_deadline?: string | null
+          resolution_notes?: string | null
+          resolution_type?: string | null
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"] | null
+          title: string
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          admin_assigned?: string | null
+          amount_disputed_btc?: number | null
+          auto_close_at?: string | null
+          buyer_id?: string
+          category?: Database["public"]["Enums"]["dispute_category"]
+          created_at?: string | null
+          description?: string
+          escalated_at?: string | null
+          escalation_reason?: string | null
+          evidence_urls?: string[] | null
+          id?: string
+          order_id?: string
+          priority?: Database["public"]["Enums"]["dispute_priority"] | null
+          resolution_deadline?: string | null
+          resolution_notes?: string | null
+          resolution_type?: string | null
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"] | null
+          title?: string
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disputes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       escrow_transactions: {
         Row: {
           amount_satoshis: number
@@ -1699,6 +1950,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_escalate_disputes: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       auto_release_expired_escrow: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -1731,7 +1986,27 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      dispute_category:
+        | "item_not_received"
+        | "item_not_as_described"
+        | "damaged_item"
+        | "wrong_item"
+        | "counterfeit_item"
+        | "shipping_issues"
+        | "communication_issues"
+        | "refund_request"
+        | "other"
+      dispute_priority: "low" | "medium" | "high" | "urgent"
+      dispute_status:
+        | "open"
+        | "under_review"
+        | "awaiting_buyer_response"
+        | "awaiting_vendor_response"
+        | "escalated"
+        | "resolved_favor_buyer"
+        | "resolved_favor_vendor"
+        | "resolved_mutual"
+        | "closed_no_action"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1846,6 +2121,30 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      dispute_category: [
+        "item_not_received",
+        "item_not_as_described",
+        "damaged_item",
+        "wrong_item",
+        "counterfeit_item",
+        "shipping_issues",
+        "communication_issues",
+        "refund_request",
+        "other",
+      ],
+      dispute_priority: ["low", "medium", "high", "urgent"],
+      dispute_status: [
+        "open",
+        "under_review",
+        "awaiting_buyer_response",
+        "awaiting_vendor_response",
+        "escalated",
+        "resolved_favor_buyer",
+        "resolved_favor_vendor",
+        "resolved_mutual",
+        "closed_no_action",
+      ],
+    },
   },
 } as const

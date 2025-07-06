@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Package, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PaymentStatus } from "@/components/PaymentStatus";
 import { ReviewSystem } from "@/components/ReviewSystem";
 import { supabase } from "@/integrations/supabase/client";
@@ -197,6 +197,31 @@ const OrderConfirmation = () => {
             />
           </div>
         </div>
+
+        {/* Dispute Section - Show for completed orders if something went wrong */}
+        {(order.status === 'completed' || order.status === 'shipped' || order.status === 'paid') && (
+          <div className="mt-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Having an Issue?</CardTitle>
+                <CardDescription>
+                  If you're experiencing problems with your order, you can file a dispute.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  variant="destructive"
+                  onClick={() => {
+                    // This will be handled by a modal or navigation to dispute form
+                    console.log('File dispute for order:', order.id);
+                  }}
+                >
+                  File a Dispute
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Review Section - Show after order is completed */}
         {(order.status === 'completed' || order.status === 'paid') && (
