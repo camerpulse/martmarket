@@ -1,329 +1,464 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { Star, User, Calendar, Edit, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { 
+  Star, 
+  ThumbsUp, 
+  ThumbsDown, 
+  Shield, 
+  TrendingUp,
+  MessageSquare,
+  Package,
+  Truck,
+  CheckCircle
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Review {
   id: string;
-  rating: number;
-  comment: string | null;
-  is_anonymous: boolean;
-  created_at: string;
   reviewer_id: string;
   vendor_id: string;
   order_id: string;
-  profiles: {
-    display_name: string | null;
-  } | null;
+  overall_rating: number;
+  product_rating?: number;
+  communication_rating?: number;
+  shipping_rating?: number;
+  would_recommend: boolean;
+  review_title?: string;
+  comment?: string;
+  helpful_votes: number;
+  verified_purchase: boolean;
+  review_images?: string[];
+  created_at: string;
+  reviewer_profile?: { display_name: string };
+  order?: { products: { title: string } };
+}
+
+interface VendorRating {
+  vendor_id: string;
+  total_reviews: number;
+  average_overall_rating: number;
+  average_product_rating: number;
+  average_communication_rating: number;
+  average_shipping_rating: number;
+  five_star_count: number;
+  four_star_count: number;
+  three_star_count: number;
+  two_star_count: number;
+  one_star_count: number;
+  recommendation_percentage: number;
 }
 
 interface ReviewSystemProps {
-  productId?: string;
   vendorId?: string;
-  orderId?: string;
-  canReview?: boolean;
-  showWriteReview?: boolean;
+  productId?: string;
+  showSummary?: boolean;
+  maxReviews?: number;
 }
 
-const ReviewSystem = ({ 
-  productId, 
-  vendorId, 
-  orderId, 
-  canReview = false, 
-  showWriteReview = false 
-}: ReviewSystemProps) => {
+const StarRating = ({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' | 'lg' }) => {
+  const sizeClass = {
+    sm: 'h-4 w-4',
+    md: 'h-5 w-5',
+    lg: 'h-6 w-6'
+  }[size];
+
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <Star
+          key={star}
+          className={`${sizeClass} ${
+            star <= rating 
+              ? 'fill-yellow-400 text-yellow-400' 
+              : 'text-muted-foreground'
+          }`}
+        />
+      ))}
+    </div>
+  );
+};
+
+const RatingBreakdown = ({ vendorRating }: { vendorRating: VendorRating }) => {
+  const total = vendorRating.total_reviews;
+  
+  const ratingBreakdown = [
+    { stars: 5, count: vendorRating.five_star_count },
+    { stars: 4, count: vendorRating.four_star_count },
+    { stars: 3, count: vendorRating.three_star_count },
+    { stars: 2, count: vendorRating.two_star_count },
+    { stars: 1, count: vendorRating.one_star_count },
+  ];
+
+  return (
+    <div className="space-y-2">
+      {ratingBreakdown.map((item) => (
+        <div key={item.stars} className="flex items-center gap-3">
+          <div className="flex items-center gap-1 text-sm min-w-[60px]">
+            <span>{item.stars}</span>
+            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+          </div>
+          <Progress 
+            value={(item.count / total) * 100} 
+            className="flex-1 h-2"
+          />
+          <span className="text-sm text-muted-foreground min-w-[40px] text-right">
+            {item.count}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const ReviewCard = ({ review, onHelpfulVote }: { 
+  review: Review; 
+  onHelpfulVote: (reviewId: string, isHelpful: boolean) => void;
+}) => {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  return (
+    <Card className="mb-4">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10">
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {review.reviewer_profile?.display_name?.charAt(0)?.toUpperCase() || 'A'}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-medium">
+                  {review.reviewer_profile?.display_name || 'Anonymous'}
+                </span>
+                {review.verified_purchase && (
+                  <Badge variant="secondary" className="text-xs">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Verified Purchase
+                  </Badge>
+                )}
+              </div>
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <StarRating rating={review.overall_rating} />
+                <span>{formatDate(review.created_at)}</span>
+              </div>
+            </div>
+          </div>
+          <div className="text-right">
+            {review.would_recommend && (
+              <Badge variant="outline" className="text-xs">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                Recommends
+              </Badge>
+            )}
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-4">
+        {review.review_title && (
+          <h4 className="font-semibold">{review.review_title}</h4>
+        )}
+        
+        {/* Detailed Ratings */}
+        {(review.product_rating || review.communication_rating || review.shipping_rating) && (
+          <div className="grid grid-cols-3 gap-4 p-3 bg-muted/30 rounded-lg">
+            {review.product_rating && (
+              <div className="text-center">
+                <Package className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
+                <div className="text-xs text-muted-foreground mb-1">Product</div>
+                <StarRating rating={review.product_rating} size="sm" />
+              </div>
+            )}
+            {review.communication_rating && (
+              <div className="text-center">
+                <MessageSquare className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
+                <div className="text-xs text-muted-foreground mb-1">Communication</div>
+                <StarRating rating={review.communication_rating} size="sm" />
+              </div>
+            )}
+            {review.shipping_rating && (
+              <div className="text-center">
+                <Truck className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
+                <div className="text-xs text-muted-foreground mb-1">Shipping</div>
+                <StarRating rating={review.shipping_rating} size="sm" />
+              </div>
+            )}
+          </div>
+        )}
+        
+        {review.comment && (
+          <p className="text-sm leading-relaxed">{review.comment}</p>
+        )}
+        
+        {review.order?.products && (
+          <div className="text-xs text-muted-foreground">
+            Product: {review.order.products.title}
+          </div>
+        )}
+        
+        <Separator />
+        
+        {/* Helpfulness Voting */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              Was this helpful?
+            </span>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onHelpfulVote(review.id, true)}
+                className="h-8 px-2"
+              >
+                <ThumbsUp className="h-3 w-3 mr-1" />
+                Yes
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onHelpfulVote(review.id, false)}
+                className="h-8 px-2"
+              >
+                <ThumbsDown className="h-3 w-3 mr-1" />
+                No
+              </Button>
+            </div>
+          </div>
+          {review.helpful_votes > 0 && (
+            <span className="text-sm text-muted-foreground">
+              {review.helpful_votes} people found this helpful
+            </span>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export function ReviewSystem({ vendorId, productId, showSummary = true, maxReviews = 10 }: ReviewSystemProps) {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [vendorRating, setVendorRating] = useState<VendorRating | null>(null);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [showForm, setShowForm] = useState(showWriteReview);
-  const [reviewForm, setReviewForm] = useState({
-    rating: 5,
-    comment: '',
-    is_anonymous: false,
-  });
 
   useEffect(() => {
-    if (vendorId) {
-      loadReviews();
+    if (vendorId || productId) {
+      loadReviewsAndRatings();
     }
-  }, [vendorId]);
+  }, [vendorId, productId]);
 
-  const loadReviews = async () => {
-    if (!vendorId) return;
-
+  const loadReviewsAndRatings = async () => {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      
+      // Load reviews
+      let reviewQuery = supabase
         .from('reviews')
         .select(`
           *,
-          profiles!reviews_reviewer_id_fkey(display_name)
+          reviewer_profile:profiles!reviews_reviewer_id_fkey(display_name),
+          order:orders(products(title))
         `)
-        .eq('vendor_id', vendorId)
-        .order('created_at', { ascending: false });
+        .eq('review_status', 'published')
+        .order('created_at', { ascending: false })
+        .limit(maxReviews);
 
-      if (error) throw error;
-      setReviews(data || []);
+      if (vendorId) {
+        reviewQuery = reviewQuery.eq('vendor_id', vendorId);
+      }
+
+      if (productId) {
+        reviewQuery = reviewQuery.eq('order.product_id', productId);
+      }
+
+      const { data: reviewsData, error: reviewsError } = await reviewQuery;
+      
+      if (reviewsError) throw reviewsError;
+      setReviews(reviewsData || []);
+
+      // Load vendor ratings if vendor ID is provided
+      if (vendorId) {
+        const { data: ratingData, error: ratingError } = await supabase
+          .from('vendor_ratings')
+          .select('*')
+          .eq('vendor_id', vendorId)
+          .single();
+        
+        if (ratingError && ratingError.code !== 'PGRST116') {
+          throw ratingError;
+        }
+        
+        setVendorRating(ratingData);
+      }
+      
     } catch (error) {
       console.error('Error loading reviews:', error);
-      toast.error('Failed to load reviews');
+      toast({
+        title: "Error",
+        description: "Failed to load reviews",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmitReview = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user || !vendorId || !orderId) return;
+  const handleHelpfulVote = async (reviewId: string, isHelpful: boolean) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to vote on review helpfulness",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    setSubmitting(true);
     try {
-      const { data, error } = await supabase
-        .from('reviews')
-        .insert({
-          reviewer_id: user.id,
-          vendor_id: vendorId,
-          order_id: orderId,
-          rating: reviewForm.rating,
-          comment: reviewForm.comment || null,
-          is_anonymous: reviewForm.is_anonymous,
-        })
-        .select()
-        .single();
+      const { error } = await supabase
+        .from('review_helpfulness')
+        .upsert({
+          review_id: reviewId,
+          user_id: user.id,
+          is_helpful: isHelpful
+        });
 
       if (error) throw error;
 
-      toast.success('Review submitted successfully!');
-      setShowForm(false);
-      setReviewForm({ rating: 5, comment: '', is_anonymous: false });
-      loadReviews(); // Reload reviews
+      toast({
+        title: "Thank you!",
+        description: "Your feedback has been recorded",
+      });
+
+      // Reload reviews to update helpful vote counts
+      loadReviewsAndRatings();
+      
     } catch (error) {
-      console.error('Error submitting review:', error);
-      toast.error('Failed to submit review. You may have already reviewed this order.');
-    } finally {
-      setSubmitting(false);
+      console.error('Error voting on review:', error);
+      toast({
+        title: "Error",
+        description: "Failed to record your vote",
+        variant: "destructive",
+      });
     }
-  };
-
-  const renderStars = (rating: number, interactive = false, onRatingChange?: (rating: number) => void) => {
-    return (
-      <div className="flex items-center space-x-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            className={`h-5 w-5 ${
-              star <= rating
-                ? 'text-yellow-400 fill-yellow-400'
-                : 'text-gray-300'
-            } ${interactive ? 'cursor-pointer hover:text-yellow-400' : ''}`}
-            onClick={interactive && onRatingChange ? () => onRatingChange(star) : undefined}
-          />
-        ))}
-      </div>
-    );
-  };
-
-  const getAverageRating = () => {
-    if (reviews.length === 0) return "0";
-    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return (sum / reviews.length).toFixed(1);
-  };
-
-  const getRatingDistribution = () => {
-    const distribution: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    reviews.forEach(review => {
-      if (review.rating >= 1 && review.rating <= 5) {
-        distribution[review.rating]++;
-      }
-    });
-    return distribution;
   };
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="p-6 text-center">
-          <div className="text-muted-foreground">Loading reviews...</div>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        <div className="h-32 bg-muted animate-pulse rounded-lg" />
+        <div className="h-48 bg-muted animate-pulse rounded-lg" />
+      </div>
     );
   }
 
-  const distribution = getRatingDistribution();
-  const averageRating = getAverageRating();
-
   return (
     <div className="space-y-6">
-      {/* Review Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>Customer Reviews</span>
-            {canReview && (
-              <Button onClick={() => setShowForm(true)} disabled={showForm}>
-                Write Review
-              </Button>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {reviews.length === 0 ? (
-            <div className="text-center py-8">
-              <Star className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No Reviews Yet</h3>
-              <p className="text-muted-foreground">
-                Be the first to leave a review for this vendor!
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Rating Overview */}
-              <div className="space-y-4">
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">
-                    {averageRating}
-                  </div>
-                  <div className="flex items-center justify-center mb-2">
-                    {renderStars(Math.round(parseFloat(averageRating)))}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Based on {reviews.length} review{reviews.length !== 1 ? 's' : ''}
-                  </p>
-                </div>
-              </div>
-
-              {/* Rating Distribution */}
-              <div className="space-y-2">
-                {[5, 4, 3, 2, 1].map((rating) => (
-                  <div key={rating} className="flex items-center space-x-2">
-                    <span className="text-sm w-8">{rating}</span>
-                    <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                    <div className="flex-1 bg-muted rounded-full h-2">
-                      <div
-                        className="bg-primary h-2 rounded-full"
-                        style={{
-                          width: reviews.length > 0 
-                            ? `${(distribution[rating as keyof typeof distribution] / reviews.length) * 100}%`
-                            : '0%'
-                        }}
-                      />
-                    </div>
-                    <span className="text-sm text-muted-foreground w-8">
-                      {distribution[rating as keyof typeof distribution]}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Write Review Form */}
-      {showForm && canReview && (
+      {/* Rating Summary */}
+      {showSummary && vendorRating && (
         <Card>
           <CardHeader>
-            <CardTitle>Write a Review</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Vendor Rating Summary
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmitReview} className="space-y-4">
-              <div>
-                <Label>Rating</Label>
-                <div className="mt-2">
-                  {renderStars(reviewForm.rating, true, (rating) =>
-                    setReviewForm({ ...reviewForm, rating })
-                  )}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Overall Rating */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">
+                    {vendorRating.average_overall_rating.toFixed(1)}
+                  </div>
+                  <StarRating rating={Math.round(vendorRating.average_overall_rating)} size="lg" />
+                  <div className="text-sm text-muted-foreground mt-2">
+                    Based on {vendorRating.total_reviews} reviews
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <div className="text-lg font-semibold">
+                      {vendorRating.average_product_rating.toFixed(1)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Product Quality</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold">
+                      {vendorRating.average_communication_rating.toFixed(1)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Communication</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold">
+                      {vendorRating.average_shipping_rating.toFixed(1)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Shipping Speed</div>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground mb-1">
+                    {vendorRating.recommendation_percentage.toFixed(0)}% of buyers recommend this vendor
+                  </div>
+                  <Progress value={vendorRating.recommendation_percentage} className="h-2" />
                 </div>
               </div>
-
+              
+              {/* Rating Breakdown */}
               <div>
-                <Label htmlFor="comment">Comment (Optional)</Label>
-                <Textarea
-                  id="comment"
-                  placeholder="Share your experience with this vendor..."
-                  value={reviewForm.comment}
-                  onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-                  rows={4}
-                  className="mt-1"
-                />
+                <h4 className="font-medium mb-3">Rating Breakdown</h4>
+                <RatingBreakdown vendorRating={vendorRating} />
               </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="anonymous"
-                  checked={reviewForm.is_anonymous}
-                  onCheckedChange={(checked) =>
-                    setReviewForm({ ...reviewForm, is_anonymous: checked })
-                  }
-                />
-                <Label htmlFor="anonymous" className="text-sm">
-                  Post anonymously
-                </Label>
-              </div>
-
-              <div className="flex space-x-2">
-                <Button type="submit" disabled={submitting}>
-                  {submitting ? 'Submitting...' : 'Submit Review'}
-                </Button>
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
-                  Cancel
-                </Button>
-              </div>
-            </form>
+            </div>
           </CardContent>
         </Card>
       )}
 
       {/* Reviews List */}
-      {reviews.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">All Reviews</h3>
-          {reviews.map((review) => (
-            <Card key={review.id}>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <User className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <div className="font-medium">
-                        {review.is_anonymous
-                          ? 'Anonymous User'
-                          : review.profiles?.display_name || 'User'}
-                      </div>
-                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
-                        <span>{new Date(review.created_at).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {renderStars(review.rating)}
-                    <Badge variant="outline">{review.rating}/5</Badge>
-                  </div>
-                </div>
-
-                {review.comment && (
-                  <div className="mt-3">
-                    <p className="text-sm leading-relaxed">{review.comment}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">
+          Customer Reviews ({reviews.length})
+        </h3>
+        
+        {reviews.length === 0 ? (
+          <Card>
+            <CardContent className="text-center py-8">
+              <Star className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <p className="text-muted-foreground">No reviews yet</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Be the first to leave a review!
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div>
+            {reviews.map((review) => (
+              <ReviewCard
+                key={review.id}
+                review={review}
+                onHelpfulVote={handleHelpfulVote}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
-};
-
-export default ReviewSystem;
+}

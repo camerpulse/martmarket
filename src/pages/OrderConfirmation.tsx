@@ -4,7 +4,7 @@ import { ArrowLeft, Package, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PaymentStatus } from "@/components/PaymentStatus";
-import ReviewSystem from "@/components/ReviewSystem";
+import { ReviewSystem } from "@/components/ReviewSystem";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -203,9 +203,6 @@ const OrderConfirmation = () => {
           <div className="mt-8">
             <ReviewSystem 
               vendorId={order.vendor_id}
-              orderId={order.id}
-              canReview={true}
-              showWriteReview={false}
             />
           </div>
         )}

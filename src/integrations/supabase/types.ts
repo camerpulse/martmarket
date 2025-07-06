@@ -932,6 +932,53 @@ export type Database = {
           },
         ]
       }
+      product_ratings: {
+        Row: {
+          average_rating: number | null
+          five_star_count: number | null
+          four_star_count: number | null
+          id: string
+          one_star_count: number | null
+          product_id: string
+          three_star_count: number | null
+          total_reviews: number | null
+          two_star_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          average_rating?: number | null
+          five_star_count?: number | null
+          four_star_count?: number | null
+          id?: string
+          one_star_count?: number | null
+          product_id: string
+          three_star_count?: number | null
+          total_reviews?: number | null
+          two_star_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          average_rating?: number | null
+          five_star_count?: number | null
+          four_star_count?: number | null
+          id?: string
+          one_star_count?: number | null
+          product_id?: string
+          three_star_count?: number | null
+          total_reviews?: number | null
+          two_star_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_ratings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category_id: string | null
@@ -1034,36 +1081,98 @@ export type Database = {
         }
         Relationships: []
       }
+      review_helpfulness: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_helpful: boolean
+          review_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_helpful: boolean
+          review_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_helpful?: boolean
+          review_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_helpfulness_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           comment: string | null
+          communication_rating: number | null
           created_at: string
+          helpful_votes: number | null
           id: string
           is_anonymous: boolean | null
           order_id: string
+          overall_rating: number | null
+          product_rating: number | null
           rating: number
+          review_images: string[] | null
+          review_status: string | null
+          review_title: string | null
           reviewer_id: string
+          shipping_rating: number | null
           vendor_id: string
+          verified_purchase: boolean | null
+          would_recommend: boolean | null
         }
         Insert: {
           comment?: string | null
+          communication_rating?: number | null
           created_at?: string
+          helpful_votes?: number | null
           id?: string
           is_anonymous?: boolean | null
           order_id: string
+          overall_rating?: number | null
+          product_rating?: number | null
           rating: number
+          review_images?: string[] | null
+          review_status?: string | null
+          review_title?: string | null
           reviewer_id: string
+          shipping_rating?: number | null
           vendor_id: string
+          verified_purchase?: boolean | null
+          would_recommend?: boolean | null
         }
         Update: {
           comment?: string | null
+          communication_rating?: number | null
           created_at?: string
+          helpful_votes?: number | null
           id?: string
           is_anonymous?: boolean | null
           order_id?: string
+          overall_rating?: number | null
+          product_rating?: number | null
           rating?: number
+          review_images?: string[] | null
+          review_status?: string | null
+          review_title?: string | null
           reviewer_id?: string
+          shipping_rating?: number | null
           vendor_id?: string
+          verified_purchase?: boolean | null
+          would_recommend?: boolean | null
         }
         Relationships: [
           {
@@ -1492,6 +1601,57 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      vendor_ratings: {
+        Row: {
+          average_communication_rating: number | null
+          average_overall_rating: number | null
+          average_product_rating: number | null
+          average_shipping_rating: number | null
+          five_star_count: number | null
+          four_star_count: number | null
+          id: string
+          one_star_count: number | null
+          recommendation_percentage: number | null
+          three_star_count: number | null
+          total_reviews: number | null
+          two_star_count: number | null
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          average_communication_rating?: number | null
+          average_overall_rating?: number | null
+          average_product_rating?: number | null
+          average_shipping_rating?: number | null
+          five_star_count?: number | null
+          four_star_count?: number | null
+          id?: string
+          one_star_count?: number | null
+          recommendation_percentage?: number | null
+          three_star_count?: number | null
+          total_reviews?: number | null
+          two_star_count?: number | null
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          average_communication_rating?: number | null
+          average_overall_rating?: number | null
+          average_product_rating?: number | null
+          average_shipping_rating?: number | null
+          five_star_count?: number | null
+          four_star_count?: number | null
+          id?: string
+          one_star_count?: number | null
+          recommendation_percentage?: number | null
+          three_star_count?: number | null
+          total_reviews?: number | null
+          two_star_count?: number | null
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: []
       }
       wallet_balances: {
         Row: {
