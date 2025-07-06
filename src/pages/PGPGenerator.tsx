@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 // SEO will be handled with standard meta tags for now
 
-const OpesPGP = () => {
+const PGPGenerator = () => {
   const { user } = useAuth();
   const { 
     loading, 
@@ -864,4 +864,4 @@ const OpesPGP = () => {
   );
 };
 
-export default OpesPGP;
+export default PGPGenerator;

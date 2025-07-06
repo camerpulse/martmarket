@@ -34,7 +34,14 @@ export const usePGP = () => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(`Function call failed: ${error.message}`);
+      }
+
+      if (!data) {
+        throw new Error('No data returned from PGP function');
+      }
 
       return {
         publicKey: data.public_key,

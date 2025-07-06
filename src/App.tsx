@@ -28,7 +28,7 @@ import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import VendorProfile from "./pages/VendorProfile";
 import OrderTracking from "./pages/OrderTracking";
-import OpesPGP from "./pages/OpesPGP";
+import PGPGenerator from "./pages/PGPGenerator";
 import Cart from "./pages/Cart";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
@@ -69,7 +69,7 @@ const App = () => (
             <Route path="/product/:productId" element={<ProductDetail />} />
             <Route path="/vendor/:vendorId" element={<VendorProfile />} />
             <Route path="/track-order" element={<OrderTracking />} />
-            <Route path="/pgp" element={<OpesPGP />} />
+            <Route path="/pgp" element={<PGPGenerator />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
