@@ -16,8 +16,6 @@ interface User {
   display_name: string;
   user_type: string;
   created_at: string;
-  is_banned?: boolean;
-  ban_reason?: string;
 }
 
 interface UserManagementDialogProps {
@@ -32,7 +30,7 @@ export function UserManagementDialog({ user, open, onOpenChange, onUserUpdated }
   const [loading, setLoading] = useState(false);
   const [displayName, setDisplayName] = useState(user?.display_name || '');
   const [userType, setUserType] = useState(user?.user_type || 'buyer');
-  const [banReason, setBanReason] = useState(user?.ban_reason || '');
+  const [banReason, setBanReason] = useState('');
 
   const handleUpdateUser = async () => {
     if (!user) return;
@@ -80,33 +78,11 @@ export function UserManagementDialog({ user, open, onOpenChange, onUserUpdated }
 
     setLoading(true);
     try {
-      // Insert ban record (you may need to create a user_bans table)
-      const { error } = await supabase
-        .from('user_bans')
-        .insert({
-          user_id: user.user_id,
-          banned_by: (await supabase.auth.getUser()).data.user?.id,
-          ban_reason: banReason,
-          banned_at: new Date().toISOString()
-        });
-
-      if (error) {
-        // If table doesn't exist, you could update profiles with ban info
-        console.warn('user_bans table may not exist, updating profiles instead');
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            is_banned: true,
-            ban_reason: banReason
-          })
-          .eq('user_id', user.user_id);
-        
-        if (profileError) throw profileError;
-      }
-
+      // For now, we'll just show a message since the ban functionality requires database schema updates
       toast({
-        title: "User Banned",
-        description: `User ${user.display_name} has been banned.`,
+        title: "Ban Feature",
+        description: "Ban functionality requires database setup. Contact system administrator.",
+        variant: "destructive",
       });
       
       onUserUpdated();
@@ -128,20 +104,11 @@ export function UserManagementDialog({ user, open, onOpenChange, onUserUpdated }
 
     setLoading(true);
     try {
-      // Remove ban record or update profile
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          is_banned: false,
-          ban_reason: null
-        })
-        .eq('user_id', user.user_id);
-
-      if (error) throw error;
-
+      // For now, we'll just show a message since the unban functionality requires database schema updates
       toast({
-        title: "User Unbanned",
-        description: `User ${user.display_name} has been unbanned.`,
+        title: "Unban Feature", 
+        description: "Unban functionality requires database setup. Contact system administrator.",
+        variant: "destructive",
       });
       
       onUserUpdated();
@@ -180,17 +147,10 @@ export function UserManagementDialog({ user, open, onOpenChange, onUserUpdated }
               <p className="font-medium">Account Status</p>
               <p className="text-sm text-muted-foreground">Current user status</p>
             </div>
-            <Badge variant={user.is_banned ? "destructive" : "default"}>
-              {user.is_banned ? "Banned" : "Active"}
+            <Badge variant="default">
+              Active
             </Badge>
           </div>
-
-          {user.is_banned && user.ban_reason && (
-            <div className="p-3 bg-red-50 dark:bg-red-950/20 rounded-lg">
-              <p className="text-sm font-medium text-red-700 dark:text-red-300">Ban Reason:</p>
-              <p className="text-sm text-red-600 dark:text-red-400">{user.ban_reason}</p>
-            </div>
-          )}
 
           {/* Edit User Details */}
           <div className="space-y-3">
@@ -218,19 +178,17 @@ export function UserManagementDialog({ user, open, onOpenChange, onUserUpdated }
               </Select>
             </div>
 
-            {/* Ban Reason Input (for banning) */}
-            {!user.is_banned && (
-              <div>
-                <Label htmlFor="banReason">Ban Reason (optional)</Label>
-                <Textarea
-                  id="banReason"
-                  value={banReason}
-                  onChange={(e) => setBanReason(e.target.value)}
-                  placeholder="Reason for banning this user..."
-                  rows={3}
-                />
-              </div>
-            )}
+            {/* Ban Reason Input */}
+            <div>
+              <Label htmlFor="banReason">Ban Reason (optional)</Label>
+              <Textarea
+                id="banReason"
+                value={banReason}
+                onChange={(e) => setBanReason(e.target.value)}
+                placeholder="Reason for banning this user..."
+                rows={3}
+              />
+            </div>
           </div>
         </div>
 
@@ -246,27 +204,15 @@ export function UserManagementDialog({ user, open, onOpenChange, onUserUpdated }
               Update
             </Button>
             
-            {user.is_banned ? (
-              <Button
-                variant="outline"
-                onClick={handleUnbanUser}
-                disabled={loading}
-                className="flex-1 text-green-600 hover:bg-green-50"
-              >
-                <UserX className="h-4 w-4 mr-2" />
-                Unban
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                onClick={handleBanUser}
-                disabled={loading || !banReason.trim()}
-                className="flex-1 text-red-600 hover:bg-red-50"
-              >
-                <Ban className="h-4 w-4 mr-2" />
-                Ban User
-              </Button>
-            )}
+            <Button
+              variant="outline"
+              onClick={handleBanUser}
+              disabled={loading || !banReason.trim()}
+              className="flex-1 text-red-600 hover:bg-red-50"
+            >
+              <Ban className="h-4 w-4 mr-2" />
+              Ban User
+            </Button>
           </div>
           
           <Button
