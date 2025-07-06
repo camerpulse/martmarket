@@ -4,6 +4,7 @@ import { ArrowLeft, Package, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PaymentStatus from "@/components/PaymentStatus";
+import ReviewSystem from "@/components/ReviewSystem";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -15,6 +16,7 @@ interface Order {
   quantity: number;
   created_at: string;
   shipping_address: string | null;
+  vendor_id: string;
   products: {
     title: string;
     description: string;
@@ -197,6 +199,18 @@ const OrderConfirmation = () => {
             />
           </div>
         </div>
+
+        {/* Review Section - Show after order is completed */}
+        {(order.status === 'completed' || order.status === 'paid') && (
+          <div className="mt-8">
+            <ReviewSystem 
+              vendorId={order.vendor_id}
+              orderId={order.id}
+              canReview={true}
+              showWriteReview={false}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
