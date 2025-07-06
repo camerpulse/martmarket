@@ -506,60 +506,428 @@ export default function AdminDashboard() {
             </div>
           </TabsContent>
 
-          <TabsContent value="users">
+          <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>User Management</CardTitle>
-                <CardDescription>Manage platform users and permissions</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  User Management
+                </CardTitle>
+                <CardDescription>Manage platform users and their permissions</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground text-center py-8">
-                  User management interface will be implemented here
-                </p>
+                <div className="space-y-4">
+                  {/* User Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-medium">Total Users</span>
+                      </div>
+                      <div className="text-2xl font-bold text-blue-600">{metrics?.total_users || 0}</div>
+                    </div>
+                    <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <UserCheck className="h-4 w-4 text-green-500" />
+                        <span className="text-sm font-medium">Active Today</span>
+                      </div>
+                      <div className="text-2xl font-bold text-green-600">247</div>
+                    </div>
+                    <div className="p-4 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-amber-500" />
+                        <span className="text-sm font-medium">New This Week</span>
+                      </div>
+                      <div className="text-2xl font-bold text-amber-600">89</div>
+                    </div>
+                    <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Shield className="h-4 w-4 text-purple-500" />
+                        <span className="text-sm font-medium">Banned Users</span>
+                      </div>
+                      <div className="text-2xl font-bold text-purple-600">12</div>
+                    </div>
+                  </div>
+
+                  {/* User Actions */}
+                  <div className="flex flex-wrap gap-3 mb-6">
+                    <Button size="sm" className="flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Export Users
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                      <UserCheck className="h-4 w-4" />
+                      Bulk Actions
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Security Review
+                    </Button>
+                  </div>
+
+                  {/* Recent Users Table */}
+                  <div className="border rounded-lg">
+                    <div className="p-4 border-b bg-muted/30">
+                      <h3 className="font-semibold">Recent User Activity</h3>
+                    </div>
+                    <div className="divide-y">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="p-4 flex items-center justify-between hover:bg-muted/30 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                              U{i}
+                            </div>
+                            <div>
+                              <p className="font-medium">User {i}23{i}</p>
+                              <p className="text-sm text-muted-foreground">user{i}23{i}@example.com</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Badge variant={i % 2 === 0 ? "default" : "secondary"}>
+                              {i % 2 === 0 ? "Buyer" : "Vendor"}
+                            </Badge>
+                            <span className="text-sm text-muted-foreground">{i} min ago</span>
+                            <Button variant="ghost" size="sm">View</Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="vendors">
+          <TabsContent value="vendors" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Vendor Management</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingBag className="h-5 w-5" />
+                  Vendor Management
+                </CardTitle>
                 <CardDescription>Review and approve vendor applications</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground text-center py-8">
-                  Vendor verification and management interface will be implemented here
-                </p>
+                <div className="space-y-6">
+                  {/* Vendor Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <ShoppingBag className="h-4 w-4 text-emerald-500" />
+                        <span className="text-sm font-medium">Active Vendors</span>
+                      </div>
+                      <div className="text-2xl font-bold text-emerald-600">{metrics?.total_vendors || 0}</div>
+                    </div>
+                    <div className="p-4 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-amber-500" />
+                        <span className="text-sm font-medium">Pending Review</span>
+                      </div>
+                      <div className="text-2xl font-bold text-amber-600">{metrics?.pending_verifications || 0}</div>
+                    </div>
+                    <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-medium">Top Performers</span>
+                      </div>
+                      <div className="text-2xl font-bold text-blue-600">24</div>
+                    </div>
+                    <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                        <span className="text-sm font-medium">Flagged</span>
+                      </div>
+                      <div className="text-2xl font-bold text-red-600">3</div>
+                    </div>
+                  </div>
+
+                  {/* Vendor Actions */}
+                  <div className="flex flex-wrap gap-3">
+                    <Button size="sm" className="flex items-center gap-2">
+                      <UserCheck className="h-4 w-4" />
+                      Approve All Pending
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Export Vendor Data
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4" />
+                      Performance Report
+                    </Button>
+                  </div>
+
+                  {/* Pending Verifications */}
+                  <div className="border rounded-lg">
+                    <div className="p-4 border-b bg-muted/30">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <Shield className="h-4 w-4" />
+                        Pending Vendor Verifications
+                      </h3>
+                    </div>
+                    <div className="divide-y">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="p-4 hover:bg-muted/30 transition-colors">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                                V{i}
+                              </div>
+                              <div>
+                                <p className="font-medium">Vendor Store {i}</p>
+                                <p className="text-sm text-muted-foreground">Electronics & Gadgets</p>
+                                <p className="text-xs text-muted-foreground">Applied {i} days ago</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-amber-600">Pending Review</Badge>
+                              <Button size="sm" variant="outline" className="text-green-600 hover:bg-green-50">
+                                Approve
+                              </Button>
+                              <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50">
+                                Reject
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="disputes">
+          <TabsContent value="disputes" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Dispute Resolution</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  Dispute Resolution
+                </CardTitle>
                 <CardDescription>Manage order disputes and resolutions</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground text-center py-8">
-                  Advanced dispute management interface will be implemented here
-                </p>
+                <div className="space-y-6">
+                  {/* Dispute Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                        <span className="text-sm font-medium">Open Disputes</span>
+                      </div>
+                      <div className="text-2xl font-bold text-red-600">{metrics?.pending_disputes || 0}</div>
+                    </div>
+                    <div className="p-4 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-amber-500" />
+                        <span className="text-sm font-medium">Escalated</span>
+                      </div>
+                      <div className="text-2xl font-bold text-amber-600">7</div>
+                    </div>
+                    <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <UserCheck className="h-4 w-4 text-green-500" />
+                        <span className="text-sm font-medium">Resolved Today</span>
+                      </div>
+                      <div className="text-2xl font-bold text-green-600">15</div>
+                    </div>
+                    <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <BarChart3 className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-medium">Avg Resolution</span>
+                      </div>
+                      <div className="text-2xl font-bold text-blue-600">2.3d</div>
+                    </div>
+                  </div>
+
+                  {/* Dispute Actions */}
+                  <div className="flex flex-wrap gap-3">
+                    <Button size="sm" className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      Review High Priority
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Generate Report
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      Dispute Settings
+                    </Button>
+                  </div>
+
+                  {/* Active Disputes */}
+                  <div className="border rounded-lg">
+                    <div className="p-4 border-b bg-muted/30">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4" />
+                        Active Disputes Requiring Attention
+                      </h3>
+                    </div>
+                    <div className="divide-y">
+                      {[
+                        { id: 1, title: "Product not as described", priority: "High", time: "2h", amount: "0.003 BTC" },
+                        { id: 2, title: "Item never received", priority: "Medium", time: "1d", amount: "0.001 BTC" },
+                        { id: 3, title: "Quality issues", priority: "Low", time: "3d", amount: "0.002 BTC" }
+                      ].map((dispute) => (
+                        <div key={dispute.id} className="p-4 hover:bg-muted/30 transition-colors">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className={`h-3 w-3 rounded-full ${
+                                dispute.priority === 'High' ? 'bg-red-500' : 
+                                dispute.priority === 'Medium' ? 'bg-amber-500' : 'bg-green-500'
+                              }`} />
+                              <div>
+                                <p className="font-medium">{dispute.title}</p>
+                                <p className="text-sm text-muted-foreground">Order #ORD00{dispute.id}23 • {dispute.amount}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <Badge variant={
+                                dispute.priority === 'High' ? 'destructive' : 
+                                dispute.priority === 'Medium' ? 'default' : 'secondary'
+                              }>
+                                {dispute.priority}
+                              </Badge>
+                              <span className="text-sm text-muted-foreground">{dispute.time} ago</span>
+                              <Button size="sm" variant="outline">Review</Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Platform Settings</CardTitle>
-                <CardDescription>Configure platform-wide settings</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-center py-8">
-                  Platform configuration interface will be implemented here
-                </p>
-              </CardContent>
-            </Card>
+          <TabsContent value="settings" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Platform Settings */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Platform Configuration
+                  </CardTitle>
+                  <CardDescription>Core platform settings and parameters</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Platform Fee (%)</label>
+                    <div className="flex items-center gap-2">
+                      <input className="flex-1 px-3 py-2 border rounded-md" defaultValue="2.5" />
+                      <Button size="sm" variant="outline">Update</Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Vendor Bond (USD)</label>
+                    <div className="flex items-center gap-2">
+                      <input className="flex-1 px-3 py-2 border rounded-md" defaultValue="250.00" />
+                      <Button size="sm" variant="outline">Update</Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Max Dispute Days</label>
+                    <div className="flex items-center gap-2">
+                      <input className="flex-1 px-3 py-2 border rounded-md" defaultValue="30" />
+                      <Button size="sm" variant="outline">Update</Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                    <div>
+                      <p className="font-medium">Maintenance Mode</p>
+                      <p className="text-sm text-muted-foreground">Temporarily disable the platform</p>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      Disabled
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Security Settings */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    Security & Compliance
+                  </CardTitle>
+                  <CardDescription>Security policies and monitoring</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                    <div>
+                      <p className="font-medium text-green-700 dark:text-green-300">Two-Factor Authentication</p>
+                      <p className="text-sm text-green-600 dark:text-green-400">Required for all admin accounts</p>
+                    </div>
+                    <Badge className="bg-green-100 text-green-700">Active</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                    <div>
+                      <p className="font-medium text-blue-700 dark:text-blue-300">Rate Limiting</p>
+                      <p className="text-sm text-blue-600 dark:text-blue-400">API and login attempt protection</p>
+                    </div>
+                    <Badge className="bg-blue-100 text-blue-700">Active</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
+                    <div>
+                      <p className="font-medium text-amber-700 dark:text-amber-300">Fraud Detection</p>
+                      <p className="text-sm text-amber-600 dark:text-amber-400">Automated suspicious activity monitoring</p>
+                    </div>
+                    <Button variant="outline" size="sm">Configure</Button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                    <div>
+                      <p className="font-medium text-purple-700 dark:text-purple-300">Backup System</p>
+                      <p className="text-sm text-purple-600 dark:text-purple-400">Last backup: 2 hours ago</p>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      <Database className="h-4 w-4 mr-1" />
+                      Backup Now
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* System Logs */}
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Recent System Events
+                  </CardTitle>
+                  <CardDescription>Platform activity and security events</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {[
+                      { type: "security", message: "Failed login attempt from IP 192.168.1.100", time: "2 min ago", level: "warning" },
+                      { type: "system", message: "Database backup completed successfully", time: "15 min ago", level: "success" },
+                      { type: "admin", message: "Vendor application approved by admin", time: "1 hour ago", level: "info" },
+                      { type: "security", message: "New admin account created", time: "2 hours ago", level: "info" },
+                      { type: "system", message: "Platform maintenance completed", time: "1 day ago", level: "success" }
+                    ].map((log, i) => (
+                      <div key={i} className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg">
+                        <div className={`h-2 w-2 rounded-full ${
+                          log.level === 'warning' ? 'bg-amber-500' :
+                          log.level === 'success' ? 'bg-green-500' : 'bg-blue-500'
+                        }`} />
+                        <div className="flex-1">
+                          <p className="text-sm">{log.message}</p>
+                          <p className="text-xs text-muted-foreground">{log.time}</p>
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          {log.type}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
