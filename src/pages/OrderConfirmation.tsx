@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PaymentStatus } from "@/components/PaymentStatus";
 import { ReviewSystem } from "@/components/ReviewSystem";
+import BitcoinPayment from "@/components/BitcoinPayment";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -188,13 +189,21 @@ const OrderConfirmation = () => {
             </Card>
           </div>
 
-          {/* Payment Status */}
+          {/* Payment Status/Bitcoin Payment */}
           <div>
-            <PaymentStatus 
-              orderId={order.id}
-              buyerId={user.id}
-              vendorId={order.vendor_id}
-            />
+            {order.status === 'pending_payment' ? (
+              <BitcoinPayment 
+                purpose="order_payment"
+                amountUsd={order.total_btc * 45000} // Mock BTC to USD conversion
+                onPaymentComplete={() => window.location.reload()}
+              />
+            ) : (
+              <PaymentStatus 
+                orderId={order.id}
+                buyerId={user.id}
+                vendorId={order.vendor_id}
+              />
+            )}
           </div>
         </div>
 

@@ -68,57 +68,47 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
     setProcessing(true);
     
     try {
-      console.log('Starting purchase process...');
-      console.log('User:', user);
-      console.log('Product:', product);
-      console.log('Creating order with:', {
-        buyer_id: user.id,
-        vendor_id: product.vendor_id,
-        product_id: product.id,
-        quantity,
-        total_btc: total,
-        platform_fee_btc: platformFee,
-        status: 'pending'
-      });
-
-      // Create order with escrow
-      console.log('Attempting to create order...');
+      // Create order first
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
           buyer_id: user.id,
-          vendor_id: product.vendor_id, // Use actual vendor_id
+          vendor_id: product.vendor_id,
           product_id: product.id,
           quantity,
           total_btc: total,
           platform_fee_btc: platformFee,
           shipping_address: shippingAddress || null,
-          status: 'pending' // Use default status instead of 'pending_payment'
+          status: 'pending_payment'
         })
         .select()
         .single();
 
-      console.log('Order creation result:', { order, orderError });
       if (orderError) {
-        console.error('Order creation failed:', orderError);
         throw orderError;
       }
 
-      // MANUAL PAYMENT MODE - Skip Bitcoin integration for now
-      console.log('Using manual payment mode - skipping Bitcoin integration');
-      
-      // Update order status to simulate payment completion
-      await supabase
-        .from('orders')
-        .update({ 
-          status: 'paid',
-          payment_txid: `manual_${Date.now()}` // Mock transaction ID
-        })
-        .eq('id', order.id);
+      // Generate Bitcoin payment address
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke('generate-bitcoin-address', {
+        body: {
+          purpose: 'order_payment',
+          amount_usd: total * 45000, // Convert BTC to USD (mock rate)
+          user_id: user.id,
+          order_id: order.id
+        }
+      });
 
-      toast.success("Order created successfully! (Manual payment mode)");
+      if (paymentError) {
+        throw paymentError;
+      }
+
+      if (!paymentData.success) {
+        throw new Error(paymentData.error || 'Failed to generate payment address');
+      }
+
+      toast.success("Order created! Complete payment to proceed.");
       
-      // Close dialog and redirect
+      // Close dialog and redirect to order page
       onOpenChange(false);
       setTimeout(() => {
         window.location.href = `/order/${order.id}`;
