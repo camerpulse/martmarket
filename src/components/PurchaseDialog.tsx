@@ -104,38 +104,25 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
         throw orderError;
       }
 
-      // Generate Bitcoin address for escrow payment
-      console.log('Generating Bitcoin address...');
-      const { data: addressData, error: addressError } = await supabase.functions.invoke(
-        'generate-bitcoin-address',
-        {
-          body: {
-            purpose: 'order_payment',
-            amount_usd: total * 100000 // Convert BTC to rough USD estimate for demo
-          }
-        }
-      );
-
-      if (addressError) throw addressError;
-
-      // Create payment request
-      const { error: paymentError } = await supabase
-        .from('payment_requests')
-        .insert({
-          user_id: user.id,
-          order_id: order.id,
-          bitcoin_address_id: addressData.address_id,
-          amount_satoshis: Math.round(total * 100000000), // Convert BTC to satoshis
-          payment_type: 'escrow',
-          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
-        });
-
-      if (paymentError) throw paymentError;
-
-      toast.success("Order created! Redirecting to payment...");
+      // MANUAL PAYMENT MODE - Skip Bitcoin integration for now
+      console.log('Using manual payment mode - skipping Bitcoin integration');
       
-      // Redirect to order confirmation page
-      window.location.href = `/order/${order.id}`;
+      // Update order status to simulate payment completion
+      await supabase
+        .from('orders')
+        .update({ 
+          status: 'paid',
+          payment_txid: `manual_${Date.now()}` // Mock transaction ID
+        })
+        .eq('id', order.id);
+
+      toast.success("Order created successfully! (Manual payment mode)");
+      
+      // Close dialog and redirect
+      onOpenChange(false);
+      setTimeout(() => {
+        window.location.href = `/order/${order.id}`;
+      }, 1000);
       
     } catch (error) {
       console.error('Purchase error:', error);
