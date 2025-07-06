@@ -25,6 +25,8 @@ export const usePGP = () => {
   const generateKeyPair = useCallback(async (name: string, email: string, passphrase?: string) => {
     setLoading(true);
     try {
+      console.log('Calling PGP function with:', { action: 'generate_keypair', name, email });
+      
       const { data, error } = await supabase.functions.invoke('pgp-encryption', {
         body: {
           action: 'generate_keypair',
@@ -34,24 +36,28 @@ export const usePGP = () => {
         }
       });
 
+      console.log('PGP function response:', { data, error });
+
       if (error) {
         console.error('Supabase function error:', error);
-        throw new Error(`Function call failed: ${error.message}`);
+        throw new Error(`Function failed: ${error.message || JSON.stringify(error)}`);
       }
 
-      if (!data) {
-        throw new Error('No data returned from PGP function');
+      if (!data || !data.success) {
+        throw new Error(data?.error || 'PGP function returned no data');
       }
 
+      const fingerprint = await getKeyFingerprint(data.public_key);
+      
       return {
         publicKey: data.public_key,
         privateKey: data.private_key,
         keyType: data.key_type,
-        fingerprint: await getKeyFingerprint(data.public_key)
+        fingerprint
       };
     } catch (error: any) {
       console.error('Error generating PGP key pair:', error);
-      const errorMessage = error?.message || error?.details || 'Failed to generate PGP key pair';
+      const errorMessage = error?.message || 'Failed to generate PGP key pair';
       toast.error(`PGP Generation Error: ${errorMessage}`);
       throw error;
     } finally {
