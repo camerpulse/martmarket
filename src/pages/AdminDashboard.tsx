@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { 
   Users, 
   ShoppingBag, 
@@ -30,7 +34,12 @@ import {
   BarChart2,
   Download,
   CheckCircle,
-  XCircle
+  XCircle,
+  Edit,
+  Trash2,
+  Ban,
+  UserX,
+  Mail
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -50,6 +59,26 @@ interface DashboardMetrics {
 interface AdminProfile {
   admin_role: string;
   is_active: boolean;
+}
+
+interface User {
+  id: string;
+  user_id: string;
+  display_name: string;
+  user_type: string;
+  created_at: string;
+  is_banned?: boolean;
+  ban_reason?: string;
+}
+
+interface Vendor {
+  id: string;
+  user_id: string;
+  business_name: string;
+  status: string;
+  created_at: string;
+  is_banned?: boolean;
+  ban_reason?: string;
 }
 
 const MetricCard = ({ 
@@ -116,6 +145,21 @@ export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Data state
+  const [users, setUsers] = useState<User[]>([]);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [loadingVendors, setLoadingVendors] = useState(false);
+  
+  // Dialog state
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+  const [banReason, setBanReason] = useState('');
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [userDialogOpen, setUserDialogOpen] = useState(false);
+  const [banDialogOpen, setBanDialogOpen] = useState(false);
+  const [vendorActionDialogOpen, setVendorActionDialogOpen] = useState(false);
   
   // Settings state
   const [platformFee, setPlatformFee] = useState("2.5");
