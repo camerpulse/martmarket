@@ -143,7 +143,6 @@ serve(async (req) => {
           recent_events: recentEvents,
           active_sessions: activeSessions?.length || 0,
           mfa_enabled: mfaSettings?.is_totp_enabled || false,
-          pgp_enabled: mfaSettings?.is_pgp_enabled || false,
           high_risk_activity: recentEvents?.some(e => e.threat_score > 6.0) || false,
           recommendations: generateSecurityRecommendations(mfaSettings, securitySettings, recentEvents)
         }),
@@ -298,7 +297,6 @@ function calculateSecurityScore(mfaSettings: any, securitySettings: any, recentE
 
   // MFA bonus
   if (mfaSettings?.is_totp_enabled) score += 20;
-  if (mfaSettings?.is_pgp_enabled) score += 15;
   if (mfaSettings?.is_sms_enabled) score += 10;
 
   // Security settings bonus
@@ -321,10 +319,6 @@ function generateSecurityRecommendations(mfaSettings: any, securitySettings: any
 
   if (!mfaSettings?.is_totp_enabled) {
     recommendations.push('Enable two-factor authentication for enhanced security');
-  }
-
-  if (!mfaSettings?.is_pgp_enabled) {
-    recommendations.push('Set up PGP encryption for secure communications');
   }
 
   if (!securitySettings?.require_mfa_for_transactions) {

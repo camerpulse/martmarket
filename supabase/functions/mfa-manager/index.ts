@@ -43,7 +43,6 @@ serve(async (req) => {
       action, 
       totp_code, 
       backup_code, 
-      pgp_public_key,
       sms_phone 
     } = await req.json();
 
@@ -273,48 +272,6 @@ serve(async (req) => {
         }
       );
 
-    } else if (action === 'setup_pgp') {
-      if (!pgp_public_key) {
-        throw new Error('PGP public key required');
-      }
-
-      // Validate PGP key format (basic validation)
-      if (!pgp_public_key.includes('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
-        throw new Error('Invalid PGP public key format');
-      }
-
-      // Extract PGP fingerprint (simplified)
-      const fingerprint = extractPGPFingerprint(pgp_public_key);
-
-      // Store PGP settings
-      const { error: pgpError } = await supabaseAdmin
-        .from('mfa_settings')
-        .upsert({
-          user_id: user.id,
-          pgp_public_key: pgp_public_key,
-          pgp_fingerprint: fingerprint,
-          is_pgp_enabled: true
-        });
-
-      if (pgpError) throw pgpError;
-
-      await logSecurityEvent(supabaseAdmin, user.id, 'pgp_enabled', {
-        fingerprint: fingerprint
-      }, req);
-
-      return new Response(
-        JSON.stringify({
-          success: true,
-          pgp_enabled: true,
-          fingerprint: fingerprint,
-          message: 'PGP encryption has been successfully enabled'
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        }
-      );
-
     } else if (action === 'get_mfa_status') {
       // Get user's current MFA status
       const { data: mfaSettings, error: mfaError } = await supabaseAdmin
@@ -333,7 +290,6 @@ serve(async (req) => {
         JSON.stringify({
           success: true,
           totp_enabled: mfaSettings?.is_totp_enabled || false,
-          pgp_enabled: mfaSettings?.is_pgp_enabled || false,
           sms_enabled: mfaSettings?.is_sms_enabled || false,
           backup_codes_count: mfaSettings?.backup_codes?.length || 0,
           locked_until: mfaSettings?.locked_until,
@@ -406,13 +362,6 @@ function generateBackupCodes(): string[] {
   return codes;
 }
 
-function extractPGPFingerprint(pgpKey: string): string {
-  // Simplified fingerprint extraction
-  // In production, use a proper PGP library
-  const keyContent = pgpKey.replace(/[\r\n\s]/g, '');
-  const hash = keyContent.substr(50, 16); // Simplified
-  return hash.toUpperCase();
-}
 
 async function logSecurityEvent(supabase: any, userId: string, eventType: string, eventData: any, req: Request) {
   try {

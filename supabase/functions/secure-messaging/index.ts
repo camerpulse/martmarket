@@ -136,28 +136,8 @@ serve(async (req) => {
       // Determine recipient
       const recipient_id = thread.buyer_id === user.id ? thread.vendor_id : thread.buyer_id;
 
-      // Encrypt message if required
+      // Encrypt message if required (PGP removed)
       let finalContent = content;
-      if (encrypt && thread.is_encrypted) {
-        // In production, integrate with PGP encryption function
-        try {
-          const { data: encryptResult, error: encryptError } = await supabaseAdmin.functions.invoke('pgp-encryption', {
-            body: {
-              action: 'encrypt_message',
-              message: content,
-              recipient_id: recipient_id
-            }
-          });
-          
-          if (encryptError) {
-            console.warn('PGP encryption failed, sending plaintext:', encryptError);
-          } else if (encryptResult?.success) {
-            finalContent = encryptResult.encrypted_message;
-          }
-        } catch (error) {
-          console.warn('PGP encryption unavailable, sending plaintext:', error);
-        }
-      }
 
       // Insert message
       const { data: message, error: messageError } = await supabaseAdmin
