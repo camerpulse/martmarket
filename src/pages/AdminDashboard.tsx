@@ -44,6 +44,10 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { UserManagementDialog } from '@/components/admin/UserManagementDialog';
+import { VendorManagementDialog } from '@/components/admin/VendorManagementDialog';
+import { CategoryManagement } from '@/components/admin/CategoryManagement';
+import { TranslationManagement } from '@/components/admin/TranslationManagement';
 
 interface DashboardMetrics {
   total_users: number;
@@ -153,13 +157,12 @@ export default function AdminDashboard() {
   const [loadingVendors, setLoadingVendors] = useState(false);
   
   // Dialog state
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
-  const [banReason, setBanReason] = useState('');
-  const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [userDialogOpen, setUserDialogOpen] = useState(false);
-  const [banDialogOpen, setBanDialogOpen] = useState(false);
-  const [vendorActionDialogOpen, setVendorActionDialogOpen] = useState(false);
+  const [userManagementOpen, setUserManagementOpen] = useState(false);
+  const [vendorManagementOpen, setVendorManagementOpen] = useState(false);
+  const [categoriesManagementOpen, setCategoriesManagementOpen] = useState(false);
+  const [translationsManagementOpen, setTranslationsManagementOpen] = useState(false);
+  const [ordersManagementOpen, setOrdersManagementOpen] = useState(false);
+  const [disputesManagementOpen, setDisputesManagementOpen] = useState(false);
   
   // Settings state
   const [platformFee, setPlatformFee] = useState("2.5");
@@ -476,24 +479,131 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* Management Actions Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => setUserManagementOpen(true)}>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Users className="h-5 w-5 text-primary" />
+                User Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Manage all platform users, ban/unban accounts, and view user activity
+              </p>
+              <Button className="w-full">
+                <Users className="h-4 w-4 mr-2" />
+                Manage Users
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => setVendorManagementOpen(true)}>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <ShoppingBag className="h-5 w-5 text-primary" />
+                Vendor Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Approve/reject vendor applications, manage vendor profiles and settings
+              </p>
+              <Button className="w-full">
+                <ShoppingBag className="h-4 w-4 mr-2" />
+                Manage Vendors
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => setCategoriesManagementOpen(true)}>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <FileText className="h-5 w-5 text-primary" />
+                Categories
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Create, edit, and manage product categories and subcategories
+              </p>
+              <Button className="w-full">
+                <FileText className="h-4 w-4 mr-2" />
+                Manage Categories
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => setTranslationsManagementOpen(true)}>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Globe className="h-5 w-5 text-primary" />
+                Translations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Manage multi-language translations and localization settings
+              </p>
+              <Button className="w-full">
+                <Globe className="h-4 w-4 mr-2" />
+                Manage Translations
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => setOrdersManagementOpen(true)}>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <ShoppingCart className="h-5 w-5 text-primary" />
+                Orders
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                View and manage all platform orders, refunds, and transactions
+              </p>
+              <Button className="w-full">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Manage Orders
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer" onClick={() => setDisputesManagementOpen(true)}>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <AlertTriangle className="h-5 w-5 text-primary" />
+                Disputes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Resolve disputes, mediate between buyers and vendors
+              </p>
+              <Button className="w-full">
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                Manage Disputes
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Admin Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 h-12 bg-muted/50 p-1">
+          <TabsList className="grid w-full grid-cols-4 h-12 bg-muted/50 p-1">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-background">
               <BarChart3 className="h-4 w-4" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2 data-[state=active]:bg-background">
-              <Users className="h-4 w-4" />
-              Users
+            <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-background">
+              <Activity className="h-4 w-4" />
+              Analytics
             </TabsTrigger>
-            <TabsTrigger value="vendors" className="flex items-center gap-2 data-[state=active]:bg-background">
-              <ShoppingBag className="h-4 w-4" />
-              Vendors
-            </TabsTrigger>
-            <TabsTrigger value="disputes" className="flex items-center gap-2 data-[state=active]:bg-background">
-              <AlertTriangle className="h-4 w-4" />
-              Disputes
+            <TabsTrigger value="security" className="flex items-center gap-2 data-[state=active]:bg-background">
+              <Shield className="h-4 w-4" />
+              Security
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2 data-[state=active]:bg-background">
               <Settings className="h-4 w-4" />
