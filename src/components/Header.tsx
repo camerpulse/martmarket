@@ -7,6 +7,7 @@ import { useVendorStatus } from "@/hooks/useVendorStatus";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageSelector from "./LanguageSelector";
+import BitcoinPrice from "./BitcoinPrice";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
@@ -39,6 +40,7 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center space-x-2">
+          <BitcoinPrice />
           <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
             <Link to="/forum">
               <Users className="h-4 w-4 mr-2" />
@@ -149,6 +151,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         <div className="flex items-center space-x-2 lg:hidden">
+          <BitcoinPrice />
           <LanguageSelector />
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
