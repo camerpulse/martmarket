@@ -1406,9 +1406,13 @@ export type Database = {
       }
       profiles: {
         Row: {
+          ban_reason: string | null
+          banned_at: string | null
+          banned_by: string | null
           created_at: string
           display_name: string | null
           id: string
+          is_banned: boolean | null
           pgp_public_key: string | null
           two_factor_enabled: boolean | null
           updated_at: string
@@ -1416,9 +1420,13 @@ export type Database = {
           user_type: string
         }
         Insert: {
+          ban_reason?: string | null
+          banned_at?: string | null
+          banned_by?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          is_banned?: boolean | null
           pgp_public_key?: string | null
           two_factor_enabled?: boolean | null
           updated_at?: string
@@ -1426,9 +1434,13 @@ export type Database = {
           user_type: string
         }
         Update: {
+          ban_reason?: string | null
+          banned_at?: string | null
+          banned_by?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          is_banned?: boolean | null
           pgp_public_key?: string | null
           two_factor_enabled?: boolean | null
           updated_at?: string
@@ -1884,6 +1896,45 @@ export type Database = {
           },
         ]
       }
+      user_bans: {
+        Row: {
+          ban_reason: string
+          banned_at: string | null
+          banned_by: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          unbanned_at: string | null
+          unbanned_by: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ban_reason: string
+          banned_at?: string | null
+          banned_by: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          unbanned_at?: string | null
+          unbanned_by?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ban_reason?: string
+          banned_at?: string | null
+          banned_by?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          unbanned_at?: string | null
+          unbanned_by?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_sessions: {
         Row: {
           created_at: string
@@ -1976,11 +2027,15 @@ export type Database = {
       }
       vendor_profiles: {
         Row: {
+          ban_reason: string | null
+          banned_at: string | null
+          banned_by: string | null
           bitcoin_address: string | null
           created_at: string
           description: string | null
           dispute_count: number | null
           id: string
+          is_banned: boolean | null
           is_featured: boolean | null
           is_verified: boolean | null
           payout_threshold: number | null
@@ -1994,11 +2049,15 @@ export type Database = {
           wallet_balance: number | null
         }
         Insert: {
+          ban_reason?: string | null
+          banned_at?: string | null
+          banned_by?: string | null
           bitcoin_address?: string | null
           created_at?: string
           description?: string | null
           dispute_count?: number | null
           id?: string
+          is_banned?: boolean | null
           is_featured?: boolean | null
           is_verified?: boolean | null
           payout_threshold?: number | null
@@ -2012,11 +2071,15 @@ export type Database = {
           wallet_balance?: number | null
         }
         Update: {
+          ban_reason?: string | null
+          banned_at?: string | null
+          banned_by?: string | null
           bitcoin_address?: string | null
           created_at?: string
           description?: string | null
           dispute_count?: number | null
           id?: string
+          is_banned?: boolean | null
           is_featured?: boolean | null
           is_verified?: boolean | null
           payout_threshold?: number | null
