@@ -33,6 +33,7 @@ interface SearchFilters {
   category: string;
   priceRange: string;
   sortBy: string;
+  vendorId?: string;
 }
 
 interface ProductGridProps {
@@ -52,6 +53,11 @@ const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
           .from('products')
           .select('*')
           .eq('is_active', true);
+
+        // Apply vendor filter (for vendor profile pages)
+        if (searchFilters?.vendorId) {
+          query = query.eq('vendor_id', searchFilters.vendorId);
+        }
 
         // Apply search filter
         if (searchFilters?.search) {

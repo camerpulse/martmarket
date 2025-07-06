@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import ProductGrid from "@/components/ProductGrid";
+import ShopHeader from "@/components/ShopHeader";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -86,6 +87,12 @@ const Shop = () => {
             Discover thousands of products from verified vendors in our secure marketplace
           </p>
         </div>
+
+        {/* Shop Header */}
+        <ShopHeader 
+          onSearchChange={handleSearchChange}
+          searchValue={searchFilters.search}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
           {/* Sidebar - 1 column */}

@@ -237,12 +237,12 @@ const ProductDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Product Images */}
           <div className="space-y-4">
-            <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
-              <div className="text-8xl">📦</div>
+            <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
+              <div className="text-6xl">📦</div>
             </div>
             <div className="grid grid-cols-4 gap-2">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="aspect-square bg-muted rounded flex items-center justify-center text-2xl">
+                <div key={i} className="aspect-square bg-muted rounded flex items-center justify-center text-xl">
                   📦
                 </div>
               ))}
@@ -257,7 +257,12 @@ const ProductDetail = () => {
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">by</span>
-                  <span className="font-medium">{product.vendor.store_name}</span>
+                  <Link 
+                    to={`/vendor/${product.vendor_id}`}
+                    className="font-medium hover:text-primary transition-colors underline decoration-dotted"
+                  >
+                    {product.vendor.store_name}
+                  </Link>
                   <TrustIndicator 
                     score={product.vendor.trust_score} 
                     isVerified={product.vendor.is_verified} 
