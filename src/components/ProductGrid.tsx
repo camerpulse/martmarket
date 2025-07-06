@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Bitcoin, Eye, ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -233,8 +234,8 @@ const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
         </div>
         
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-            Browse All Products
+          <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
+            <Link to="/shop">Browse All Products</Link>
           </Button>
         </div>
       </div>
