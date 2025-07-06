@@ -43,7 +43,8 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
     
     setLoading(true);
     try {
-      const { error } = await supabase
+      const supabaseClient = supabase as any;
+      const { error } = await supabaseClient
         .from('vendor_profiles')
         .update({
           business_name: businessName,
@@ -79,7 +80,8 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      const supabaseClient = supabase as any;
+      const { error } = await supabaseClient
         .from('vendor_profiles')
         .update({
           status: 'approved',
@@ -120,7 +122,8 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      const supabaseClient = supabase as any;
+      const { error } = await supabaseClient
         .from('vendor_profiles')
         .update({
           status: 'rejected',
@@ -163,8 +166,9 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
     setLoading(true);
     try {
       const currentUser = await supabase.auth.getUser();
+      const supabaseClient = supabase as any;
       
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('vendor_profiles')
         .update({
           is_banned: true,
@@ -178,7 +182,7 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
       if (error) throw error;
 
       // Also create a ban record
-      await supabase
+      await supabaseClient
         .from('user_bans')
         .insert({
           user_id: vendor.user_id,
@@ -210,7 +214,8 @@ export function VendorManagementDialog({ vendor, open, onOpenChange, onVendorUpd
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      const supabaseClient = supabase as any;
+      const { error } = await supabaseClient
         .from('vendor_profiles')
         .update({
           is_banned: false,
