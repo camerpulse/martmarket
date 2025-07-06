@@ -30,6 +30,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { LogDetailsDialog } from './LogDetailsDialog';
 import { ThreatMonitoringPanel } from './ThreatMonitoringPanel';
+import { AIEvolutionDashboard } from './AIEvolutionDashboard';
 
 interface AIConfig {
   id?: string;
@@ -452,10 +453,11 @@ export function HeavenlyFireAI() {
       </Card>
 
       <Tabs defaultValue="activity" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="activity">AI Activity</TabsTrigger>
           <TabsTrigger value="threats">Threat Monitor</TabsTrigger>
           <TabsTrigger value="fixes">Auto-Fix History</TabsTrigger>
+          <TabsTrigger value="evolution">AI Evolution</TabsTrigger>
           <TabsTrigger value="metrics">System Health</TabsTrigger>
         </TabsList>
 
@@ -572,6 +574,10 @@ export function HeavenlyFireAI() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="evolution">
+          <AIEvolutionDashboard />
         </TabsContent>
 
         <TabsContent value="metrics">
