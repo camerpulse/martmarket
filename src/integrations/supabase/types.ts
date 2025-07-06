@@ -9,6 +9,123 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bitcoin_addresses: {
+        Row: {
+          address: string
+          address_index: number
+          address_path: string
+          balance_satoshis: number | null
+          created_at: string
+          id: string
+          is_used: boolean | null
+          order_id: string | null
+          purpose: string
+          updated_at: string
+          user_id: string | null
+          vendor_bond_id: string | null
+        }
+        Insert: {
+          address: string
+          address_index: number
+          address_path: string
+          balance_satoshis?: number | null
+          created_at?: string
+          id?: string
+          is_used?: boolean | null
+          order_id?: string | null
+          purpose: string
+          updated_at?: string
+          user_id?: string | null
+          vendor_bond_id?: string | null
+        }
+        Update: {
+          address?: string
+          address_index?: number
+          address_path?: string
+          balance_satoshis?: number | null
+          created_at?: string
+          id?: string
+          is_used?: boolean | null
+          order_id?: string | null
+          purpose?: string
+          updated_at?: string
+          user_id?: string | null
+          vendor_bond_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bitcoin_addresses_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bitcoin_addresses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "bitcoin_addresses_vendor_bond_id_fkey"
+            columns: ["vendor_bond_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_bonds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bitcoin_transactions: {
+        Row: {
+          address_id: string
+          amount_satoshis: number
+          block_height: number | null
+          confirmations: number | null
+          confirmed_at: string | null
+          created_at: string
+          detected_at: string
+          id: string
+          is_incoming: boolean | null
+          processed: boolean | null
+          txid: string
+        }
+        Insert: {
+          address_id: string
+          amount_satoshis: number
+          block_height?: number | null
+          confirmations?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          detected_at?: string
+          id?: string
+          is_incoming?: boolean | null
+          processed?: boolean | null
+          txid: string
+        }
+        Update: {
+          address_id?: string
+          amount_satoshis?: number
+          block_height?: number | null
+          confirmations?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          detected_at?: string
+          id?: string
+          is_incoming?: boolean | null
+          processed?: boolean | null
+          txid?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bitcoin_transactions_address_id_fkey"
+            columns: ["address_id"]
+            isOneToOne: false
+            referencedRelation: "bitcoin_addresses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -164,6 +281,80 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      payment_requests: {
+        Row: {
+          amount_satoshis: number
+          amount_usd: number | null
+          bitcoin_address_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          order_id: string | null
+          paid_at: string | null
+          payment_type: string
+          status: string
+          user_id: string
+          vendor_bond_id: string | null
+        }
+        Insert: {
+          amount_satoshis: number
+          amount_usd?: number | null
+          bitcoin_address_id: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          order_id?: string | null
+          paid_at?: string | null
+          payment_type: string
+          status?: string
+          user_id: string
+          vendor_bond_id?: string | null
+        }
+        Update: {
+          amount_satoshis?: number
+          amount_usd?: number | null
+          bitcoin_address_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          order_id?: string | null
+          paid_at?: string | null
+          payment_type?: string
+          status?: string
+          user_id?: string
+          vendor_bond_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_requests_bitcoin_address_id_fkey"
+            columns: ["bitcoin_address_id"]
+            isOneToOne: false
+            referencedRelation: "bitcoin_addresses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "payment_requests_vendor_bond_id_fkey"
+            columns: ["vendor_bond_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_bonds"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -324,6 +515,33 @@ export type Database = {
           },
         ]
       }
+      system_config: {
+        Row: {
+          config_key: string
+          config_value: string
+          created_at: string
+          description: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          config_key: string
+          config_value: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          config_key?: string
+          config_value?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       trust_events: {
         Row: {
           created_at: string
@@ -387,6 +605,7 @@ export type Database = {
           id: string
           is_active: boolean | null
           paid_at: string
+          payment_request_id: string | null
           payment_txid: string | null
           vendor_id: string
         }
@@ -397,6 +616,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           paid_at?: string
+          payment_request_id?: string | null
           payment_txid?: string | null
           vendor_id: string
         }
@@ -407,10 +627,18 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           paid_at?: string
+          payment_request_id?: string | null
           payment_txid?: string | null
           vendor_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "vendor_bonds_payment_request_id_fkey"
+            columns: ["payment_request_id"]
+            isOneToOne: false
+            referencedRelation: "payment_requests"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "vendor_bonds_vendor_id_fkey"
             columns: ["vendor_id"]
@@ -479,6 +707,47 @@ export type Database = {
           {
             foreignKeyName: "vendor_profiles_vendor_id_fkey"
             columns: ["vendor_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      wallet_balances: {
+        Row: {
+          balance_satoshis: number | null
+          created_at: string
+          escrow_locked_satoshis: number | null
+          id: string
+          payout_pending_satoshis: number | null
+          pending_deposits_satoshis: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance_satoshis?: number | null
+          created_at?: string
+          escrow_locked_satoshis?: number | null
+          id?: string
+          payout_pending_satoshis?: number | null
+          pending_deposits_satoshis?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance_satoshis?: number | null
+          created_at?: string
+          escrow_locked_satoshis?: number | null
+          id?: string
+          payout_pending_satoshis?: number | null
+          pending_deposits_satoshis?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_balances_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]

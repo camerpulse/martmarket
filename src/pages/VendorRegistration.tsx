@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Shield, Bitcoin, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import BitcoinPayment from '@/components/BitcoinPayment';
 
 const VendorRegistration = () => {
   const { user } = useAuth();
@@ -18,6 +19,7 @@ const VendorRegistration = () => {
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [existingVendor, setExistingVendor] = useState<any>(null);
+  const [showPayment, setShowPayment] = useState(false);
   
   const [formData, setFormData] = useState({
     storeName: '',
@@ -109,6 +111,9 @@ const VendorRegistration = () => {
         description: "Now proceed with bond payment to activate your vendor account."
       });
 
+      // Show payment interface
+      setShowPayment(true);
+      
       // Refresh data
       await checkUserProfile();
       
@@ -124,10 +129,16 @@ const VendorRegistration = () => {
   };
 
   const handleBondPayment = () => {
+    setShowPayment(true);
+  };
+
+  const handlePaymentComplete = () => {
     toast({
-      title: "Payment system",
-      description: "Bond payment system will be implemented next!"
+      title: "Bond payment received!",
+      description: "Your vendor account is now active."
     });
+    checkUserProfile(); // Refresh vendor status
+    setShowPayment(false);
   };
 
   // If already a vendor, show status
@@ -201,6 +212,16 @@ const VendorRegistration = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Bitcoin Payment Interface */}
+          {showPayment && !activeBond && (
+            <div className="mt-6">
+              <BitcoinPayment
+                purpose="vendor_bond"
+                onPaymentComplete={handlePaymentComplete}
+              />
+            </div>
+          )}
         </div>
       </div>
     );
@@ -290,6 +311,16 @@ const VendorRegistration = () => {
             </form>
           </CardContent>
         </Card>
+
+        {/* Bitcoin Payment Interface */}
+        {showPayment && (
+          <div className="mt-6">
+            <BitcoinPayment
+              purpose="vendor_bond"
+              onPaymentComplete={handlePaymentComplete}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
