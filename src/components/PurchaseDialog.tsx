@@ -68,6 +68,16 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
     setProcessing(true);
     
     try {
+      console.log('Creating order with:', {
+        buyer_id: user.id,
+        vendor_id: product.vendor_id,
+        product_id: product.id,
+        quantity,
+        total_btc: total,
+        platform_fee_btc: platformFee,
+        status: 'pending'
+      });
+
       // Create order with escrow
       const { data: order, error: orderError } = await supabase
         .from('orders')
@@ -79,7 +89,7 @@ const PurchaseDialog = ({ product, open, onOpenChange }: PurchaseDialogProps) =>
           total_btc: total,
           platform_fee_btc: platformFee,
           shipping_address: shippingAddress || null,
-          status: 'pending_payment'
+          status: 'pending' // Use default status instead of 'pending_payment'
         })
         .select()
         .single();
