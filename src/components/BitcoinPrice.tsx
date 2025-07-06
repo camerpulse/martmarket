@@ -45,8 +45,8 @@ const BitcoinPrice = () => {
 
     fetchPrice();
     
-    // Update price every 30 seconds
-    const interval = setInterval(fetchPrice, 30000);
+    // Update price every 15 seconds for more real-time feel
+    const interval = setInterval(fetchPrice, 15000);
     
     return () => clearInterval(interval);
   }, []);
