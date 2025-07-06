@@ -166,7 +166,7 @@ const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
             <Card key={product.id} className="group card-gradient shadow-card hover:shadow-primary/20 transition-all duration-300 hover:scale-105">
               <CardContent className="p-6">
