@@ -21,23 +21,7 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Get authenticated user from request
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('Authorization header required');
-    }
-
-    const supabaseUser = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
-    if (userError || !user) {
-      throw new Error('User authentication required');
-    }
-
+    // Get request body first
     const { 
       action, 
       message, 
@@ -45,10 +29,55 @@ serve(async (req) => {
       encrypted_message, 
       order_id,
       private_key,
-      passphrase 
+      passphrase,
+      name,
+      email,
+      message_to_sign,
+      private_key_armored,
+      signed_message,
+      public_key_armored
     } = await req.json();
 
-    console.log(`PGP Encryption: ${action} for user ${user.id}`);
+    console.log(`PGP Encryption: ${action}`);
+
+    // For key generation, signing, and validation - no auth required (public tools)
+    if (action === 'generate_keypair' || action === 'sign_message' || action === 'verify_signature' || action === 'validate_public_key' || action === 'decrypt_message') {
+      // These operations don't require authentication
+    } else {
+      // For other operations, require authentication
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader) {
+        throw new Error('Authorization header required');
+      }
+
+      const supabaseUser = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+        { global: { headers: { Authorization: authHeader } } }
+      );
+
+      const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
+      if (userError || !user) {
+        throw new Error('User authentication required');
+      }
+    }
+
+    // Get authenticated user only when needed
+    let user = null;
+    if (action !== 'generate_keypair' && action !== 'sign_message' && action !== 'verify_signature' && action !== 'validate_public_key' && action !== 'decrypt_message') {
+      const authHeader = req.headers.get('Authorization');
+      if (authHeader) {
+        const supabaseUser = createClient(
+          Deno.env.get("SUPABASE_URL") ?? "",
+          Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+          { global: { headers: { Authorization: authHeader } } }
+        );
+        const { data: { user: authUser }, error: userError } = await supabaseUser.auth.getUser();
+        if (!userError && authUser) {
+          user = authUser;
+        }
+      }
+    }
 
     if (action === 'encrypt_message') {
       if (!message || !recipient_id) {
@@ -134,10 +163,12 @@ serve(async (req) => {
         format: 'utf8'
       });
 
-      // Log security event
-      await logSecurityEvent(supabaseAdmin, user.id, 'pgp_message_decrypted', {
-        decrypted: true
-      }, req);
+      // Log security event only if user is authenticated
+      if (user) {
+        await logSecurityEvent(supabaseAdmin, user.id, 'pgp_message_decrypted', {
+          decrypted: true
+        }, req);
+      }
 
       return new Response(
         JSON.stringify({
@@ -180,8 +211,6 @@ serve(async (req) => {
       );
 
     } else if (action === 'generate_keypair') {
-      const { name, email } = await req.json();
-      
       if (!name || !email) {
         throw new Error('Name and email required for key generation');
       }
@@ -194,11 +223,13 @@ serve(async (req) => {
         format: 'armored'
       });
 
-      // Log security event
-      await logSecurityEvent(supabaseAdmin, user.id, 'pgp_keypair_generated', {
-        key_type: 'rsa_2048',
-        user_id: { name, email }
-      }, req);
+      // Log security event only if user is authenticated
+      if (user) {
+        await logSecurityEvent(supabaseAdmin, user.id, 'pgp_keypair_generated', {
+          key_type: 'rsa_2048',
+          user_id: { name, email }
+        }, req);
+      }
 
       return new Response(
         JSON.stringify({
@@ -215,7 +246,6 @@ serve(async (req) => {
       );
 
     } else if (action === 'verify_signature') {
-      const { signed_message, public_key_armored } = await req.json();
       
       if (!signed_message || !public_key_armored) {
         throw new Error('Signed message and public key required');
@@ -233,11 +263,13 @@ serve(async (req) => {
       const isValid = verificationResult.signatures.length > 0 && 
                      await verificationResult.signatures[0].verified;
 
-      // Log security event
-      await logSecurityEvent(supabaseAdmin, user.id, 'pgp_signature_verified', {
-        verified: isValid,
-        signature_count: verificationResult.signatures.length
-      }, req);
+      // Log security event only if user is authenticated
+      if (user) {
+        await logSecurityEvent(supabaseAdmin, user.id, 'pgp_signature_verified', {
+          verified: isValid,
+          signature_count: verificationResult.signatures.length
+        }, req);
+      }
 
       return new Response(
         JSON.stringify({
@@ -254,7 +286,6 @@ serve(async (req) => {
       );
 
     } else if (action === 'sign_message') {
-      const { message_to_sign, private_key_armored } = await req.json();
       
       if (!message_to_sign || !private_key_armored) {
         throw new Error('Message and private key required for signing');
@@ -274,10 +305,12 @@ serve(async (req) => {
         format: 'armored'
       });
 
-      // Log security event
-      await logSecurityEvent(supabaseAdmin, user.id, 'pgp_message_signed', {
-        signed: true
-      }, req);
+      // Log security event only if user is authenticated
+      if (user) {
+        await logSecurityEvent(supabaseAdmin, user.id, 'pgp_message_signed', {
+          signed: true
+        }, req);
+      }
 
       return new Response(
         JSON.stringify({
@@ -293,7 +326,6 @@ serve(async (req) => {
       );
 
     } else if (action === 'validate_public_key') {
-      const { public_key_armored } = await req.json();
       
       if (!public_key_armored) {
         throw new Error('Public key required for validation');
