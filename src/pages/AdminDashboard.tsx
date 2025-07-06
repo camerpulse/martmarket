@@ -23,7 +23,10 @@ import {
   Zap,
   Eye,
   UserCheck,
-  ShoppingCart
+  ShoppingCart,
+  Brain,
+  Cpu,
+  BarChart2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -488,15 +491,23 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => window.location.href = '/orders'}>
                       <Eye className="h-4 w-4 mr-2" />
                       View Recent Orders
                     </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => {
+                      // Switch to vendors tab
+                      const vendorsTab = document.querySelector('[data-value="vendors"]') as HTMLElement;
+                      vendorsTab?.click();
+                    }}>
                       <UserCheck className="h-4 w-4 mr-2" />
                       Approve Vendors
                     </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => {
+                      // Switch to disputes tab
+                      const disputesTab = document.querySelector('[data-value="disputes"]') as HTMLElement;
+                      disputesTab?.click();
+                    }}>
                       <AlertTriangle className="h-4 w-4 mr-2" />
                       Review Disputes
                     </Button>
@@ -888,6 +899,67 @@ export default function AdminDashboard() {
                       <Database className="h-4 w-4 mr-1" />
                       Backup Now
                     </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* AI Model Settings */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Brain className="h-5 w-5" />
+                    AI Model Configuration
+                  </CardTitle>
+                  <CardDescription>Manage AI models and optimization settings</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Primary AI Model</label>
+                    <div className="flex items-center gap-2">
+                      <select className="flex-1 px-3 py-2 border rounded-md bg-background">
+                        <option value="gpt-4o-mini">GPT-4o Mini (Fast)</option>
+                        <option value="gpt-4o">GPT-4o (Balanced)</option>
+                        <option value="claude-3-haiku">Claude 3 Haiku</option>
+                      </select>
+                      <Button size="sm" variant="outline">Update</Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Auto-optimization</label>
+                    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                      <div>
+                        <p className="font-medium text-blue-700 dark:text-blue-300">Product Descriptions</p>
+                        <p className="text-sm text-blue-600 dark:text-blue-400">AI-enhanced product listings</p>
+                      </div>
+                      <Button variant="outline" size="sm">
+                        <Zap className="h-4 w-4 mr-1" />
+                        Enabled
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                      <div>
+                        <p className="font-medium text-purple-700 dark:text-purple-300">Search Intelligence</p>
+                        <p className="text-sm text-purple-600 dark:text-purple-400">Smart search suggestions and trends</p>
+                      </div>
+                      <Button variant="outline" size="sm">
+                        <BarChart2 className="h-4 w-4 mr-1" />
+                        Active
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
+                      <div>
+                        <p className="font-medium text-amber-700 dark:text-amber-300">Model Evolution</p>
+                        <p className="text-sm text-amber-600 dark:text-amber-400">Automatic model improvement</p>
+                      </div>
+                      <Button variant="outline" size="sm">
+                        <Cpu className="h-4 w-4 mr-1" />
+                        Running
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
