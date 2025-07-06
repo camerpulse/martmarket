@@ -1241,6 +1241,7 @@ export type Database = {
           is_featured: boolean | null
           price_btc: number
           price_usd: number | null
+          search_vector: unknown | null
           shipping_info: string | null
           stock_quantity: number | null
           tags: string[] | null
@@ -1258,6 +1259,7 @@ export type Database = {
           is_featured?: boolean | null
           price_btc: number
           price_usd?: number | null
+          search_vector?: unknown | null
           shipping_info?: string | null
           stock_quantity?: number | null
           tags?: string[] | null
@@ -1275,6 +1277,7 @@ export type Database = {
           is_featured?: boolean | null
           price_btc?: number
           price_usd?: number | null
+          search_vector?: unknown | null
           shipping_info?: string | null
           stock_quantity?: number | null
           tags?: string[] | null
@@ -1448,6 +1451,63 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      search_analytics: {
+        Row: {
+          conversion_rate: number | null
+          id: string
+          last_searched: string | null
+          search_count: number | null
+          search_term: string
+          trending_score: number | null
+        }
+        Insert: {
+          conversion_rate?: number | null
+          id?: string
+          last_searched?: string | null
+          search_count?: number | null
+          search_term: string
+          trending_score?: number | null
+        }
+        Update: {
+          conversion_rate?: number | null
+          id?: string
+          last_searched?: string | null
+          search_count?: number | null
+          search_term?: string
+          trending_score?: number | null
+        }
+        Relationships: []
+      }
+      search_history: {
+        Row: {
+          clicked_product_id: string | null
+          filters_applied: Json | null
+          id: string
+          results_count: number | null
+          search_query: string
+          search_timestamp: string | null
+          user_id: string | null
+        }
+        Insert: {
+          clicked_product_id?: string | null
+          filters_applied?: Json | null
+          id?: string
+          results_count?: number | null
+          search_query: string
+          search_timestamp?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          clicked_product_id?: string | null
+          filters_applied?: Json | null
+          id?: string
+          results_count?: number | null
+          search_query?: string
+          search_timestamp?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       search_intelligence: {
         Row: {
@@ -1975,6 +2035,15 @@ export type Database = {
           search_volume: number
           related_terms: string[]
         }[]
+      }
+      log_search: {
+        Args: {
+          p_user_id: string
+          p_search_query: string
+          p_filters?: Json
+          p_results_count?: number
+        }
+        Returns: undefined
       }
       mark_thread_as_read: {
         Args: { thread_id_param: string; user_id_param: string }
