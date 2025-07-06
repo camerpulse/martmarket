@@ -1285,6 +1285,45 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_testers: {
+        Row: {
+          created_at: string | null
+          id: string
+          quality_rating: number | null
+          reports_submitted: number | null
+          reputation_score: number | null
+          samples_received: number | null
+          specialization: string[] | null
+          tester_status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          quality_rating?: number | null
+          reports_submitted?: number | null
+          reputation_score?: number | null
+          samples_received?: number | null
+          specialization?: string[] | null
+          tester_status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          quality_rating?: number | null
+          reports_submitted?: number | null
+          reputation_score?: number | null
+          samples_received?: number | null
+          specialization?: string[] | null
+          tester_status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_ratings: {
         Row: {
           average_rating: number | null
@@ -1566,6 +1605,66 @@ export type Database = {
           },
         ]
       }
+      sample_requests: {
+        Row: {
+          assigned_at: string | null
+          completed_at: string | null
+          created_at: string | null
+          estimated_value_usd: number | null
+          id: string
+          priority_level: string | null
+          product_id: string
+          received_at: string | null
+          requested_at: string | null
+          sample_description: string
+          shipped_at: string | null
+          shipping_address: string | null
+          status: string | null
+          tester_id: string | null
+          tracking_number: string | null
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          estimated_value_usd?: number | null
+          id?: string
+          priority_level?: string | null
+          product_id: string
+          received_at?: string | null
+          requested_at?: string | null
+          sample_description: string
+          shipped_at?: string | null
+          shipping_address?: string | null
+          status?: string | null
+          tester_id?: string | null
+          tracking_number?: string | null
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          estimated_value_usd?: number | null
+          id?: string
+          priority_level?: string | null
+          product_id?: string
+          received_at?: string | null
+          requested_at?: string | null
+          sample_description?: string
+          shipped_at?: string | null
+          shipping_address?: string | null
+          status?: string | null
+          tester_id?: string | null
+          tracking_number?: string | null
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: []
+      }
       search_analytics: {
         Row: {
           conversion_rate: number | null
@@ -1806,6 +1905,78 @@ export type Database = {
           metric_name?: string
           metric_value?: number | null
           recorded_at?: string | null
+        }
+        Relationships: []
+      }
+      tester_feedback: {
+        Row: {
+          authenticity_score: number | null
+          created_at: string | null
+          detailed_review: string
+          feedback_tags: string[] | null
+          id: string
+          impact_on_trust_score: number | null
+          is_published: boolean | null
+          overall_rating: number | null
+          packaging_score: number | null
+          photos: Json | null
+          product_id: string
+          quality_score: number | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          sample_request_id: string
+          submitted_at: string | null
+          tester_id: string
+          updated_at: string | null
+          vendor_id: string
+          verified_possession: boolean | null
+          would_recommend: boolean | null
+        }
+        Insert: {
+          authenticity_score?: number | null
+          created_at?: string | null
+          detailed_review: string
+          feedback_tags?: string[] | null
+          id?: string
+          impact_on_trust_score?: number | null
+          is_published?: boolean | null
+          overall_rating?: number | null
+          packaging_score?: number | null
+          photos?: Json | null
+          product_id: string
+          quality_score?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sample_request_id: string
+          submitted_at?: string | null
+          tester_id: string
+          updated_at?: string | null
+          vendor_id: string
+          verified_possession?: boolean | null
+          would_recommend?: boolean | null
+        }
+        Update: {
+          authenticity_score?: number | null
+          created_at?: string | null
+          detailed_review?: string
+          feedback_tags?: string[] | null
+          id?: string
+          impact_on_trust_score?: number | null
+          is_published?: boolean | null
+          overall_rating?: number | null
+          packaging_score?: number | null
+          photos?: Json | null
+          product_id?: string
+          quality_score?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sample_request_id?: string
+          submitted_at?: string | null
+          tester_id?: string
+          updated_at?: string | null
+          vendor_id?: string
+          verified_possession?: boolean | null
+          would_recommend?: boolean | null
         }
         Relationships: []
       }
