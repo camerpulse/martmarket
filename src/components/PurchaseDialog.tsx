@@ -41,19 +41,33 @@ interface PurchaseDialogProps {
   onOpenChange: (open: boolean) => void;
   selectedVariations?: Record<string, string>;
   finalPrice?: number;
+  cartItems?: any[];
 }
 
-const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, finalPrice }: PurchaseDialogProps) => {
+const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, finalPrice, cartItems }: PurchaseDialogProps) => {
   const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [shippingAddress, setShippingAddress] = useState("");
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [processing, setProcessing] = useState(false);
 
-  if (!product) return null;
+  if (!product && !cartItems) return null;
 
-  const basePrice = finalPrice || product.price_btc;
-  const subtotal = basePrice * quantity;
+  // Handle cart checkout vs single product purchase
+  const isCartCheckout = !product && cartItems && cartItems.length > 0;
+  const displayProduct = product || (cartItems && cartItems[0] ? {
+    ...cartItems[0],
+    title: `${cartItems.length} item${cartItems.length > 1 ? 's' : ''}`,
+    vendor: cartItems[0].vendor
+  } : null);
+
+  if (!displayProduct) return null;
+
+  const basePrice = finalPrice || (isCartCheckout ? 
+    (cartItems?.reduce((total, item) => total + (item.finalPrice || item.price_btc) * item.quantity, 0) || 0) :
+    displayProduct.price_btc
+  );
+  const subtotal = isCartCheckout ? basePrice : basePrice * quantity;
   const platformFee = subtotal * 0.05; // 5% platform fee
   const total = subtotal + platformFee;
 
@@ -63,7 +77,7 @@ const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, final
       return;
     }
 
-    if (quantity > product.stock_quantity) {
+    if (quantity > (displayProduct.stock_quantity || 0)) {
       toast.error("Not enough stock available");
       return;
     }
@@ -71,19 +85,31 @@ const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, final
     setProcessing(true);
     
     try {
-      // Create order first
+      // Create order first  
+      const orderData = isCartCheckout ? {
+        // For cart checkout, create multiple orders or handle as single order
+        buyer_id: user.id,
+        vendor_id: cartItems![0].vendor.vendor_id, // Use first vendor for now
+        product_id: cartItems![0].productId,
+        quantity: cartItems!.reduce((total, item) => total + item.quantity, 0),
+        total_btc: total,
+        platform_fee_btc: platformFee,
+        shipping_address: shippingAddress || null,
+        status: 'pending_payment'
+      } : {
+        buyer_id: user.id,
+        vendor_id: displayProduct.vendor_id || displayProduct.vendor?.vendor_id,
+        product_id: displayProduct.id || displayProduct.productId,
+        quantity,
+        total_btc: total,
+        platform_fee_btc: platformFee,
+        shipping_address: shippingAddress || null,
+        status: 'pending_payment'
+      };
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
-        .insert({
-          buyer_id: user.id,
-          vendor_id: product.vendor_id,
-          product_id: product.id,
-          quantity,
-          total_btc: total,
-          platform_fee_btc: platformFee,
-          shipping_address: shippingAddress || null,
-          status: 'pending_payment'
-        })
+        .insert(orderData)
         .select()
         .single();
 
@@ -144,12 +170,12 @@ const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, final
                   <div className="text-2xl">📦</div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold">{product.title}</h3>
+                  <h3 className="font-semibold">{displayProduct.title}</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    by {product.vendor.store_name}
+                    by {displayProduct.vendor?.store_name || displayProduct.vendor_name}
                   </p>
                   <Badge variant="secondary" className="mt-2">
-                    {product.category.name}
+                    {displayProduct.category?.name || 'Product'}
                   </Badge>
                 </div>
                 <div className="text-right">
@@ -157,7 +183,9 @@ const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, final
                     <Bitcoin className="h-4 w-4 text-primary" />
                     <span className="font-bold text-primary">{basePrice.toFixed(8)} BTC</span>
                   </div>
-                  <p className="text-sm text-muted-foreground">Stock: {product.stock_quantity}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {isCartCheckout ? `${cartItems?.length} items` : `Stock: ${displayProduct.stock_quantity || 0}`}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -181,26 +209,28 @@ const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, final
           )}
 
           {/* Quantity & Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="quantity">Quantity</Label>
-              <Input
-                id="quantity"
-                type="number"
-                min="1"
-                max={product.stock_quantity}
-                value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-              />
-            </div>
-            <div>
-              <Label>Shipping Info</Label>
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground p-2 bg-muted rounded">
-                <Truck className="h-4 w-4" />
-                <span>{product.shipping_info}</span>
+          {!isCartCheckout && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="quantity">Quantity</Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  min="1"
+                  max={displayProduct.stock_quantity || 1}
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                />
+              </div>
+              <div>
+                <Label>Shipping Info</Label>
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground p-2 bg-muted rounded">
+                  <Truck className="h-4 w-4" />
+                  <span>{displayProduct.shipping_info || 'Standard shipping'}</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Shipping Address */}
           <div>
@@ -234,7 +264,7 @@ const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, final
               <h4 className="font-semibold mb-3">Price Breakdown</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span>Subtotal ({quantity}x)</span>
+                  <span>{isCartCheckout ? `Total (${cartItems?.reduce((sum, item) => sum + item.quantity, 0)}x)` : `Subtotal (${quantity}x)`}</span>
                   <span className="flex items-center space-x-1">
                     <Bitcoin className="h-4 w-4 text-primary" />
                     <span>{subtotal.toFixed(8)} BTC</span>
@@ -288,19 +318,19 @@ const PurchaseDialog = ({ product, open, onOpenChange, selectedVariations, final
           {/* Purchase Button */}
           <Button
             onClick={handlePurchase}
-            disabled={processing || !user || quantity > product.stock_quantity}
+            disabled={processing || !user || (!isCartCheckout && quantity > (displayProduct.stock_quantity || 0))}
             className="w-full h-12 text-lg"
           >
             {processing ? (
               "Processing..."
             ) : !user ? (
               "Login Required"
-            ) : quantity > product.stock_quantity ? (
+            ) : (!isCartCheckout && quantity > (displayProduct.stock_quantity || 0)) ? (
               "Out of Stock"
             ) : (
               <>
                 <Shield className="h-5 w-5 mr-2" />
-                Create Escrow Order - {total.toFixed(8)} BTC
+                {isCartCheckout ? `Checkout Cart - ${total.toFixed(8)} BTC` : `Create Escrow Order - ${total.toFixed(8)} BTC`}
               </>
             )}
           </Button>

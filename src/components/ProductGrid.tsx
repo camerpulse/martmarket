@@ -40,7 +40,7 @@ interface ProductGridProps {
   searchFilters?: SearchFilters;
 }
 
-const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
+import { useCart } from "@/hooks/useCart";
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -220,10 +220,17 @@ const ProductGrid = ({ searchFilters }: ProductGridProps = {}) => {
                     <div className="flex items-center space-x-1 text-muted-foreground">
                       <span className="text-sm">Stock: {product.stock_quantity}</span>
                     </div>
-                     <div className="flex items-center space-x-2">
-                       <div onClick={(e) => e.stopPropagation()}>
-                         <WishlistButton productId={product.id} />
-                       </div>
+                      <div className="flex items-center space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addToCart(product, 1);
+                          }}
+                        >
+                          Add to Cart
+                        </Button>
                         <Button 
                           size="sm" 
                           className="bg-primary hover:bg-primary/90"

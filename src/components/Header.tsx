@@ -6,8 +6,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useVendorStatus } from "@/hooks/useVendorStatus";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useCart } from "@/hooks/useCart";
 import LanguageSelector from "./LanguageSelector";
 import BitcoinPrice from "./BitcoinPrice";
+import CartSidebar from "./CartSidebar";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
@@ -16,7 +18,7 @@ const Header = () => {
   const { isVendor, hasActiveBond, loading } = useVendorStatus();
   const { isAdmin, loading: adminLoading } = useAdminStatus();
   const { t } = useTranslation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { itemCount, setIsOpen } = useCart();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -132,7 +134,17 @@ const Header = () => {
                 </>
               )}
               
-              <Button variant="ghost" size="sm" onClick={signOut}>
+            {/* Shopping Cart */}
+            <Button variant="outline" size="icon" className="relative" onClick={() => setIsOpen(true)}>
+              <ShoppingBag className="h-4 w-4" />
+              {itemCount > 0 && (
+                <Badge variant="secondary" className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                  {itemCount}
+                </Badge>
+              )}
+            </Button>
+            
+            <Button variant="ghost" size="sm" onClick={signOut}>
                 <LogOut className="h-4 w-4 mr-1" />
                 Logout
               </Button>
@@ -284,6 +296,7 @@ const Header = () => {
           </Sheet>
         </div>
       </div>
+      <CartSidebar />
     </header>
   );
 };
