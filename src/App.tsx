@@ -10,6 +10,8 @@ import VendorRegistration from "./pages/VendorRegistration";
 import VendorDashboard from "./pages/VendorDashboard";
 import VendorProducts from "./pages/VendorProducts";
 import TesterDashboard from "./pages/TesterDashboard";
+import Forum from "./pages/Forum";
+import Affiliate from "./pages/Affiliate";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import UserProfile from "./pages/UserProfile";
 import OrderHistory from "./pages/OrderHistory";
@@ -36,6 +38,8 @@ const App = () => (
             <Route path="/vendor/dashboard" element={<VendorDashboard />} />
             <Route path="/vendor/products" element={<VendorProducts />} />
             <Route path="/tester/dashboard" element={<TesterDashboard />} />
+            <Route path="/forum" element={<Forum />} />
+            <Route path="/affiliate" element={<Affiliate />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/order/:orderId" element={<OrderConfirmation />} />
             <Route path="/profile" element={<UserProfile />} />

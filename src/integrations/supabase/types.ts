@@ -81,6 +81,81 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_programs: {
+        Row: {
+          affiliate_id: string
+          commission_rate: number | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          referral_code: string
+          total_earnings_btc: number | null
+          total_referrals: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          commission_rate?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          referral_code: string
+          total_earnings_btc?: number | null
+          total_referrals?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          commission_rate?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          referral_code?: string
+          total_earnings_btc?: number | null
+          total_referrals?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      affiliate_referrals: {
+        Row: {
+          affiliate_id: string
+          commission_btc: number | null
+          confirmed_at: string | null
+          created_at: string | null
+          id: string
+          order_id: string | null
+          paid_at: string | null
+          referral_code: string
+          referred_user_id: string
+          status: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          commission_btc?: number | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          paid_at?: string | null
+          referral_code: string
+          referred_user_id: string
+          status?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          commission_btc?: number | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          paid_at?: string | null
+          referral_code?: string
+          referred_user_id?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
       ai_knowledge_base: {
         Row: {
           confidence_score: number
@@ -243,6 +318,51 @@ export type Database = {
           tokens_used?: number | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      anonymous_feedback: {
+        Row: {
+          content: string
+          created_at: string | null
+          feedback_tags: string[] | null
+          feedback_type: string
+          id: string
+          ip_hash: string | null
+          is_verified_purchase: boolean | null
+          processed_at: string | null
+          rating: number | null
+          sentiment_score: number | null
+          target_id: string | null
+          trust_impact: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          feedback_tags?: string[] | null
+          feedback_type: string
+          id?: string
+          ip_hash?: string | null
+          is_verified_purchase?: boolean | null
+          processed_at?: string | null
+          rating?: number | null
+          sentiment_score?: number | null
+          target_id?: string | null
+          trust_impact?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          feedback_tags?: string[] | null
+          feedback_type?: string
+          id?: string
+          ip_hash?: string | null
+          is_verified_purchase?: boolean | null
+          processed_at?: string | null
+          rating?: number | null
+          sentiment_score?: number | null
+          target_id?: string | null
+          trust_impact?: number | null
         }
         Relationships: []
       }
@@ -766,6 +886,156 @@ export type Database = {
           optimized_size_bytes?: number
           original_file_path?: string
           original_size_bytes?: number
+        }
+        Relationships: []
+      }
+      forum_categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          last_post_at: string | null
+          name: string
+          post_count: number | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_post_at?: string | null
+          name: string
+          post_count?: number | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_post_at?: string | null
+          name?: string
+          post_count?: number | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      forum_likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          reply_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reply_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reply_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      forum_replies: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string | null
+          id: string
+          is_anonymous: boolean | null
+          is_solution: boolean | null
+          like_count: number | null
+          reply_to: string | null
+          topic_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          is_solution?: boolean | null
+          like_count?: number | null
+          reply_to?: string | null
+          topic_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          is_solution?: boolean | null
+          like_count?: number | null
+          reply_to?: string | null
+          topic_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      forum_topics: {
+        Row: {
+          author_id: string
+          category_id: string
+          content: string
+          created_at: string | null
+          id: string
+          is_anonymous: boolean | null
+          is_locked: boolean | null
+          is_pinned: boolean | null
+          last_reply_at: string | null
+          last_reply_by: string | null
+          reply_count: number | null
+          title: string
+          updated_at: string | null
+          view_count: number | null
+        }
+        Insert: {
+          author_id: string
+          category_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          is_locked?: boolean | null
+          is_pinned?: boolean | null
+          last_reply_at?: string | null
+          last_reply_by?: string | null
+          reply_count?: number | null
+          title: string
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          author_id?: string
+          category_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          is_locked?: boolean | null
+          is_pinned?: boolean | null
+          last_reply_at?: string | null
+          last_reply_by?: string | null
+          reply_count?: number | null
+          title?: string
+          updated_at?: string | null
+          view_count?: number | null
         }
         Relationships: []
       }
@@ -2016,6 +2286,36 @@ export type Database = {
           vendor_id?: string
           verified_possession?: boolean | null
           would_recommend?: boolean | null
+        }
+        Relationships: []
+      }
+      translations: {
+        Row: {
+          context: string | null
+          created_at: string | null
+          id: string
+          language_code: string
+          translation_key: string
+          translation_value: string
+          updated_at: string | null
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string | null
+          id?: string
+          language_code: string
+          translation_key: string
+          translation_value: string
+          updated_at?: string | null
+        }
+        Update: {
+          context?: string | null
+          created_at?: string | null
+          id?: string
+          language_code?: string
+          translation_key?: string
+          translation_value?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
