@@ -174,41 +174,41 @@ const ProductGrid = ({ searchFilters }: ProductGridProps) => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
           {products.map((product) => (
             <Card key={product.id} className="group card-gradient shadow-card hover:shadow-primary/20 transition-all duration-300 hover:scale-105 cursor-pointer" onClick={() => window.location.href = `/product/${product.id}`}>
-              <CardContent className="p-6">
+              <CardContent className="p-3 sm:p-4 md:p-6">
                 {/* Product Image Placeholder */}
-                <div className="w-full h-48 bg-muted rounded-lg mb-4 flex items-center justify-center">
-                  <div className="text-6xl text-muted-foreground">📦</div>
+                <div className="w-full h-32 sm:h-40 md:h-48 bg-muted rounded-lg mb-3 sm:mb-4 flex items-center justify-center">
+                  <div className="text-3xl sm:text-4xl md:text-6xl text-muted-foreground">📦</div>
                 </div>
                 
                 {/* Product Info */}
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   <div className="flex items-start justify-between">
-                    <h3 className="font-semibold line-clamp-2 flex-1">{product.title}</h3>
-                    <Badge variant="secondary" className="ml-2 text-xs">
+                    <h3 className="font-semibold line-clamp-2 flex-1 text-sm sm:text-base">{product.title}</h3>
+                    <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs hidden sm:inline-flex">
                       {product.category.name}
                     </Badge>
                   </div>
                   
-                  {/* Description */}
-                  <p className="text-sm text-muted-foreground line-clamp-2">
+                  {/* Description - Hidden on mobile for space */}
+                  <p className="text-sm text-muted-foreground line-clamp-2 hidden sm:block">
                     {product.description}
                   </p>
                   
                   {/* Price */}
-                  <div className="flex items-center space-x-2">
-                    <Bitcoin className="h-5 w-5 text-primary" />
-                    <span className="text-xl font-bold text-primary">{product.price_btc}</span>
-                    <span className="text-sm text-muted-foreground">BTC</span>
+                  <div className="flex items-center space-x-1 sm:space-x-2">
+                    <Bitcoin className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                    <span className="text-lg sm:text-xl font-bold text-primary">{product.price_btc}</span>
+                    <span className="text-xs sm:text-sm text-muted-foreground">BTC</span>
                   </div>
                   
-                  {/* Vendor Info */}
+                  {/* Vendor Info - Simplified on mobile */}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-muted-foreground">by</span>
-                      <span className="font-medium">{product.vendor.store_name}</span>
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <span className="text-xs sm:text-sm text-muted-foreground hidden sm:inline">by</span>
+                      <span className="font-medium text-xs sm:text-sm truncate">{product.vendor.store_name}</span>
                     </div>
                     <TrustIndicator 
                       score={product.vendor.trust_score} 
@@ -218,32 +218,35 @@ const ProductGrid = ({ searchFilters }: ProductGridProps) => {
                   </div>
                   
                   {/* Stock & Actions */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <div className="flex items-center space-x-1 text-muted-foreground">
-                      <span className="text-sm">Stock: {product.stock_quantity}</span>
+                      <span className="text-xs sm:text-sm">Stock: {product.stock_quantity}</span>
                     </div>
-                      <div className="flex items-center space-x-2">
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            addToCart(product, 1);
-                          }}
-                        >
-                          Add to Cart
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          className="bg-primary hover:bg-primary/90"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePurchase(product);
-                          }}
-                          disabled={product.stock_quantity === 0}
-                        >
-                        <ShoppingCart className="h-4 w-4 mr-1" />
-                        Buy Now
+                    <div className="flex items-center space-x-1 sm:space-x-2 w-full sm:w-auto">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        className="flex-1 sm:flex-none text-xs sm:text-sm px-2 sm:px-3"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(product, 1);
+                        }}
+                      >
+                        <span className="hidden sm:inline">Add to Cart</span>
+                        <span className="sm:hidden">Cart</span>
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        className="bg-primary hover:bg-primary/90 flex-1 sm:flex-none text-xs sm:text-sm px-2 sm:px-3"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePurchase(product);
+                        }}
+                        disabled={product.stock_quantity === 0}
+                      >
+                        <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                        <span className="hidden sm:inline">Buy Now</span>
+                        <span className="sm:hidden">Buy</span>
                       </Button>
                     </div>
                   </div>

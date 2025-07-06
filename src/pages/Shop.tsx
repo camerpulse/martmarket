@@ -94,9 +94,9 @@ const Shop = () => {
           searchValue={searchFilters.search}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-          {/* Sidebar - 1 column */}
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 lg:gap-8">
+          {/* Sidebar - Hidden on mobile, collapsible */}
+          <div className="lg:col-span-1 hidden lg:block">
             <div className="sticky top-4 space-y-6">
               {/* Search */}
               <Card>
@@ -212,8 +212,36 @@ const Shop = () => {
             </div>
           </div>
 
-          {/* Products Grid - 5 columns */}
+          {/* Products Grid - Full width on mobile, 5 columns on desktop */}
           <div className="lg:col-span-5">
+            {/* Mobile filters - Quick access */}
+            <div className="lg:hidden mb-4 grid grid-cols-2 gap-2">
+              <Select value={searchFilters.category} onValueChange={handleCategoryChange}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={searchFilters.sortBy} onValueChange={handleSortChange}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="oldest">Oldest</SelectItem>
+                  <SelectItem value="price-low">Price ↑</SelectItem>
+                  <SelectItem value="price-high">Price ↓</SelectItem>
+                  <SelectItem value="popular">Popular</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <ProductGrid searchFilters={searchFilters} />
           </div>
         </div>
