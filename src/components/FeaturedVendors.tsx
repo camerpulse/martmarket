@@ -1,6 +1,10 @@
+import { useState, useEffect } from "react";
 import VendorCard from "./VendorCard";
 
 const FeaturedVendors = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const vendorsPerSlide = 4;
+  
   const vendors = [
     {
       name: "CryptoKing",
@@ -61,8 +65,44 @@ const FeaturedVendors = () => {
       specialties: ["Security", "Privacy", "VPN"],
       image: "",
       isOnline: true
+    },
+    {
+      name: "SecureStore",
+      trustScore: 89,
+      isVerified: true,
+      totalTrades: 345,
+      responseTime: "2h",
+      specialties: ["Security", "Encryption", "Tools"],
+      image: "",
+      isOnline: true
+    },
+    {
+      name: "BitMerchant",
+      trustScore: 87,
+      isVerified: true,
+      totalTrades: 567,
+      responseTime: "1h",
+      specialties: ["General", "Various", "Popular"],
+      image: "",
+      isOnline: false
     }
   ];
+
+  const totalSlides = Math.ceil(vendors.length / vendorsPerSlide);
+
+  // Auto-slide functionality
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % totalSlides);
+    }, 4000); // Change slide every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [totalSlides]);
+
+  const currentVendors = vendors.slice(
+    currentIndex * vendorsPerSlide,
+    (currentIndex + 1) * vendorsPerSlide
+  );
 
   return (
     <section className="py-16 bg-muted/20">
@@ -77,10 +117,37 @@ const FeaturedVendors = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {vendors.map((vendor) => (
-            <VendorCard key={vendor.name} {...vendor} />
-          ))}
+        <div className="relative overflow-hidden max-w-md mx-auto">
+          <div className="space-y-6">
+            {currentVendors.map((vendor, index) => (
+              <div 
+                key={`${vendor.name}-${currentIndex}`} 
+                className="animate-fade-in"
+                style={{ 
+                  animationDelay: `${index * 0.1}s`,
+                  animationDuration: '0.5s'
+                }}
+              >
+                <VendorCard {...vendor} />
+              </div>
+            ))}
+          </div>
+          
+          {/* Slide Indicators */}
+          <div className="flex justify-center mt-8 space-x-2">
+            {Array.from({ length: totalSlides }).map((_, index) => (
+              <button
+                key={index}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex 
+                    ? 'bg-primary scale-110' 
+                    : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                }`}
+                onClick={() => setCurrentIndex(index)}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
         
         <div className="text-center mt-12">
