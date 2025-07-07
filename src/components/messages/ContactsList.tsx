@@ -116,6 +116,8 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
         .eq('display_name', searchTerm)
         .maybeSingle();
 
+      console.log('Search by display name:', { userProfile, error });
+
       // If not found by display name, try by email
       if (!userProfile && !error) {
         const result = await supabase
@@ -126,9 +128,10 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
           
         userProfile = result.data;
         error = result.error;
+        console.log('Search by email:', { userProfile, error });
       }
 
-      console.log('Search result:', { userProfile, error });
+      console.log('Final search result:', { userProfile, error });
 
       if (error) {
         console.error('Search error:', error);
@@ -141,6 +144,7 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
       }
 
       if (!userProfile) {
+        console.log('No user profile found for:', searchTerm);
         toast({
           title: "User Not Found",
           description: "No user found with that username or email",
@@ -148,6 +152,8 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
         });
         return;
       }
+
+      console.log('Found user profile:', userProfile);
 
       if (userProfile.user_id === userId) {
         toast({
