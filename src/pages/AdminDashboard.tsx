@@ -69,6 +69,9 @@ import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { ComprehensiveUserManagement } from '@/components/admin/ComprehensiveUserManagement';
+import { ProductManagement } from '@/components/admin/ProductManagement';
+import { SystemSettings } from '@/components/admin/SystemSettings';
 
 interface DashboardMetrics {
   total_users: number;
@@ -562,71 +565,12 @@ export default function AdminDashboard() {
 
           {/* Users Management */}
           <TabsContent value="users" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <Users className="h-6 w-6" />
-                      User Management
-                    </CardTitle>
-                    <CardDescription>Manage all platform users and their permissions</CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button onClick={loadUsers} variant="outline">
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Refresh
-                    </Button>
-                    <Button>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add User
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Users Table would go here */}
-                  <div className="text-center py-8 text-muted-foreground">
-                    Click Refresh to load users
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ComprehensiveUserManagement />
           </TabsContent>
 
           {/* Products Management */}
           <TabsContent value="products" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <Package className="h-6 w-6" />
-                      Product Management
-                    </CardTitle>
-                    <CardDescription>Manage all product listings and categories</CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button onClick={loadProducts} variant="outline">
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Refresh
-                    </Button>
-                    <Button>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Product
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center py-8 text-muted-foreground">
-                    Click Refresh to load products
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProductManagement />
           </TabsContent>
 
           {/* Orders Management */}

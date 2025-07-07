@@ -3396,6 +3396,10 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: boolean
       }
+      is_admin_or_system: {
+        Args: { user_id_param?: string }
+        Returns: boolean
+      }
       log_admin_action: {
         Args: {
           p_admin_id: string
@@ -3403,6 +3407,18 @@ export type Database = {
           p_target_type: string
           p_target_id?: string
           p_details?: Json
+        }
+        Returns: undefined
+      }
+      log_admin_action_comprehensive: {
+        Args: {
+          p_admin_id: string
+          p_action_type: string
+          p_target_type: string
+          p_target_id?: string
+          p_details?: Json
+          p_ip_address?: unknown
+          p_user_agent?: string
         }
         Returns: undefined
       }
