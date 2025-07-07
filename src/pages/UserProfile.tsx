@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Shield, Key, Bell, Bitcoin } from 'lucide-react';
+import { ArrowLeft, User, Mail, Shield, Key, Bell, Bitcoin, Copy, Trash2 } from 'lucide-react';
 
 interface UserProfile {
   id: string;
@@ -24,9 +24,19 @@ interface UserProfile {
   updated_at: string;
 }
 
+interface PGPKey {
+  id: string;
+  key_name: string;
+  public_key: string;
+  key_fingerprint: string | null;
+  is_default: boolean | null;
+  created_at: string;
+}
+
 const UserProfile = () => {
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [pgpKeys, setPgpKeys] = useState<PGPKey[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
@@ -38,6 +48,7 @@ const UserProfile = () => {
   useEffect(() => {
     if (user) {
       loadProfile();
+      loadPGPKeys();
     }
   }, [user]);
 
@@ -96,6 +107,50 @@ const UserProfile = () => {
       toast.error(`Failed to load profile: ${error.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPGPKeys = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_pgp_keys')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setPgpKeys(data || []);
+    } catch (error) {
+      console.error('Error loading PGP keys:', error);
+    }
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success('Copied to clipboard');
+    } catch (error) {
+      toast.error('Failed to copy to clipboard');
+    }
+  };
+
+  const deletePGPKey = async (keyId: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_pgp_keys')
+        .delete()
+        .eq('id', keyId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+      
+      toast.success('PGP key deleted successfully');
+      loadPGPKeys(); // Reload keys
+    } catch (error) {
+      console.error('Error deleting PGP key:', error);
+      toast.error('Failed to delete PGP key');
     }
   };
 
@@ -358,6 +413,89 @@ Your PGP public key here...
                   </Button>
                 </div>
               </form>
+            </CardContent>
+          </Card>
+
+          {/* PGP Keys Section */}
+          <Card className="mt-8">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center space-x-2">
+                  <Key className="h-5 w-5" />
+                  <span>Saved PGP Keys</span>
+                </CardTitle>
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/pgp-tools">
+                    <Key className="h-4 w-4 mr-2" />
+                    Manage Keys
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {pgpKeys.length === 0 ? (
+                <div className="text-center py-8">
+                  <Key className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No PGP Keys Found</h3>
+                  <p className="text-muted-foreground mb-4">
+                    You haven't saved any PGP keys yet. Use our PGP Tools to generate and manage your keys.
+                  </p>
+                  <Button asChild>
+                    <Link to="/pgp-tools">
+                      <Key className="h-4 w-4 mr-2" />
+                      Generate PGP Keys
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {pgpKeys.map((key) => (
+                    <div key={key.id} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-2">
+                          <h4 className="font-medium">{key.key_name}</h4>
+                          {key.is_default && (
+                            <Badge variant="default" className="text-xs">Default</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(key.public_key)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deletePGPKey(key.id)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {key.key_fingerprint && (
+                        <p className="text-sm text-muted-foreground mb-2 font-mono">
+                          Fingerprint: {key.key_fingerprint}
+                        </p>
+                      )}
+                      
+                      <div className="bg-muted rounded p-3">
+                        <p className="text-xs font-mono break-all">
+                          {key.public_key.substring(0, 100)}...
+                        </p>
+                      </div>
+                      
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Created: {new Date(key.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
