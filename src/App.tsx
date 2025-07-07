@@ -36,6 +36,9 @@ import SafetyAndTerms from "./pages/SafetyAndTerms";
 import Cart from "./pages/Cart";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
+import HowToOrder from "./pages/HowToOrder";
+import FAQ from "./pages/FAQ";
+import SellingGuide from "./pages/SellingGuide";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +80,9 @@ const App = () => (
             <Route path="/track-order" element={<OrderTracking />} />
             <Route path="/pgp-tools" element={<PGPTools />} />
             <Route path="/safety-terms" element={<SafetyAndTerms />} />
+            <Route path="/how-to-order" element={<HowToOrder />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/selling-guide" element={<SellingGuide />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
