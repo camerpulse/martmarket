@@ -68,10 +68,73 @@ const SafetyAndTerms = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Protective Background Animation */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+        
+        {/* Floating Hearts Animation */}
+        <div className="absolute inset-0">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-pulse"
+              style={{
+                left: `${15 + (i * 12)}%`,
+                top: `${20 + (i * 8)}%`,
+                animationDelay: `${i * 0.5}s`,
+                animationDuration: `${3 + (i * 0.2)}s`,
+              }}
+            >
+              <Heart className="w-4 h-4 text-primary/20 animate-bounce" style={{animationDelay: `${i * 0.3}s`}} />
+            </div>
+          ))}
+        </div>
+
+        {/* Protective Shield Animations */}
+        <div className="absolute inset-0">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-pulse"
+              style={{
+                right: `${10 + (i * 15)}%`,
+                top: `${30 + (i * 10)}%`,
+                animationDelay: `${i * 0.7}s`,
+                animationDuration: `${4 + (i * 0.1)}s`,
+              }}
+            >
+              <Shield className="w-6 h-6 text-verified/15 animate-bounce" style={{animationDelay: `${i * 0.4}s`}} />
+            </div>
+          ))}
+        </div>
+
+        {/* Gentle Light Orbs */}
+        <div className="absolute inset-0">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-gradient-to-br from-primary/10 to-accent/10 animate-pulse"
+              style={{
+                width: `${20 + (i * 10)}px`,
+                height: `${20 + (i * 10)}px`,
+                left: `${20 + (i * 20)}%`,
+                bottom: `${15 + (i * 12)}%`,
+                animationDelay: `${i * 1}s`,
+                animationDuration: `${5 + (i * 0.5)}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Soft Gradient Overlays */}
+        <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-radial from-primary/10 to-transparent rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-radial from-accent/10 to-transparent rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}} />
+      </div>
+
       <Header />
       
-      <div className="container px-4 py-16">
+      <div className="container px-4 py-16 relative z-10">
         <div className="max-w-6xl mx-auto">
           
           {/* Header Section */}
