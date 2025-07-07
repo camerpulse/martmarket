@@ -40,10 +40,10 @@ const Footer = () => {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/shop" className="hover:text-primary transition-colors">Browse Products</Link></li>
               <li><Link to="/vendors" className="hover:text-primary transition-colors">Verified Vendors</Link></li>
+              <li><Link to="/how-to-order" className="hover:text-primary transition-colors">How to Order</Link></li>
+              <li><Link to="/selling-guide" className="hover:text-primary transition-colors">Selling Guide</Link></li>
               <li><Link to="/escrow-security" className="hover:text-primary transition-colors">Escrow Security</Link></li>
               <li><Link to="/shop" className="hover:text-primary transition-colors">Categories</Link></li>
-              <li><Link to="/shop" className="hover:text-primary transition-colors">New Arrivals</Link></li>
-              <li><Link to="/shop" className="hover:text-primary transition-colors">Best Sellers</Link></li>
             </ul>
           </div>
           
@@ -51,12 +51,12 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
               <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
               <li><Link to="/safety-terms" className="hover:text-primary transition-colors">Forbidden in Opes Market</Link></li>
               <li><Link to="/pgp-tools" className="hover:text-primary transition-colors">PGP Tools</Link></li>
               <li><Link to="/forum" className="hover:text-primary transition-colors">Help Center</Link></li>
-              <li><Link to="/about" className="hover:text-primary transition-colors">Security Guide</Link></li>
             </ul>
           </div>
         </div>
