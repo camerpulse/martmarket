@@ -2918,6 +2918,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_pgp_keys: {
+        Row: {
+          created_at: string
+          encrypted_private_key: string | null
+          id: string
+          is_default: boolean | null
+          key_fingerprint: string | null
+          key_name: string
+          public_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_private_key?: string | null
+          id?: string
+          is_default?: boolean | null
+          key_fingerprint?: string | null
+          key_name: string
+          public_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_private_key?: string | null
+          id?: string
+          is_default?: boolean | null
+          key_fingerprint?: string | null
+          key_name?: string
+          public_key?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_sessions: {
         Row: {
           created_at: string
