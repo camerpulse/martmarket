@@ -28,7 +28,7 @@ const SafetyAndTerms = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const [petitionForm, setPetitionForm] = useState({
-    fullName: '',
+    pseudoName: '',
     email: '',
     agreement: false
   });
@@ -56,7 +56,7 @@ const SafetyAndTerms = () => {
       
       setSigned(true);
       setSignaturesCount(prev => prev + 1);
-      setPetitionForm({ fullName: '', email: '', agreement: false });
+      setPetitionForm({ pseudoName: '', email: '', agreement: false });
     } catch (error) {
       console.error('Error signing petition:', error);
       toast({
@@ -80,11 +80,21 @@ const SafetyAndTerms = () => {
               <Shield className="h-12 w-12 text-primary" />
             </div>
             <h1 className="text-4xl font-bold mb-4">
-              Safety & Community Standards
+              Forbidden in Opes Market
             </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              OpesMarket is committed to creating a safe, ethical marketplace. We have zero tolerance for illegal content and actively work to protect vulnerable individuals worldwide.
-            </p>
+            <div className="max-w-4xl mx-auto space-y-6">
+              <p className="text-lg text-muted-foreground">
+                OpesMarket stands as a fortress protecting the innocent. We have zero tolerance for any content that harms children or exploits the vulnerable.
+              </p>
+              <div className="bg-primary/5 p-6 rounded-lg border border-primary/20">
+                <p className="text-base leading-relaxed text-foreground">
+                  Every child deserves to grow up safe, protected, and free from harm. Their laughter should echo in playgrounds, not be silenced by those who would steal their innocence. At OpesMarket, we believe in preserving the sacred trust that society places in us to shield the most vulnerable among us. 
+                </p>
+                <p className="text-base leading-relaxed text-foreground mt-4">
+                  A child's smile is precious beyond measure. Their dreams should be filled with wonder, not nightmares. We stand united as guardians of innocence, ensuring that our platform remains a space where evil finds no refuge and where those who would harm children face our unwavering opposition.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
@@ -97,7 +107,7 @@ const SafetyAndTerms = () => {
                 <AlertTriangle className="h-5 w-5 text-destructive" />
                 <AlertDescription className="text-destructive font-semibold text-lg">
                   <strong>ZERO TOLERANCE POLICY</strong><br />
-                  Any attempt to sell, distribute, or promote child exploitation material, human trafficking, or terrorism-related products will result in immediate account termination and law enforcement notification.
+                  Any attempt to sell, distribute, or promote child exploitation material, human trafficking, or terrorism-related products will result in immediate account termination.
                 </AlertDescription>
               </Alert>
 
@@ -169,15 +179,15 @@ const SafetyAndTerms = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 text-warning">
                     <Gavel className="h-5 w-5" />
-                    <span>Legal Consequences</span>
+                    <span>Consequences</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li>• Immediate account termination and permanent ban</li>
-                    <li>• All relevant information forwarded to law enforcement agencies</li>
-                    <li>• Full cooperation with international authorities and investigations</li>
-                    <li>• Potential criminal prosecution under applicable laws</li>
+                    <li>• All evidence preserved and reported to appropriate authorities</li>
+                    <li>• Complete cooperation with investigations</li>
+                    <li>• Full legal prosecution to the extent of the law</li>
                     <li>• Civil liability for damages caused to victims and platform</li>
                   </ul>
                 </CardContent>
@@ -220,13 +230,13 @@ const SafetyAndTerms = () => {
                   <CardContent>
                     <form onSubmit={handlePetitionSubmit} className="space-y-4">
                       <div>
-                        <Label htmlFor="fullName">Full Name</Label>
+                        <Label htmlFor="pseudoName">Pseudo Name</Label>
                         <Input
-                          id="fullName"
+                          id="pseudoName"
                           type="text"
-                          value={petitionForm.fullName}
-                          onChange={(e) => setPetitionForm({ ...petitionForm, fullName: e.target.value })}
-                          placeholder="Your full name"
+                          value={petitionForm.pseudoName}
+                          onChange={(e) => setPetitionForm({ ...petitionForm, pseudoName: e.target.value })}
+                          placeholder="Your pseudo name"
                           required
                         />
                       </div>
@@ -276,29 +286,19 @@ const SafetyAndTerms = () => {
                 </Card>
               )}
 
-              {/* Additional Resources */}
-              <Card>
+              {/* Message of Hope */}
+              <Card className="border-primary/20 bg-primary/5">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Users className="h-5 w-5" />
-                    <span>Support Resources</span>
+                  <CardTitle className="flex items-center space-x-2 text-primary">
+                    <Heart className="h-5 w-5" />
+                    <span>A Message of Hope</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div>
-                      <h5 className="font-medium">National Child Abuse Hotline</h5>
-                      <p className="text-sm text-muted-foreground">1-800-4-A-CHILD (1-800-422-4453)</p>
-                    </div>
-                    <div>
-                      <h5 className="font-medium">Human Trafficking Hotline</h5>
-                      <p className="text-sm text-muted-foreground">1-888-373-7888</p>
-                    </div>
-                    <div>
-                      <h5 className="font-medium">FBI Internet Crime Complaint</h5>
-                      <p className="text-sm text-muted-foreground">ic3.gov</p>
-                    </div>
-                  </div>
+                  <p className="text-sm text-muted-foreground italic leading-relaxed">
+                    "Together, we create a world where children can be children - free to laugh, play, dream, and grow in safety. 
+                    Every signature, every report, every stand we take is a shield protecting innocence and a beacon of hope for a better tomorrow."
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -338,9 +338,9 @@ const SafetyAndTerms = () => {
                   <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Shield className="h-6 w-6 text-success" />
                   </div>
-                  <h4 className="font-semibold mb-2">Law Enforcement</h4>
+                  <h4 className="font-semibold mb-2">Immediate Action</h4>
                   <p className="text-sm text-muted-foreground">
-                    Direct partnerships with agencies worldwide to combat illegal activities.
+                    Swift response to violations with full documentation and appropriate reporting.
                   </p>
                 </div>
               </div>
