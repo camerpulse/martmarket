@@ -1,4 +1,5 @@
 import { Star, MessageCircle, Package, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -13,6 +14,7 @@ interface VendorCardProps {
   specialties: string[];
   image: string;
   isOnline: boolean;
+  vendorId?: string;
 }
 
 const VendorCard = ({
@@ -23,8 +25,11 @@ const VendorCard = ({
   responseTime,
   specialties,
   image,
-  isOnline
+  isOnline,
+  vendorId
 }: VendorCardProps) => {
+  // Use vendorId if provided, otherwise use name as slug
+  const vendorSlug = vendorId || name.toLowerCase().replace(/\s+/g, '-');
   return (
     <Card className="card-gradient shadow-card hover:shadow-primary/20 transition-all duration-300 hover:scale-105">
       <CardHeader className="pb-3">
@@ -41,7 +46,9 @@ const VendorCard = ({
           
           {/* Vendor Info */}
           <div className="flex-1">
-            <h3 className="text-lg font-semibold">{name}</h3>
+            <Link to={`/vendor/${vendorSlug}`} className="hover:text-primary transition-colors">
+              <h3 className="text-lg font-semibold">{name}</h3>
+            </Link>
             <TrustIndicator score={trustScore} isVerified={isVerified} size="sm" />
           </div>
         </div>
@@ -78,13 +85,17 @@ const VendorCard = ({
         
         {/* Actions */}
         <div className="flex space-x-2">
-          <Button size="sm" className="flex-1 bg-primary hover:bg-primary/90">
-            <Package className="h-4 w-4 mr-2" />
-            View Store
-          </Button>
-          <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-            <MessageCircle className="h-4 w-4" />
-          </Button>
+          <Link to={`/vendor/${vendorSlug}`} className="flex-1">
+            <Button size="sm" className="w-full bg-primary hover:bg-primary/90">
+              <Package className="h-4 w-4 mr-2" />
+              View Store
+            </Button>
+          </Link>
+          <Link to="/messages">
+            <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+              <MessageCircle className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>
