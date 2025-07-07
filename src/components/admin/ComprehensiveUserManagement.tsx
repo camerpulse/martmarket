@@ -169,7 +169,7 @@ export const ComprehensiveUserManagement = ({ onUserSelect }: ComprehensiveUserM
         .from('admin_profiles')
         .upsert({
           user_id: selectedUser.user_id,
-          admin_role: adminForm.admin_role,
+          admin_role: adminForm.admin_role as "support_agent" | "admin" | "super_admin" | "moderator",
           is_active: adminForm.is_active,
           permissions: adminForm.permissions
         });
@@ -416,7 +416,7 @@ export const ComprehensiveUserManagement = ({ onUserSelect }: ComprehensiveUserM
                       <TableCell>
                         <div className="flex items-center gap-1">
                           {user.two_factor_enabled && (
-                            <Key className="h-4 w-4 text-green-500" title="2FA Enabled" />
+                            <Key className="h-4 w-4 text-green-500" />
                           )}
                         </div>
                       </TableCell>
