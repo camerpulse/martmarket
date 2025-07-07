@@ -1,4 +1,4 @@
-import { Mail, MessageSquare, Shield, Clock, Phone, MapPin, HelpCircle, Key, Copy, CheckCircle } from "lucide-react";
+import { Mail, MessageSquare, Shield, Clock, Phone, MapPin, HelpCircle, Key, Copy, CheckCircle, Bitcoin, Globe, MessageCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useTranslation } from "@/hooks/useTranslation";
