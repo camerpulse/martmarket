@@ -215,8 +215,52 @@ const Forum = () => {
     }
   };
 
+  const checkUserCanPost = async () => {
+    if (!user) return false;
+    
+    try {
+      // Check if user has placed at least one order
+      const { data: orders, error } = await supabase
+        .from('orders')
+        .select('id')
+        .eq('buyer_id', user.id)
+        .limit(1);
+        
+      if (error) throw error;
+      return orders && orders.length > 0;
+    } catch (error) {
+      console.error('Error checking user orders:', error);
+      return false;
+    }
+  };
+
+  const [canPost, setCanPost] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
+
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (user) {
+        const hasOrders = await checkUserCanPost();
+        setCanPost(hasOrders);
+      }
+      setCheckingAccess(false);
+    };
+    
+    checkAccess();
+  }, [user]);
+
   const createTopic = async () => {
-    if (!user || !selectedCategory || !newTopic.title.trim() || !newTopic.content.trim()) {
+    if (!user) {
+      toast.error('Please log in to create topics');
+      return;
+    }
+    
+    if (!canPost) {
+      toast.error('You must place at least one order before posting in the forum');
+      return;
+    }
+    
+    if (!selectedCategory || !newTopic.title.trim() || !newTopic.content.trim()) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -245,7 +289,17 @@ const Forum = () => {
   };
 
   const createReply = async () => {
-    if (!user || !selectedTopic || !newReply.content.trim()) {
+    if (!user) {
+      toast.error('Please log in to reply');
+      return;
+    }
+    
+    if (!canPost) {
+      toast.error('You must place at least one order before posting replies');
+      return;
+    }
+    
+    if (!selectedTopic || !newReply.content.trim()) {
       toast.error('Please fill in all required fields');
       return;
     }

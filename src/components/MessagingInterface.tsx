@@ -1,32 +1,44 @@
 import { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
-  MessageCircle, 
-  Send, 
-  Shield, 
-  Lock, 
-  Smile, 
-  Paperclip,
-  MoreVertical,
-  Clock,
+  MessageCircle,
+  Send,
+  Shield,
+  Search,
   Plus,
+  ArrowLeft,
+  User,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Settings,
+  MoreHorizontal,
+  Trash2,
+  Reply,
+  Forward,
+  Archive,
   Inbox,
-  SendIcon,
   FileText,
-  Archive
+  Lock,
+  Paperclip,
+  Smile
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Header from '@/components/Header';
+import { Link } from 'react-router-dom';
 
 interface Message {
   id: string;
@@ -89,7 +101,7 @@ export function MessagingInterface() {
 
   const folders: Folder[] = [
     { id: 'inbox', name: 'Inbox', icon: Inbox, count: threads.length },
-    { id: 'sent', name: 'Sent', icon: SendIcon, count: 0 },
+    { id: 'sent', name: 'Sent', icon: Send, count: 0 },
     { id: 'drafts', name: 'Drafts', icon: FileText, count: 0 },
     { id: 'archived', name: 'Archived', icon: Archive, count: 0 },
   ];
@@ -485,7 +497,7 @@ export function MessagingInterface() {
           
           {currentFolder === 'sent' && (
             <div className="p-8 text-center text-muted-foreground">
-              <SendIcon className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <Send className="h-12 w-12 mx-auto mb-4 opacity-30" />
               <p className="text-sm">No sent messages</p>
               <p className="text-xs mt-1">Messages you send will appear here</p>
             </div>
@@ -597,7 +609,7 @@ export function MessagingInterface() {
                     </Badge>
                   )}
                   <Button variant="ghost" size="sm">
-                    <MoreVertical className="h-4 w-4" />
+                    <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
