@@ -156,6 +156,7 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
       console.log('Found user profile:', userProfile);
 
       if (userProfile.user_id === userId) {
+        console.log('User tried to add themselves');
         toast({
           title: "Invalid Contact",
           description: "You cannot add yourself as a contact",
@@ -165,12 +166,15 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
       }
 
       // Check if user has PGP key
-      const { data: pgpKey } = await supabase
+      console.log('Checking PGP key for user:', userProfile.user_id);
+      const { data: pgpKey, error: pgpError } = await supabase
         .from('user_pgp_keys')
         .select('id')
         .eq('user_id', userProfile.user_id)
         .eq('is_default', true)
-        .single();
+        .maybeSingle();
+
+      console.log('PGP key check result:', { pgpKey, pgpError });
 
       const newContact: Contact = {
         id: userProfile.user_id,
@@ -179,11 +183,15 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
         unread_count: 0
       };
 
+      console.log('Creating new contact:', newContact);
+
       // Check if contact already exists
       const existingContact = contacts.find(c => c.id === newContact.id);
       if (existingContact) {
+        console.log('Contact already exists, selecting it');
         onContactSelect(existingContact);
       } else {
+        console.log('Adding new contact to list');
         setContacts(prev => [newContact, ...prev]);
         onContactSelect(newContact);
       }
@@ -191,6 +199,7 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
       setShowNewContact(false);
       setNewContactUsername('');
 
+      console.log('Contact added successfully');
       toast({
         title: "Contact Added",
         description: `Added ${userProfile.display_name} to your contacts`,
