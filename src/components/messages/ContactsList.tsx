@@ -104,15 +104,34 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
   const addNewContact = async () => {
     if (!newContactUsername.trim()) return;
 
+    console.log('Searching for:', newContactUsername.trim());
+
     try {
-      // Find user by display name or email
-      const { data: userProfile, error } = await supabase
+      const searchTerm = newContactUsername.trim();
+      
+      // Try to find user by display name first
+      let { data: userProfile, error } = await supabase
         .from('profiles')
         .select('user_id, display_name, email')
-        .or(`display_name.eq.${newContactUsername.trim()},email.eq.${newContactUsername.trim()}`)
+        .eq('display_name', searchTerm)
         .maybeSingle();
 
+      // If not found by display name, try by email
+      if (!userProfile && !error) {
+        const result = await supabase
+          .from('profiles')
+          .select('user_id, display_name, email')
+          .eq('email', searchTerm)
+          .maybeSingle();
+          
+        userProfile = result.data;
+        error = result.error;
+      }
+
+      console.log('Search result:', { userProfile, error });
+
       if (error) {
+        console.error('Search error:', error);
         toast({
           title: "Search Error", 
           description: error.message,
