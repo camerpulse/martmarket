@@ -62,12 +62,18 @@ const Header = () => {
                   {t('nav.wishlist', 'Wishlist')}
                 </Link>
               </Button>
-              <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
-                <Link to="/affiliate">
-                  <DollarSign className="h-4 w-4 mr-2" />
-                  {t('nav.affiliate', 'Affiliate')}
-                </Link>
-              </Button>
+               <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
+                 <Link to="/affiliate">
+                   <DollarSign className="h-4 w-4 mr-2" />
+                   {t('nav.affiliate', 'Affiliate')}
+                 </Link>
+               </Button>
+               <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
+                 <Link to="/pgp-tools">
+                   <Shield className="h-4 w-4 mr-2" />
+                   PGP Tools
+                 </Link>
+               </Button>
             </>
           )}
           <LanguageSelector />
@@ -214,6 +220,13 @@ const Header = () => {
                         <Link to="/affiliate">
                           <DollarSign className="h-4 w-4 mr-2" />
                           {t('nav.affiliate', 'Affiliate')}
+                        </Link>
+                      </Button>
+
+                      <Button variant="ghost" className="justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
+                        <Link to="/pgp-tools">
+                          <Shield className="h-4 w-4 mr-2" />
+                          PGP Tools
                         </Link>
                       </Button>
 
