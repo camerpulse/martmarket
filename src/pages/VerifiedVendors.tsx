@@ -25,11 +25,15 @@ const VerifiedVendors = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("trust_score");
 
+  console.log("🔥 VerifiedVendors component is loading!");
+
   useEffect(() => {
+    console.log("🔥 VerifiedVendors useEffect triggered");
     fetchVerifiedVendors();
   }, []);
 
   const fetchVerifiedVendors = async () => {
+    console.log("🔥 Fetching verified vendors from database...");
     try {
       const { data: vendorData, error } = await supabase
         .from('vendor_profiles')
@@ -37,7 +41,11 @@ const VerifiedVendors = () => {
         .eq('is_verified', true)
         .order('trust_score', { ascending: false });
 
-      if (error) throw error;
+      console.log("🔥 Vendor data fetched:", vendorData);
+      if (error) {
+        console.error("🔥 Database error:", error);
+        throw error;
+      }
 
       const transformedVendors = vendorData?.map(vendor => ({
         name: vendor.store_name,
@@ -51,9 +59,10 @@ const VerifiedVendors = () => {
         vendorId: vendor.vendor_id
       })) || [];
 
+      console.log("🔥 Transformed vendors:", transformedVendors);
       setVendors(transformedVendors);
     } catch (error) {
-      console.error('Error fetching verified vendors:', error);
+      console.error('🔥 Error fetching verified vendors:', error);
     } finally {
       setLoading(false);
     }
@@ -72,6 +81,7 @@ const VerifiedVendors = () => {
     });
 
   if (loading) {
+    console.log("🔥 VerifiedVendors still loading...");
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -83,6 +93,8 @@ const VerifiedVendors = () => {
     );
   }
 
+  console.log("🔥 VerifiedVendors component rendering with vendors:", vendors.length);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -90,7 +102,7 @@ const VerifiedVendors = () => {
       <div className="container px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">
-            <span className="bitcoin-gradient">Verified Vendors</span>
+            <span className="bitcoin-gradient">🔥 DEBUG: Verified Vendors Page Loaded!</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Browse our trusted, verified vendors with proven track records and $250 security bonds.
