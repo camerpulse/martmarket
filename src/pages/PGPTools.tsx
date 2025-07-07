@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,7 @@ interface StoredKey {
 
 export default function PGPTools() {
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // Key Generation State
   const [keySize, setKeySize] = useState<'2048' | '4096'>('2048');
@@ -137,17 +139,63 @@ export default function PGPTools() {
   };
 
   const saveKeysToProfile = async (keyPair: KeyPair) => {
-    try {
-      // This would save encrypted keys to the database
-      // For now, we'll just show a success message
-      toast({
-        title: "Keys Saved",
-        description: "Your keys have been securely saved to your profile"
-      });
-    } catch (error) {
+    if (!user) {
       toast({
         title: "Error",
-        description: "Failed to save keys to profile",
+        description: "You must be logged in to save keys to your profile",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      console.log('Saving keys to profile for user:', user.id);
+      
+      // Extract fingerprint from public key
+      const publicKey = await openpgp.readKey({ armoredKey: keyPair.publicKey });
+      const fingerprint = publicKey.getFingerprint();
+      
+      // Create a key name based on user info and timestamp
+      const keyName = `${userName || 'PGP Key'} - ${new Date().toLocaleDateString()}`;
+      
+      // Encrypt private key with AES (optional - user can choose not to store private key)
+      const privateKeyToStore = passphrase ? keyPair.privateKey : null;
+      
+      console.log('Inserting PGP key:', {
+        user_id: user.id,
+        key_name: keyName,
+        key_fingerprint: fingerprint,
+        has_private_key: !!privateKeyToStore
+      });
+
+      const { data, error } = await supabase
+        .from('user_pgp_keys')
+        .insert({
+          user_id: user.id,
+          key_name: keyName,
+          public_key: keyPair.publicKey,
+          encrypted_private_key: privateKeyToStore, // Store private key if user wants
+          key_fingerprint: fingerprint,
+          is_default: false
+        })
+        .select();
+
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+
+      console.log('Successfully saved PGP key:', data);
+
+      toast({
+        title: "Keys Saved",
+        description: "Your PGP keys have been securely saved to your profile"
+      });
+    } catch (error) {
+      console.error('Error saving keys to profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save keys to profile: " + (error as Error).message,
         variant: "destructive"
       });
     }
