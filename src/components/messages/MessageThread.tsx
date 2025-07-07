@@ -19,7 +19,7 @@ interface Message {
   sender_id: string;
   recipient_id: string;
   created_at: string;
-  is_encrypted: boolean;
+  is_encrypted?: boolean;
   sender_profile?: { display_name: string };
 }
 
@@ -80,27 +80,31 @@ export default function MessageThread({ recipientId, recipientName, userId }: Me
 
       // Decrypt messages
       const decryptedMessages = await Promise.all(
-        (data || []).map(async (message) => {
-          if (message.is_encrypted && message.recipient_id === userId) {
+        (data || []).map(async (message: any) => {
+          // Handle case where encrypted columns might not exist yet
+          const isEncrypted = message.is_encrypted || false;
+          const encryptedContent = message.encrypted_content;
+          
+          if (isEncrypted && message.recipient_id === userId) {
             try {
               // Try to decrypt if we have the passphrase
               if (pgpPassphrase && userPgpKeys.length > 0) {
                 const defaultKey = userPgpKeys.find(k => k.is_default);
-                if (defaultKey?.encrypted_private_key) {
+                if (defaultKey?.encrypted_private_key && encryptedContent) {
                   const decrypted = await decryptMessage(
-                    message.encrypted_content || message.content,
+                    encryptedContent,
                     defaultKey.encrypted_private_key,
                     pgpPassphrase
                   );
-                  return { ...message, content: decrypted };
+                  return { ...message, content: decrypted, is_encrypted: true };
                 }
               }
-              return { ...message, content: '[Encrypted Message - Enter passphrase to decrypt]' };
+              return { ...message, content: '[Encrypted Message - Enter passphrase to decrypt]', is_encrypted: true };
             } catch (error) {
-              return { ...message, content: '[Decryption Failed]' };
+              return { ...message, content: '[Decryption Failed]', is_encrypted: true };
             }
           }
-          return message;
+          return { ...message, is_encrypted: isEncrypted };
         })
       );
 

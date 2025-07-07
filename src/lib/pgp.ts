@@ -25,8 +25,8 @@ export async function generatePGPKeyPair(
   passphrase: string
 ): Promise<PGPKeyPair> {
   const { privateKey, publicKey } = await openpgp.generateKey({
-    type: 'ecc',
-    curve: 'curve25519',
+    type: 'rsa',
+    rsaBits: 2048,
     userIDs: [{ name, email }],
     passphrase,
     format: 'armored'
@@ -173,7 +173,8 @@ export async function verifyMessageSignature(
       verificationKeys: publicKey
     });
 
-    return verificationResult.signatures[0]?.verified === true;
+    const firstSignature = verificationResult.signatures[0];
+    return firstSignature ? await firstSignature.verified : false;
   } catch (error) {
     console.error('Signature verification failed:', error);
     return false;
