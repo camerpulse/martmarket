@@ -47,10 +47,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Bitcoin className="h-12 w-12 text-primary mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  {t('about.features.bitcoin.title', 'Bitcoin Only')}
+                  Bitcoin Only
                 </h3>
                 <p className="text-muted-foreground">
-                  {t('about.features.bitcoin.description', 'All transactions are conducted exclusively in Bitcoin, ensuring true financial privacy and decentralization.')}
+                  All transactions are conducted exclusively in Bitcoin, ensuring true financial privacy and decentralization.
                 </p>
               </CardContent>
             </Card>
@@ -59,10 +59,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Shield className="h-12 w-12 text-verified mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  {t('about.features.security.title', 'AI Security')}
+                  AI Security
                 </h3>
                 <p className="text-muted-foreground">
-                  {t('about.features.security.description', 'Advanced AI algorithms continuously monitor and protect against fraud, ensuring a safe trading environment.')}
+                  Advanced AI algorithms continuously monitor and protect against fraud, ensuring a safe trading environment.
                 </p>
               </CardContent>
             </Card>
@@ -71,10 +71,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Lock className="h-12 w-12 text-trust-high mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  {t('about.features.privacy.title', 'Anonymous')}
+                  Anonymous
                 </h3>
                 <p className="text-muted-foreground">
-                  {t('about.features.privacy.description', 'Complete anonymity with end-to-end encryption and no personal data collection.')}
+                  Complete anonymity with end-to-end encryption and no personal data collection.
                 </p>
               </CardContent>
             </Card>
@@ -83,10 +83,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Users className="h-12 w-12 text-secondary mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  {t('about.features.vendors.title', 'Verified Vendors')}
+                  Verified Vendors
                 </h3>
                 <p className="text-muted-foreground">
-                  {t('about.features.vendors.description', 'All vendors undergo strict verification processes to ensure product quality and reliability.')}
+                  All vendors undergo strict verification processes to ensure product quality and reliability.
                 </p>
               </CardContent>
             </Card>
@@ -95,10 +95,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Zap className="h-12 w-12 text-warning mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  {t('about.features.escrow.title', 'Smart Escrow')}
+                  Smart Escrow
                 </h3>
                 <p className="text-muted-foreground">
-                  {t('about.features.escrow.description', 'Automated escrow system protects both buyers and sellers with intelligent dispute resolution.')}
+                  Automated escrow system protects both buyers and sellers with intelligent dispute resolution.
                 </p>
               </CardContent>
             </Card>
@@ -107,10 +107,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Globe className="h-12 w-12 text-info mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  {t('about.features.global.title', 'Global Access')}
+                  Global Access
                 </h3>
                 <p className="text-muted-foreground">
-                  {t('about.features.global.description', 'Available worldwide with multi-language support and 24/7 accessibility.')}
+                  Available worldwide with multi-language support and 24/7 accessibility.
                 </p>
               </CardContent>
             </Card>
@@ -119,31 +119,31 @@ const About = () => {
           {/* Values Section */}
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-8">
-              {t('about.values.title', 'Our Values')}
+              Our Values
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
                 <h3 className="text-xl font-semibold mb-4 text-primary">
-                  {t('about.values.privacy.title', 'Privacy First')}
+                  Privacy First
                 </h3>
                 <p className="text-muted-foreground">
-                  {t('about.values.privacy.description', 'Your privacy is non-negotiable. We never collect personal data and ensure complete anonymity.')}
+                  Your privacy is non-negotiable. We never collect personal data and ensure complete anonymity.
                 </p>
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-4 text-verified">
-                  {t('about.values.trust.title', 'Trust & Safety')}
+                  Trust & Safety
                 </h3>
                 <p className="text-muted-foreground">
-                  {t('about.values.trust.description', 'Building trust through transparency, verified vendors, and AI-powered security measures.')}
+                  Building trust through transparency, verified vendors, and AI-powered security measures.
                 </p>
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-4 text-secondary">
-                  {t('about.values.innovation.title', 'Innovation')}
+                  Innovation
                 </h3>
                 <p className="text-muted-foreground">
-                  {t('about.values.innovation.description', 'Continuously improving with cutting-edge technology and user-centered design.')}
+                  Continuously improving with cutting-edge technology and user-centered design.
                 </p>
               </div>
             </div>
