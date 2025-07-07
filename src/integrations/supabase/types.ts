@@ -720,6 +720,57 @@ export type Database = {
         }
         Relationships: []
       }
+      content_flags: {
+        Row: {
+          action_taken: string | null
+          created_at: string
+          detected_content: string
+          draft_id: string | null
+          flag_type: string
+          id: string
+          message_id: string | null
+          reviewed: boolean | null
+          user_id: string
+        }
+        Insert: {
+          action_taken?: string | null
+          created_at?: string
+          detected_content: string
+          draft_id?: string | null
+          flag_type: string
+          id?: string
+          message_id?: string | null
+          reviewed?: boolean | null
+          user_id: string
+        }
+        Update: {
+          action_taken?: string | null
+          created_at?: string
+          detected_content?: string
+          draft_id?: string | null
+          flag_type?: string
+          id?: string
+          message_id?: string | null
+          reviewed?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_flags_draft_id_fkey"
+            columns: ["draft_id"]
+            isOneToOne: false
+            referencedRelation: "message_drafts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_flags_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dispute_evidence: {
         Row: {
           created_at: string | null
@@ -1397,6 +1448,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      message_drafts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          recipient_username: string | null
+          subject: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          recipient_username?: string | null
+          subject?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          recipient_username?: string | null
+          subject?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       message_reactions: {
         Row: {
