@@ -2202,6 +2202,7 @@ export type Database = {
           banned_by: string | null
           created_at: string
           display_name: string | null
+          email: string | null
           id: string
           is_banned: boolean | null
           pgp_public_key: string | null
@@ -2216,6 +2217,7 @@ export type Database = {
           banned_by?: string | null
           created_at?: string
           display_name?: string | null
+          email?: string | null
           id?: string
           is_banned?: boolean | null
           pgp_public_key?: string | null
@@ -2230,6 +2232,7 @@ export type Database = {
           banned_by?: string | null
           created_at?: string
           display_name?: string | null
+          email?: string | null
           id?: string
           is_banned?: boolean | null
           pgp_public_key?: string | null

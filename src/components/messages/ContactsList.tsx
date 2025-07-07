@@ -105,17 +105,26 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
     if (!newContactUsername.trim()) return;
 
     try {
-      // Find user by display name
+      // Find user by display name or email
       const { data: userProfile, error } = await supabase
         .from('profiles')
-        .select('user_id, display_name')
-        .eq('display_name', newContactUsername.trim())
-        .single();
+        .select('user_id, display_name, email')
+        .or(`display_name.eq.${newContactUsername.trim()},email.eq.${newContactUsername.trim()}`)
+        .maybeSingle();
 
-      if (error || !userProfile) {
+      if (error) {
+        toast({
+          title: "Search Error", 
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!userProfile) {
         toast({
           title: "User Not Found",
-          description: "No user found with that username",
+          description: "No user found with that username or email",
           variant: "destructive",
         });
         return;
@@ -208,10 +217,10 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="username">Username or Email</Label>
                   <Input
                     id="username"
-                    placeholder="Enter username"
+                    placeholder="Enter username or email"
                     value={newContactUsername}
                     onChange={(e) => setNewContactUsername(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && addNewContact()}
