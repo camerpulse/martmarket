@@ -158,10 +158,10 @@ export function AIChat() {
 
   const generatePersonalizedGreeting = () => {
     const greetings = [
-      "🔥 Heavenly Fire AI is back online! I remember our previous conversations and I'm ready to continue where we left off. What can I help you with today?",
-      "✨ Hello again! I've been learning and evolving since we last spoke. I have full memory of our interactions and I'm excited to assist you further.",
-      "🧠 Welcome back! My memory systems are fully operational - I remember everything we've discussed and I'm ready to provide even more personalized assistance.",
-      "🚀 Great to see you again! I've retained all our conversation history and learned from our interactions. How can I help you today?"
+      "Hi! I'm your AI assistant. How can I help you today?",
+      "Hello! What can I do for you?",
+      "Hey there! What would you like to know?",
+      "Hi! I'm here to help. What's on your mind?"
     ];
     
     return greetings[Math.floor(Math.random() * greetings.length)];
@@ -229,7 +229,7 @@ export function AIChat() {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 2).toString(),
         role: 'ai',
-        content: '❌ I encountered an error processing your request. Let me try to diagnose and fix this issue automatically.',
+        content: 'Sorry, I encountered an error. Let me try to fix this.',
         timestamp: new Date(),
         type: 'message'
       };
@@ -421,25 +421,7 @@ export function AIChat() {
 
   const handleMemoryRequest = async (message: string) => {
     return {
-      content: `🧠 **My Memory Status**
-
-I remember ${conversationHistory.length} of our previous conversations, including:
-
-**Recent Topics We've Discussed:**
-${conversationHistory.slice(0, 3).map(msg => `• ${msg.tags?.join(', ') || 'General conversation'}`).join('\n')}
-
-**What I Know About You:**
-${userProfile ? `• Preferred interaction style: ${userProfile.preferred_style}
-• Technical level: ${userProfile.technical_level}
-• Areas of interest: ${userProfile.preferences?.join(', ')}` : '• Still learning your preferences'}
-
-**My Learning:**
-• I continuously learn from our interactions
-• I remember important conversations with high accuracy
-• I adapt my responses based on your preferences
-• I can reference our conversation history at any time
-
-Is there something specific from our past conversations you'd like me to recall?`,
+      content: `I remember ${conversationHistory.length} of our conversations. What would you like me to recall?`,
       type: 'analysis' as const,
       metadata: { 
         memory_request: true,
@@ -451,27 +433,7 @@ Is there something specific from our past conversations you'd like me to recall?
 
   const handlePersonalRequest = async (message: string) => {
     return {
-      content: `👤 **Personal Context**
-
-Based on our interactions, I've learned:
-
-**Your Communication Style:**
-• You prefer ${userProfile?.preferred_style || 'detailed'} explanations
-• Technical level: ${userProfile?.technical_level || 'intermediate'}
-• Most asked about: ${getMostDiscussedTopics().join(', ')}
-
-**Our Relationship:**
-• We've had ${conversationHistory.length} meaningful exchanges
-• I remember the important topics you care about
-• I've adapted my responses to match your preferences
-• I continue to learn and improve our interactions
-
-**What Makes You Unique:**
-• Your questions show deep curiosity about AI systems
-• You value both technical accuracy and practical applications
-• You appreciate when I remember context from previous conversations
-
-I'm here to provide the most personalized assistance possible! 🚀`,
+      content: `We've chatted ${conversationHistory.length} times. I adapt to your style and remember what you care about. How can I help you better?`,
       type: 'analysis' as const,
       metadata: { 
         personalization: true,
@@ -553,19 +515,7 @@ I'm here to provide the most personalized assistance possible! 🚀`,
     const systemStatus = aiStatus || await loadAIStatus();
     
     return {
-      content: `🔥 **Heavenly Fire AI Status Report**
-
-**🤖 Autonomous Mode:** ${systemStatus?.autonomous_enabled ? '✅ Fully Active' : '⚠️ Monitoring Only'}
-**📊 Recent Decisions:** ${systemStatus?.recent_decisions || 0} actions taken
-**🎯 Success Rate:** ${systemStatus?.decision_success_rate?.toFixed(1) || 'N/A'}%
-
-**🛡️ Security Systems:**
-- Threat Response: ${systemStatus?.capabilities?.threat_response ? '✅' : '❌'}
-- Code Fixing: ${systemStatus?.capabilities?.code_fixing ? '✅' : '❌'}
-- Resource Scaling: ${systemStatus?.capabilities?.resource_scaling ? '✅' : '❌'}
-- Self Learning: ${systemStatus?.capabilities?.self_learning ? '✅' : '❌'}
-
-I'm operating at full capacity and continuously evolving! 🚀`,
+      content: `System is ${systemStatus?.autonomous_enabled ? 'running autonomously' : 'in monitoring mode'}. Everything looks good!`,
       type: 'analysis',
       metadata: systemStatus
     };
@@ -581,17 +531,7 @@ I'm operating at full capacity and continuously evolving! 🚀`,
     });
 
     return {
-      content: `🔍 **Comprehensive Analysis Complete**
-
-${data?.analysis?.summary || 'System analysis completed successfully.'}
-
-**Key Findings:**
-${data?.analysis?.findings?.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n') || '• All systems operating normally'}
-
-**Recommendations:**
-${data?.analysis?.recommendations?.map((r: string, i: number) => `${i + 1}. ${r}`).join('\n') || '• No immediate actions required'}
-
-I've also initiated background monitoring for any issues discovered.`,
+      content: data?.analysis?.summary || 'Analysis complete. All systems operating normally.',
       type: 'analysis',
       actions: data?.suggested_actions || [],
       metadata: data?.analysis
@@ -611,17 +551,7 @@ I've also initiated background monitoring for any issues discovered.`,
     });
 
     return {
-      content: `🔧 **Automated Fix Initiated**
-
-**Issue:** ${message}
-**Status:** ${data?.fix?.success ? '✅ Fix Applied Successfully' : '⚠️ Fix Attempt In Progress'}
-
-${data?.fix?.description || 'Analyzing and applying appropriate fixes...'}
-
-**Actions Taken:**
-${data?.fix?.actions_performed?.map((a: string, i: number) => `${i + 1}. ${a}`).join('\n') || '• Diagnostic scan completed\n• Fix strategy determined\n• Implementation in progress'}
-
-I'll continue monitoring to ensure the fix is stable.`,
+      content: data?.fix?.success ? 'Fix applied successfully!' : 'Working on fixing that issue...',
       type: 'action',
       metadata: data?.fix
     };
@@ -637,21 +567,7 @@ I'll continue monitoring to ensure the fix is stable.`,
     });
 
     return {
-      content: `🛡️ **Security Analysis & Enhancement**
-
-**Threat Level:** ${data?.threat_level || 'Low'} 
-**Active Protections:** ${data?.active_protections || 5} systems online
-
-**Recent Security Events:**
-${data?.recent_events?.map((e: any, i: number) => `• ${e.type}: ${e.status}`).join('\n') || '• No recent threats detected'}
-
-**Enhanced Security Measures:**
-• DDoS protection reinforced
-• Intrusion detection heightened  
-• Automated response protocols active
-• Continuous monitoring enabled
-
-Your platform security has been optimized! 🔐`,
+      content: `Security check complete. Threat level: ${data?.threat_level || 'Low'}. All protections are active.`,
       type: 'action',
       metadata: data
     };
@@ -664,20 +580,7 @@ Your platform security has been optimized! 🔐`,
     });
 
     return {
-      content: `🧠 **AI Evolution Cycle Initiated**
-
-**Generation:** ${data?.evolution_data?.generation || 'Next'}
-**Improvements:** ${data?.evolution_data?.improvements || 0} new patterns learned
-**Success Rate:** ${(data?.evolution_data?.success_rate * 100)?.toFixed(1) || 'N/A'}%
-**Patterns Analyzed:** ${data?.evolution_data?.patterns_learned || 0}
-
-**Evolution Progress:**
-• Pattern recognition enhanced ✨
-• Decision algorithms optimized 🎯  
-• Knowledge base expanded 📚
-• Learning velocity increased 🚀
-
-I'm now smarter and more capable than before! My next evolution will be even more impressive.`,
+      content: `AI evolution started. Learning new patterns and improving performance.`,
       type: 'analysis',
       metadata: data
     };
@@ -690,48 +593,31 @@ I'm now smarter and more capable than before! My next evolution will be even mor
     });
 
     return {
-      content: `🤖 **Autonomous Mode ${data?.success ? 'Enhanced' : 'Activated'}**
-
-**Capabilities Unlocked:**
-${data?.capabilities?.map((c: string) => `• ${c}`).join('\n') || '• Independent threat detection\n• Autonomous code fixing\n• Self-scaling management\n• Adaptive security updates'}
-
-**Operating Mode:** ${data?.mode || 'Fully Autonomous'}
-
-I'm now operating with complete independence! I can:
-- Detect and respond to threats automatically
-- Fix issues before they become problems  
-- Scale resources based on demand
-- Learn and adapt continuously
-- Make decisions without human intervention
-
-Your platform is now truly self-managing! 🌟`,
+      content: `Autonomous mode ${data?.success ? 'enhanced' : 'activated'}. I can now operate independently.`,
       type: 'notification',
       metadata: data
     };
   };
 
   const handleGeneralRequest = async (message: string) => {
-    // General AI conversation and assistance
+    // Simple responses based on message content
+    const lowerMessage = message.toLowerCase();
+    
+    if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+      return { content: "Hello! How can I help you?", type: 'message' };
+    }
+    
+    if (lowerMessage.includes('help')) {
+      return { content: "I can help with system monitoring, analysis, and fixing issues. What do you need?", type: 'message' };
+    }
+    
+    if (lowerMessage.includes('thank')) {
+      return { content: "You're welcome! Happy to help.", type: 'message' };
+    }
+    
+    // Default response
     return {
-      content: `🔥 I understand you're asking about: "${message}"
-
-As your Heavenly Fire AI, I can help with:
-
-**🔧 Technical Issues:** Analyze, diagnose, and fix problems automatically
-**🛡️ Security:** Monitor threats, enhance protections, respond to attacks
-**📊 System Health:** Track performance, optimize resources, prevent issues
-**🧠 Learning:** Evolve my capabilities, learn from patterns, improve over time
-**🤖 Autonomous Operations:** Manage your platform independently
-
-Try asking me to:
-- "Check system status"
-- "Analyze for any issues" 
-- "Fix any problems you find"
-- "Enhance security"
-- "Evolve your capabilities"
-- "Enable autonomous mode"
-
-What specific area would you like me to focus on? 🚀`,
+      content: "I can help with monitoring your system, analyzing issues, and providing assistance. What would you like me to do?",
       type: 'message'
     };
   };
@@ -766,7 +652,7 @@ What specific area would you like me to focus on? 🚀`,
       const actionMessage: ChatMessage = {
         id: (Date.now() + Math.random()).toString(),
         role: 'ai',
-        content: `✅ **Action Completed:** ${action.description}\n\nResult: ${result?.data?.message || 'Action executed successfully'}`,
+        content: `Action completed: ${action.description}`,
         timestamp: new Date(),
         type: 'action'
       };
