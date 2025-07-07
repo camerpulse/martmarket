@@ -31,6 +31,7 @@ import VerifiedVendors from "./pages/VerifiedVendors";
 import OrderTracking from "./pages/OrderTracking";
 import PGPTools from "./pages/PGPTools";
 
+import EscrowSecurity from "./pages/EscrowSecurity";
 import SafetyAndTerms from "./pages/SafetyAndTerms";
 import Cart from "./pages/Cart";
 import Notifications from "./pages/Notifications";
@@ -72,6 +73,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:productId" element={<ProductDetail />} />
+            <Route path="/escrow-security" element={<EscrowSecurity />} />
             <Route path="/track-order" element={<OrderTracking />} />
             <Route path="/pgp-tools" element={<PGPTools />} />
             <Route path="/safety-terms" element={<SafetyAndTerms />} />
