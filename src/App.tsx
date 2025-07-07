@@ -50,9 +50,11 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/vendors" element={<VerifiedVendors />} />
             <Route path="/vendor/register" element={<VendorRegistration />} />
             <Route path="/vendor/dashboard" element={<VendorDashboard />} />
             <Route path="/vendor/products" element={<VendorProducts />} />
+            <Route path="/vendor/:vendorId" element={<VendorProfile />} />
             <Route path="/tester/dashboard" element={<TesterDashboard />} />
             <Route path="/forum" element={<Forum />} />
             <Route path="/affiliate" element={<Affiliate />} />
@@ -70,8 +72,6 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:productId" element={<ProductDetail />} />
-            <Route path="/vendor/:vendorId" element={<VendorProfile />} />
-            <Route path="/vendors" element={<VerifiedVendors />} />
             <Route path="/track-order" element={<OrderTracking />} />
             <Route path="/pgp-tools" element={<PGPTools />} />
             <Route path="/safety-terms" element={<SafetyAndTerms />} />
