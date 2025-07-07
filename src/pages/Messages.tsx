@@ -75,13 +75,23 @@ export default function Messages() {
 
   const loadInboxMessages = async () => {
     try {
-      // Get received messages from threads where user is buyer or vendor
+      console.log('Loading inbox messages for user:', user.id);
+      
+      // First, try a simple query to see if we have any messages
+      const { data: simpleData, error: simpleError } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('recipient_id', user.id);
+      
+      console.log('Simple messages query result:', { simpleData, simpleError });
+
+      // Get received messages with sender info
       const { data, error } = await supabase
         .from('messages')
         .select(`
           *,
           sender_profile:profiles!messages_sender_id_fkey(display_name),
-          message_threads!inner(
+          message_threads(
             buyer_id,
             vendor_id,
             subject
@@ -90,12 +100,19 @@ export default function Messages() {
         .eq('recipient_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('Inbox query result:', { data, error });
+
+      if (error) {
+        console.error('Inbox query error:', error);
+        throw error;
+      }
       
       const messagesWithSubject = data?.map(msg => ({
         ...msg,
         subject: msg.message_threads?.subject
       })) || [];
+      
+      console.log('Processed inbox messages:', messagesWithSubject);
       
       setInboxMessages(messagesWithSubject);
       setCounts(prev => ({ 
@@ -104,17 +121,32 @@ export default function Messages() {
       }));
     } catch (error) {
       console.error('Error loading inbox:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load inbox messages",
+        variant: "destructive",
+      });
     }
   };
 
   const loadSentMessages = async () => {
     try {
+      console.log('Loading sent messages for user:', user.id);
+      
+      // First, try a simple query to see if we have any sent messages
+      const { data: simpleData, error: simpleError } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('sender_id', user.id);
+      
+      console.log('Simple sent messages query result:', { simpleData, simpleError });
+
       const { data, error } = await supabase
         .from('messages')
         .select(`
           *,
           recipient_profile:profiles!messages_recipient_id_fkey(display_name),
-          message_threads!inner(
+          message_threads(
             buyer_id,
             vendor_id,
             subject
@@ -123,34 +155,58 @@ export default function Messages() {
         .eq('sender_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('Sent messages query result:', { data, error });
+
+      if (error) {
+        console.error('Sent messages query error:', error);
+        throw error;
+      }
       
       const messagesWithSubject = data?.map(msg => ({
         ...msg,
         subject: msg.message_threads?.subject
       })) || [];
       
+      console.log('Processed sent messages:', messagesWithSubject);
+      
       setSentMessages(messagesWithSubject);
       setCounts(prev => ({ ...prev, sent: messagesWithSubject.length }));
     } catch (error) {
       console.error('Error loading sent messages:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load sent messages",
+        variant: "destructive",
+      });
     }
   };
 
   const loadDrafts = async () => {
     try {
+      console.log('Loading drafts for user:', user.id);
+      
       const { data, error } = await supabase
         .from('message_drafts')
         .select('*')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('Drafts query result:', { data, error });
+
+      if (error) {
+        console.error('Drafts query error:', error);
+        throw error;
+      }
       
       setDrafts(data || []);
       setCounts(prev => ({ ...prev, drafts: data?.length || 0 }));
     } catch (error) {
       console.error('Error loading drafts:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load drafts",
+        variant: "destructive",
+      });
     }
   };
 
