@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import VendorCard from "./VendorCard";
 
@@ -229,9 +230,9 @@ const FeaturedVendors = () => {
         </div>
         
         <div className="text-center mt-12">
-          <button className="text-primary hover:text-primary/80 font-medium">
+          <Link to="/vendors" className="text-primary hover:text-primary/80 font-medium">
             View All Verified Vendors →
-          </button>
+          </Link>
         </div>
       </div>
     </section>

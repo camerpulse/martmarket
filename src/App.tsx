@@ -27,6 +27,7 @@ import Contact from "./pages/Contact";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import VendorProfile from "./pages/VendorProfile";
+import VerifiedVendors from "./pages/VerifiedVendors";
 import OrderTracking from "./pages/OrderTracking";
 import PGPTools from "./pages/PGPTools";
 
@@ -70,6 +71,7 @@ const App = () => (
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:productId" element={<ProductDetail />} />
             <Route path="/vendor/:vendorId" element={<VendorProfile />} />
+            <Route path="/vendors" element={<VerifiedVendors />} />
             <Route path="/track-order" element={<OrderTracking />} />
             <Route path="/pgp-tools" element={<PGPTools />} />
             <Route path="/safety-terms" element={<SafetyAndTerms />} />

@@ -106,7 +106,7 @@ const VendorProfile = () => {
         </div>
 
         {/* Vendor Header */}
-        <Card className="mb-8">
+        <Card className="mb-8 card-gradient shadow-card">
           <CardContent className="p-8">
             <div className="flex flex-col md:flex-row gap-6">
               {/* Vendor Avatar */}
@@ -141,8 +141,8 @@ const VendorProfile = () => {
                   </div>
                   
                   <div className="flex gap-3">
-                    <Button variant="outline">
-                      <MessageCircle className="h-4 w-4 mr-2" />
+                    <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg">
+                      <MessageCircle className="h-5 w-5 mr-2" />
                       Contact Vendor
                     </Button>
                   </div>
