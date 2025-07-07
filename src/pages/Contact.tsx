@@ -149,20 +149,24 @@ const Contact = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center space-x-3">
+                    <Mail className="h-4 w-4 text-primary" />
+                    <span className="text-sm">opesmarket@opesmail.com</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
                     <Bitcoin className="h-4 w-4 text-primary" />
-                    <span className="text-sm">{t('contact.topics.payments', 'Bitcoin Payment Issues')}</span>
+                    <span className="text-sm">Bitcoin Payment Issues</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Shield className="h-4 w-4 text-verified" />
-                    <span className="text-sm">{t('contact.topics.vendor', 'Vendor Verification')}</span>
+                    <span className="text-sm">Vendor Verification</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <MessageCircle className="h-4 w-4 text-secondary" />
-                    <span className="text-sm">{t('contact.topics.disputes', 'Order Disputes')}</span>
+                    <span className="text-sm">Order Disputes</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Globe className="h-4 w-4 text-info" />
-                    <span className="text-sm">{t('contact.topics.technical', 'Technical Support')}</span>
+                    <span className="text-sm">Technical Support</span>
                   </div>
                 </CardContent>
               </Card>

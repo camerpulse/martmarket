@@ -30,6 +30,7 @@ import VendorProfile from "./pages/VendorProfile";
 import OrderTracking from "./pages/OrderTracking";
 import PGPTools from "./pages/PGPTools";
 
+import SafetyAndTerms from "./pages/SafetyAndTerms";
 import Cart from "./pages/Cart";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
@@ -71,6 +72,7 @@ const App = () => (
             <Route path="/vendor/:vendorId" element={<VendorProfile />} />
             <Route path="/track-order" element={<OrderTracking />} />
             <Route path="/pgp-tools" element={<PGPTools />} />
+            <Route path="/safety-terms" element={<SafetyAndTerms />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
