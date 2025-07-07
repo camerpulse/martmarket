@@ -294,7 +294,7 @@ export function AutoDeployment() {
               if (nextStepIndex !== -1) {
                 updatedSteps[nextStepIndex] = {
                   ...updatedSteps[nextStepIndex],
-                  status: 'running' as const,
+                  status: 'running',
                   startTime: new Date(),
                   logs: [`🚀 Starting ${updatedSteps[nextStepIndex].name}...`]
                 };
@@ -336,9 +336,9 @@ export function AutoDeployment() {
       
       setPipelines(prev => prev.map(pipeline => {
         if (pipeline.id === pipelineId) {
-          const updatedSteps = pipeline.steps.map(step => ({
+          const updatedSteps: DeploymentStep[] = pipeline.steps.map(step => ({
             ...step,
-            status: 'pending' as const,
+            status: 'pending',
             logs: [],
             duration: 0,
             startTime: undefined,
@@ -349,7 +349,7 @@ export function AutoDeployment() {
           if (updatedSteps.length > 0) {
             updatedSteps[0] = {
               ...updatedSteps[0],
-              status: 'running' as const,
+              status: 'running',
               startTime: new Date(),
               logs: [`🚀 Starting ${updatedSteps[0].name}...`]
             };

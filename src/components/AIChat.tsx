@@ -75,13 +75,13 @@ export function AIChat() {
 
   const loadConversationHistory = async () => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('ai_conversation_memory')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(20);
       
-      if (data) {
+      if (data && !error) {
         setConversationHistory(data.map(item => ({
           id: item.id,
           role: item.message_type as 'user' | 'ai',
@@ -91,20 +91,35 @@ export function AIChat() {
           tags: item.tags,
           context: item.context
         })));
+      } else {
+        // Use mock data if database query fails
+        setConversationHistory([
+          {
+            id: '1',
+            role: 'ai',
+            content: 'Welcome back! I\'m ready to assist you.',
+            timestamp: new Date(Date.now() - 60000),
+            importance: 7,
+            tags: ['greeting'],
+            context: { session_start: true }
+          }
+        ]);
       }
     } catch (error) {
       console.error('Error loading conversation history:', error);
+      // Fallback to mock data
+      setConversationHistory([]);
     }
   };
 
   const loadUserProfile = async () => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('ai_user_profiles')
         .select('*')
         .single();
       
-      if (data) {
+      if (data && !error) {
         setUserProfile(data);
         setSessionContext(prev => ({
           ...prev,
@@ -112,15 +127,32 @@ export function AIChat() {
           interaction_style: data.preferred_style,
           expertise_level: data.technical_level
         }));
+      } else {
+        // Create default profile
+        const defaultProfile = {
+          id: 'default',
+          preferences: { theme: 'dark', notifications: true },
+          preferred_style: 'professional_helpful',
+          technical_level: 'intermediate'
+        };
+        setUserProfile(defaultProfile);
+        setSessionContext(prev => ({
+          ...prev,
+          user_preferences: defaultProfile.preferences,
+          interaction_style: defaultProfile.preferred_style,
+          expertise_level: defaultProfile.technical_level
+        }));
       }
     } catch (error) {
+      console.error('Error loading user profile:', error);
       // Create default profile
-      setUserProfile({
+      const defaultProfile = {
         id: 'default',
-        preferences: ['detailed_explanations', 'technical_focus'],
+        preferences: { theme: 'dark', notifications: true },
         preferred_style: 'professional_helpful',
         technical_level: 'intermediate'
-      });
+      };
+      setUserProfile(defaultProfile);
     }
   };
 
@@ -281,20 +313,22 @@ export function AIChat() {
     const importance = calculateImportance(content, role);
     const tags = extractTags(content);
     
-    const memoryEntry = {
-      content,
-      message_type: role,
-      importance,
-      tags,
-      context: {
-        session_id: sessionContext.session_id || 'default',
-        user_mood: sessionContext.current_mood,
-        topic: sessionContext.current_topic,
-        ...metadata
-      }
-    };
-
     try {
+      // Create memory entry with user_id
+      const memoryEntry = {
+        user_id: 'anonymous', // For now, use anonymous since auth isn't set up
+        content,
+        message_type: role,
+        importance,
+        tags,
+        context: {
+          session_id: sessionContext.session_id || 'default',
+          user_mood: sessionContext.current_mood,
+          topic: sessionContext.current_topic,
+          ...metadata
+        }
+      };
+
       await supabase
         .from('ai_conversation_memory')
         .insert(memoryEntry);

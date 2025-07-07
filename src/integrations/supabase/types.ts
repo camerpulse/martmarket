@@ -156,6 +156,42 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_conversation_memory: {
+        Row: {
+          content: string
+          context: Json | null
+          created_at: string
+          id: string
+          importance: number | null
+          message_type: string
+          session_id: string
+          tags: string[] | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          context?: Json | null
+          created_at?: string
+          id?: string
+          importance?: number | null
+          message_type: string
+          session_id?: string
+          tags?: string[] | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          context?: Json | null
+          created_at?: string
+          id?: string
+          importance?: number | null
+          message_type?: string
+          session_id?: string
+          tags?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_knowledge_base: {
         Row: {
           confidence_score: number
@@ -198,6 +234,45 @@ export type Database = {
           topic?: string
           updated_at?: string
           validation_count?: number | null
+        }
+        Relationships: []
+      }
+      ai_knowledge_memory: {
+        Row: {
+          access_count: number | null
+          confidence: number | null
+          content: string
+          created_at: string
+          id: string
+          last_accessed: string | null
+          related_topics: string[] | null
+          source: string
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          access_count?: number | null
+          confidence?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          last_accessed?: string | null
+          related_topics?: string[] | null
+          source: string
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          access_count?: number | null
+          confidence?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          last_accessed?: string | null
+          related_topics?: string[] | null
+          source?: string
+          topic?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -318,6 +393,69 @@ export type Database = {
           tokens_used?: number | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      ai_personality_memory: {
+        Row: {
+          created_at: string
+          examples: string[] | null
+          id: string
+          strength: number | null
+          trait: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          examples?: string[] | null
+          id?: string
+          strength?: number | null
+          trait: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          examples?: string[] | null
+          id?: string
+          strength?: number | null
+          trait?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      ai_user_profiles: {
+        Row: {
+          created_at: string
+          id: string
+          interaction_history: Json | null
+          preferences: Json | null
+          preferred_style: string | null
+          technical_level: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interaction_history?: Json | null
+          preferences?: Json | null
+          preferred_style?: string | null
+          technical_level?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interaction_history?: Json | null
+          preferences?: Json | null
+          preferred_style?: string | null
+          technical_level?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

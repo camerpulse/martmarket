@@ -96,7 +96,10 @@ export function AIMemorySystem() {
         .limit(50);
 
       if (conversationData) {
-        setConversations(conversationData);
+        setConversations(conversationData.map(item => ({
+          ...item,
+          message_type: item.message_type as 'user' | 'ai'
+        })));
       }
 
       // Load knowledge base
