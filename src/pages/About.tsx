@@ -20,22 +20,22 @@ const About = () => {
               <span className="text-4xl font-bold bitcoin-gradient">OpesMarket</span>
             </div>
             <h1 className="text-3xl font-bold mb-4">
-              {t('about.title', 'About OpesMarket')}
+              About OpesMarket
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t('about.subtitle', 'The world\'s most secure anonymous marketplace, powered by Bitcoin and AI technology.')}
+              The world's most secure anonymous marketplace, powered by Bitcoin and AI technology.
             </p>
           </div>
 
           {/* Mission Section */}
           <div className="mb-16">
             <h2 className="text-2xl font-bold mb-6 text-center">
-              {t('about.mission.title', 'Our Mission')}
+              Our Mission
             </h2>
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg leading-relaxed text-center">
-                  {t('about.mission.description', 'OpesMarket is dedicated to creating a secure, anonymous, and trustworthy marketplace where privacy is paramount. We leverage cutting-edge Bitcoin technology and AI-powered security systems to ensure safe transactions while maintaining complete user anonymity.')}
+                  OpesMarket is dedicated to creating a secure, anonymous, and trustworthy marketplace where privacy is paramount. We leverage cutting-edge Bitcoin technology and AI-powered security systems to ensure safe transactions while maintaining complete user anonymity.
                 </p>
               </CardContent>
             </Card>

@@ -41,10 +41,10 @@ const Contact = () => {
               <MessageCircle className="h-10 w-10 text-primary" />
             </div>
             <h1 className="text-3xl font-bold mb-4">
-              {t('contact.title', 'Contact OpesMarket')}
+              Contact OpesMarket  
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t('contact.subtitle', 'Get in touch with our team for support, questions, or partnership inquiries. All communications are encrypted and secure.')}
+              Get in touch with our team for support, questions, or partnership inquiries. All communications are encrypted and secure.
             </p>
           </div>
 
