@@ -82,12 +82,12 @@ const Shop = () => {
       <div className="container px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">
-            <span className="bitcoin-gradient">{t('shop.title')}</span>
-          </h1>
-          <p className="text-muted-foreground">
-            Discover thousands of products from verified vendors in our secure marketplace
-          </p>
+            <h1 className="text-3xl font-bold mb-2">
+              <span className="bitcoin-gradient">{t('shop.title')}</span>
+            </h1>
+            <p className="text-muted-foreground">
+              {t('shop.search.placeholder')}
+            </p>
         </div>
 
         {/* Shop Header */}
@@ -103,7 +103,7 @@ const Shop = () => {
               {/* Search */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium">{t('ui.search')} Products</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('ui.search')}</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="relative">
