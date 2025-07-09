@@ -100,28 +100,28 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Shield className="h-5 w-5 text-primary" />
-                  <span>Secure Contact Form</span>
+                  <span>{t('contact.form.title')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
                     <Label htmlFor="subject">
-                      Subject
+                      {t('contact.form.subject')}
                     </Label>
                     <Input
                       id="subject"
                       type="text"
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      placeholder="Brief description of your inquiry"
+                      placeholder={t('contact.form.subject_placeholder')}
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="urgency">
-                      Priority Level
+                      {t('contact.form.priority')}
                     </Label>
                     <select
                       id="urgency"
@@ -129,22 +129,22 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
                       onChange={(e) => setFormData({ ...formData, urgency: e.target.value })}
                       className="w-full h-10 px-3 py-2 text-sm bg-background border border-input rounded-md"
                     >
-                      <option value="low">Low - General inquiry</option>
-                      <option value="normal">Normal - Standard support</option>
-                      <option value="high">High - Technical issue</option>
-                      <option value="urgent">Urgent - Security concern</option>
+                      <option value="low">{t('contact.form.priority.low')}</option>
+                      <option value="normal">{t('contact.form.priority.normal')}</option>
+                      <option value="high">{t('contact.form.priority.high')}</option>
+                      <option value="urgent">{t('contact.form.priority.urgent')}</option>
                     </select>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="message">
-                      Message
+                      {t('contact.form.message')}
                     </Label>
                     <Textarea
                       id="message"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Please provide detailed information about your inquiry or issue..."
+                      placeholder={t('contact.form.message_placeholder')}
                       className="min-h-[120px]"
                       required
                     />
@@ -152,7 +152,7 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
 
                   <Button type="submit" className="w-full">
                     <Mail className="h-4 w-4 mr-2" />
-                    Send Secure Message
+                    {t('contact.form.send')}
                   </Button>
                 </form>
               </CardContent>
