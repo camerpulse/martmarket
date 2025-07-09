@@ -144,9 +144,19 @@ export const TranslationProvider = ({ children }: TranslationProviderProps) => {
     localStorage.setItem('opesmarket_language', language);
   };
 
-  const t = (key: string, context?: string): string => {
-    const fullKey = context ? `${key}.${context}` : key;
-    return translations[fullKey] || translations[key] || key;
+  const t = (key: string, fallback?: string): string => {
+    // First try the exact key
+    if (translations[key]) return translations[key];
+    
+    // Then try without context (in case key includes context)
+    const keyParts = key.split('.');
+    if (keyParts.length > 1) {
+      const baseKey = keyParts.slice(0, -1).join('.');
+      if (translations[baseKey]) return translations[baseKey];
+    }
+    
+    // Return fallback or key itself
+    return fallback || key;
   };
 
   const value: TranslationContextType = {
