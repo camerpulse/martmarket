@@ -69,8 +69,8 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
     e.preventDefault();
     // In a real implementation, this would send to a secure contact system
     toast({
-      title: t('contact.success.title', 'Message Sent'),
-      description: t('contact.success.description', 'Your secure message has been received. We will respond within 24 hours.'),
+      title: "Message Sent",
+      description: "Your secure message has been received. We will respond within 24 hours.",
     });
     setFormData({ subject: '', message: '', urgency: 'normal' });
   };
@@ -100,28 +100,28 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Shield className="h-5 w-5 text-primary" />
-                  <span>{t('contact.form.title', 'Secure Contact Form')}</span>
+                  <span>Secure Contact Form</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
                     <Label htmlFor="subject">
-                      {t('contact.form.subject', 'Subject')}
+                      Subject
                     </Label>
                     <Input
                       id="subject"
                       type="text"
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      placeholder={t('contact.form.subject_placeholder', 'Brief description of your inquiry')}
+                      placeholder="Brief description of your inquiry"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="urgency">
-                      {t('contact.form.urgency', 'Priority Level')}
+                      Priority Level
                     </Label>
                     <select
                       id="urgency"
@@ -129,22 +129,22 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
                       onChange={(e) => setFormData({ ...formData, urgency: e.target.value })}
                       className="w-full h-10 px-3 py-2 text-sm bg-background border border-input rounded-md"
                     >
-                      <option value="low">{t('contact.form.urgency.low', 'Low - General inquiry')}</option>
-                      <option value="normal">{t('contact.form.urgency.normal', 'Normal - Standard support')}</option>
-                      <option value="high">{t('contact.form.urgency.high', 'High - Technical issue')}</option>
-                      <option value="urgent">{t('contact.form.urgency.urgent', 'Urgent - Security concern')}</option>
+                      <option value="low">Low - General inquiry</option>
+                      <option value="normal">Normal - Standard support</option>
+                      <option value="high">High - Technical issue</option>
+                      <option value="urgent">Urgent - Security concern</option>
                     </select>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="message">
-                      {t('contact.form.message', 'Message')}
+                      Message
                     </Label>
                     <Textarea
                       id="message"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder={t('contact.form.message_placeholder', 'Please provide detailed information about your inquiry or issue...')}
+                      placeholder="Please provide detailed information about your inquiry or issue..."
                       className="min-h-[120px]"
                       required
                     />
@@ -152,7 +152,7 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
 
                   <Button type="submit" className="w-full">
                     <Mail className="h-4 w-4 mr-2" />
-                    {t('contact.form.send', 'Send Secure Message')}
+                    Send Secure Message
                   </Button>
                 </form>
               </CardContent>
@@ -165,24 +165,24 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Clock className="h-5 w-5 text-primary" />
-                    <span>{t('contact.response.title', 'Response Times')}</span>
+                    <span>Response Times</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">{t('contact.response.general', 'General Inquiries')}</span>
+                    <span className="text-sm">General Inquiries</span>
                     <span className="text-sm font-medium text-muted-foreground">24-48 hours</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">{t('contact.response.technical', 'Technical Support')}</span>
+                    <span className="text-sm">Technical Support</span>
                     <span className="text-sm font-medium text-muted-foreground">12-24 hours</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">{t('contact.response.security', 'Security Issues')}</span>
+                    <span className="text-sm">Security Issues</span>
                     <span className="text-sm font-medium text-trust-high">2-6 hours</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">{t('contact.response.urgent', 'Urgent Matters')}</span>
+                    <span className="text-sm">Urgent Matters</span>
                     <span className="text-sm font-medium text-destructive">1-2 hours</span>
                   </div>
                 </CardContent>
@@ -191,7 +191,7 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
               {/* Support Topics */}
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('contact.topics.title', 'Common Topics')}</CardTitle>
+                  <CardTitle>Common Topics</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center space-x-3">
@@ -224,10 +224,10 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
                     <Shield className="h-5 w-5 text-primary mt-0.5" />
                     <div>
                       <h4 className="font-semibold text-primary mb-2">
-                        {t('contact.security.title', 'Security Notice')}
+                        Security Notice
                       </h4>
                       <p className="text-sm text-muted-foreground">
-                        {t('contact.security.description', 'All communications are encrypted end-to-end. We never ask for passwords, private keys, or sensitive information via support channels.')}
+                        All communications are encrypted end-to-end. We never ask for passwords, private keys, or sensitive information via support channels.
                       </p>
                     </div>
                   </div>

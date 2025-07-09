@@ -16,47 +16,47 @@ const Footer = () => {
               <span className="text-xl sm:text-2xl font-bold bitcoin-gradient">OpesMarket</span>
             </div>
             <p className="text-sm sm:text-base text-muted-foreground mb-4 max-w-md">
-              {t('footer.description', 'The world\'s most secure anonymous marketplace. Trade with confidence using Bitcoin, verified vendors, and AI-powered security systems.')}
+              The world's most secure anonymous marketplace. Trade with confidence using Bitcoin, verified vendors, and AI-powered security systems.
             </p>
             <div className="flex flex-wrap gap-3 sm:gap-4">
               <div className="flex items-center space-x-2 text-sm">
                 <Shield className="h-4 w-4 text-verified" />
-                <span>{t('vendor.verified', 'Verified Vendors')}</span>
+                <span>Verified Vendors</span>
               </div>
               <div className="flex items-center space-x-2 text-sm">
                 <Lock className="h-4 w-4 text-trust-high" />
-                <span>{t('footer.encrypted', 'End-to-End Encrypted')}</span>
+                <span>End-to-End Encrypted</span>
               </div>
               <div className="flex items-center space-x-2 text-sm">
                 <Zap className="h-4 w-4 text-secondary" />
-                <span>{t('footer.ai_powered', 'AI-Powered')}</span>
+                <span>AI-Powered</span>
               </div>
             </div>
           </div>
           
           {/* Marketplace */}
           <div>
-            <h3 className="font-semibold mb-4">{t('footer.menu.marketplace')}</h3>
+            <h3 className="font-semibold mb-4">Marketplace</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/shop" className="hover:text-primary transition-colors">{t('footer.menu.browse_products')}</Link></li>
-              <li><Link to="/vendors" className="hover:text-primary transition-colors">{t('footer.menu.verified_vendors')}</Link></li>
-              <li><Link to="/how-to-order" className="hover:text-primary transition-colors">{t('footer.menu.how_to_order')}</Link></li>
-              <li><Link to="/selling-guide" className="hover:text-primary transition-colors">{t('footer.menu.selling_guide')}</Link></li>
-              <li><Link to="/escrow-security" className="hover:text-primary transition-colors">{t('footer.menu.escrow_security')}</Link></li>
-              <li><Link to="/shop" className="hover:text-primary transition-colors">{t('footer.menu.categories')}</Link></li>
+              <li><Link to="/shop" className="hover:text-primary transition-colors">Browse Products</Link></li>
+              <li><Link to="/vendors" className="hover:text-primary transition-colors">Verified Vendors</Link></li>
+              <li><Link to="/how-to-order" className="hover:text-primary transition-colors">How to Order</Link></li>
+              <li><Link to="/selling-guide" className="hover:text-primary transition-colors">Selling Guide</Link></li>
+              <li><Link to="/escrow-security" className="hover:text-primary transition-colors">Escrow Security</Link></li>
+              <li><Link to="/shop" className="hover:text-primary transition-colors">Categories</Link></li>
             </ul>
           </div>
           
           {/* Support */}
           <div>
-            <h3 className="font-semibold mb-4">{t('footer.menu.support')}</h3>
+            <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/faq" className="hover:text-primary transition-colors">{t('footer.menu.faq')}</Link></li>
-              <li><Link to="/about" className="hover:text-primary transition-colors">{t('footer.menu.about_us')}</Link></li>
-              <li><Link to="/contact" className="hover:text-primary transition-colors">{t('footer.menu.contact')}</Link></li>
-              <li><Link to="/safety-terms" className="hover:text-primary transition-colors">{t('footer.menu.forbidden')}</Link></li>
-              <li><Link to="/pgp-tools" className="hover:text-primary transition-colors">{t('footer.menu.pgp_tools')}</Link></li>
-              <li><Link to="/forum" className="hover:text-primary transition-colors">{t('footer.menu.help_center')}</Link></li>
+              <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
+              <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+              <li><Link to="/safety-terms" className="hover:text-primary transition-colors">Safety & Terms</Link></li>
+              <li><Link to="/pgp-tools" className="hover:text-primary transition-colors">PGP Tools</Link></li>
+              <li><Link to="/forum" className="hover:text-primary transition-colors">Help Center</Link></li>
             </ul>
           </div>
         </div>
@@ -64,13 +64,13 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-sm text-muted-foreground mb-4 md:mb-0">
-            {t('footer.copyright')}
+            © 2024 OpesMarket. Secure, Anonymous, Decentralized.
           </div>
           
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <span>{t('footer.status.secure')}</span>
+            <span>Secure & Online</span>
             <div className="w-2 h-2 bg-trust-high rounded-full animate-trust-pulse" />
-            <span>{t('footer.status.online')}</span>
+            <span>24/7 Available</span>
           </div>
         </div>
       </div>
