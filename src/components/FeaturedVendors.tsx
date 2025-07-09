@@ -190,10 +190,10 @@ const FeaturedVendors = () => {
       <div className="container px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">
-            <span className="bitcoin-gradient">Featured Vendors</span>
+            <span className="bitcoin-gradient">{t('featured_vendors.title')}</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Discover top-rated, verified vendors in our secure marketplace
+            {t('featured_vendors.subtitle')}
           </p>
         </div>
         
@@ -232,7 +232,7 @@ const FeaturedVendors = () => {
         
         <div className="text-center mt-12">
           <Link to="/vendors" className="text-primary hover:text-primary/80 font-medium">
-            View All Vendors →
+            {t('featured_vendors.view_all')} →
           </Link>
         </div>
       </div>

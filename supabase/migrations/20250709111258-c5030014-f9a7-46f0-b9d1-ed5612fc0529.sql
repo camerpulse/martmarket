@@ -1,0 +1,160 @@
+-- Add remaining languages (Italian, Portuguese, Russian, Chinese, Japanese, Korean)
+INSERT INTO public.translations (language_code, translation_key, translation_value, context) VALUES
+
+-- Italian translations
+('it', 'nav.search', 'Cerca prodotti, venditori...', 'navigation'),
+('it', 'nav.shop', 'Negozio', 'navigation'),
+('it', 'nav.forum', 'Forum', 'navigation'),
+('it', 'nav.wishlist', 'Lista dei Desideri', 'navigation'),
+('it', 'nav.affiliate', 'Affiliato', 'navigation'),
+('it', 'nav.orders', 'I Miei Ordini', 'navigation'),
+('it', 'nav.messages', 'Messaggi', 'navigation'),
+('it', 'nav.profile', 'Profilo', 'navigation'),
+('it', 'nav.become_vendor', 'Diventa Venditore', 'navigation'),
+('it', 'nav.logout', 'Disconnetti', 'navigation'),
+('it', 'nav.login', 'Accedi', 'navigation'),
+
+('it', 'hero.title.ai_powered', 'Alimentato da IA', 'hero'),
+('it', 'hero.title.anonymous_marketplace', 'Mercato Anonimo', 'hero'),
+('it', 'hero.subtitle', 'Commercia in sicurezza con transazioni solo Bitcoin, venditori verificati e punteggio di fiducia guidato da IA.', 'hero'),
+('it', 'hero.cta.start_shopping', 'Inizia a Comprare', 'hero'),
+('it', 'hero.cta.become_vendor', 'Diventa Venditore', 'hero'),
+('it', 'hero.feature.bitcoin_only', 'Solo Bitcoin', 'hero'),
+('it', 'hero.feature.bitcoin_desc', 'Pagamenti completamente decentralizzati utilizzando solo Bitcoin per vera libertà finanziaria.', 'hero'),
+('it', 'hero.feature.verified_vendors', 'Venditori Verificati', 'hero'),
+('it', 'hero.feature.verified_desc', 'Venditori verificati da IA con sistemi trasparenti di reputazione e punteggio di fiducia.', 'hero'),
+('it', 'hero.feature.ai_powered', 'Alimentato da IA', 'hero'),
+('it', 'hero.feature.ai_desc', 'Raccomandazioni intelligenti e sicurezza automatizzata per la migliore esperienza.', 'hero'),
+('it', 'hero.feature.anonymous', 'Anonimo', 'hero'),
+('it', 'hero.feature.anonymous_desc', 'Privacy completa senza raccolta di dati personali o tracciamento.', 'hero'),
+
+('it', 'featured_vendors.title', 'Venditori in Evidenza', 'vendors'),
+('it', 'featured_vendors.subtitle', 'Scopri venditori verificati e ben valutati nel nostro mercato sicuro', 'vendors'),
+('it', 'featured_vendors.view_all', 'Vedi Tutti i Venditori', 'vendors'),
+
+('it', 'about.title', 'Su OpesMarket', 'about'),
+('it', 'contact.title', 'Contatta OpesMarket', 'contact'),
+('it', 'shop.title', 'Esplora Prodotti', 'shop'),
+
+-- Portuguese translations
+('pt', 'nav.search', 'Buscar produtos, vendedores...', 'navigation'),
+('pt', 'nav.shop', 'Loja', 'navigation'),
+('pt', 'nav.forum', 'Fórum', 'navigation'),
+('pt', 'nav.wishlist', 'Lista de Desejos', 'navigation'),
+('pt', 'nav.affiliate', 'Afiliado', 'navigation'),
+('pt', 'nav.orders', 'Meus Pedidos', 'navigation'),
+('pt', 'nav.messages', 'Mensagens', 'navigation'),
+('pt', 'nav.profile', 'Perfil', 'navigation'),
+('pt', 'nav.become_vendor', 'Tornar-se Vendedor', 'navigation'),
+('pt', 'nav.logout', 'Sair', 'navigation'),
+('pt', 'nav.login', 'Entrar', 'navigation'),
+
+('pt', 'hero.title.ai_powered', 'Alimentado por IA', 'hero'),
+('pt', 'hero.title.anonymous_marketplace', 'Mercado Anônimo', 'hero'),
+('pt', 'hero.subtitle', 'Negocie com segurança com transações apenas Bitcoin, vendedores verificados e pontuação de confiança orientada por IA.', 'hero'),
+('pt', 'hero.cta.start_shopping', 'Começar a Comprar', 'hero'),
+('pt', 'hero.cta.become_vendor', 'Tornar-se Vendedor', 'hero'),
+
+('pt', 'featured_vendors.title', 'Vendedores em Destaque', 'vendors'),
+('pt', 'about.title', 'Sobre OpesMarket', 'about'),
+('pt', 'contact.title', 'Contatar OpesMarket', 'contact'),
+('pt', 'shop.title', 'Explorar Produtos', 'shop'),
+
+-- Russian translations
+('ru', 'nav.search', 'Искать товары, продавцов...', 'navigation'),
+('ru', 'nav.shop', 'Магазин', 'navigation'),
+('ru', 'nav.forum', 'Форум', 'navigation'),
+('ru', 'nav.wishlist', 'Список Желаний', 'navigation'),
+('ru', 'nav.affiliate', 'Партнёр', 'navigation'),
+('ru', 'nav.orders', 'Мои Заказы', 'navigation'),
+('ru', 'nav.messages', 'Сообщения', 'navigation'),
+('ru', 'nav.profile', 'Профиль', 'navigation'),
+('ru', 'nav.become_vendor', 'Стать Продавцом', 'navigation'),
+('ru', 'nav.logout', 'Выйти', 'navigation'),
+('ru', 'nav.login', 'Войти', 'navigation'),
+
+('ru', 'hero.title.ai_powered', 'На Основе ИИ', 'hero'),
+('ru', 'hero.title.anonymous_marketplace', 'Анонимный Рынок', 'hero'),
+('ru', 'hero.subtitle', 'Торгуйте безопасно с транзакциями только Bitcoin, проверенными продавцами и оценкой доверия на основе ИИ.', 'hero'),
+('ru', 'hero.cta.start_shopping', 'Начать Покупки', 'hero'),
+('ru', 'hero.cta.become_vendor', 'Стать Продавцом', 'hero'),
+
+('ru', 'featured_vendors.title', 'Рекомендуемые Продавцы', 'vendors'),
+('ru', 'about.title', 'О OpesMarket', 'about'),
+('ru', 'contact.title', 'Связаться с OpesMarket', 'contact'),
+('ru', 'shop.title', 'Просмотр Товаров', 'shop'),
+
+-- Chinese translations
+('zh', 'nav.search', '搜索产品，卖家...', 'navigation'),
+('zh', 'nav.shop', '商店', 'navigation'),
+('zh', 'nav.forum', '论坛', 'navigation'),
+('zh', 'nav.wishlist', '愿望清单', 'navigation'),
+('zh', 'nav.affiliate', '联盟', 'navigation'),
+('zh', 'nav.orders', '我的订单', 'navigation'),
+('zh', 'nav.messages', '消息', 'navigation'),
+('zh', 'nav.profile', '个人资料', 'navigation'),
+('zh', 'nav.become_vendor', '成为卖家', 'navigation'),
+('zh', 'nav.logout', '登出', 'navigation'),
+('zh', 'nav.login', '登录', 'navigation'),
+
+('zh', 'hero.title.ai_powered', 'AI驱动', 'hero'),
+('zh', 'hero.title.anonymous_marketplace', '匿名市场', 'hero'),
+('zh', 'hero.subtitle', '通过比特币专用交易、验证卖家和AI驱动的信任评分安全交易。', 'hero'),
+('zh', 'hero.cta.start_shopping', '开始购物', 'hero'),
+('zh', 'hero.cta.become_vendor', '成为卖家', 'hero'),
+
+('zh', 'featured_vendors.title', '特色卖家', 'vendors'),
+('zh', 'about.title', '关于OpesMarket', 'about'),
+('zh', 'contact.title', '联系OpesMarket', 'contact'),
+('zh', 'shop.title', '浏览产品', 'shop'),
+
+-- Japanese translations
+('ja', 'nav.search', '商品、販売者を検索...', 'navigation'),
+('ja', 'nav.shop', 'ショップ', 'navigation'),
+('ja', 'nav.forum', 'フォーラム', 'navigation'),
+('ja', 'nav.wishlist', 'ウィッシュリスト', 'navigation'),
+('ja', 'nav.affiliate', 'アフィリエイト', 'navigation'),
+('ja', 'nav.orders', 'マイオーダー', 'navigation'),
+('ja', 'nav.messages', 'メッセージ', 'navigation'),
+('ja', 'nav.profile', 'プロフィール', 'navigation'),
+('ja', 'nav.become_vendor', '販売者になる', 'navigation'),
+('ja', 'nav.logout', 'ログアウト', 'navigation'),
+('ja', 'nav.login', 'ログイン', 'navigation'),
+
+('ja', 'hero.title.ai_powered', 'AI駆動', 'hero'),
+('ja', 'hero.title.anonymous_marketplace', '匿名マーケット', 'hero'),
+('ja', 'hero.subtitle', 'ビットコインのみの取引、検証済み販売者、AI駆動の信頼スコアリングで安全に取引。', 'hero'),
+('ja', 'hero.cta.start_shopping', 'ショッピング開始', 'hero'),
+('ja', 'hero.cta.become_vendor', '販売者になる', 'hero'),
+
+('ja', 'featured_vendors.title', '注目の販売者', 'vendors'),
+('ja', 'about.title', 'OpesMarketについて', 'about'),
+('ja', 'contact.title', 'OpesMarketに連絡', 'contact'),
+('ja', 'shop.title', '商品を閲覧', 'shop'),
+
+-- Korean translations
+('ko', 'nav.search', '제품, 판매자 검색...', 'navigation'),
+('ko', 'nav.shop', '상점', 'navigation'),
+('ko', 'nav.forum', '포럼', 'navigation'),
+('ko', 'nav.wishlist', '위시리스트', 'navigation'),
+('ko', 'nav.affiliate', '제휴', 'navigation'),
+('ko', 'nav.orders', '내 주문', 'navigation'),
+('ko', 'nav.messages', '메시지', 'navigation'),
+('ko', 'nav.profile', '프로필', 'navigation'),
+('ko', 'nav.become_vendor', '판매자 되기', 'navigation'),
+('ko', 'nav.logout', '로그아웃', 'navigation'),
+('ko', 'nav.login', '로그인', 'navigation'),
+
+('ko', 'hero.title.ai_powered', 'AI 구동', 'hero'),
+('ko', 'hero.title.anonymous_marketplace', '익명 마켓플레이스', 'hero'),
+('ko', 'hero.subtitle', '비트코인 전용 거래, 검증된 판매자, AI 기반 신뢰 점수로 안전하게 거래하세요.', 'hero'),
+('ko', 'hero.cta.start_shopping', '쇼핑 시작', 'hero'),
+('ko', 'hero.cta.become_vendor', '판매자 되기', 'hero'),
+
+('ko', 'featured_vendors.title', '추천 판매자', 'vendors'),
+('ko', 'about.title', 'OpesMarket 소개', 'about'),
+('ko', 'contact.title', 'OpesMarket 연락하기', 'contact'),
+('ko', 'shop.title', '제품 둘러보기', 'shop')
+
+ON CONFLICT (language_code, translation_key, context) DO UPDATE SET 
+  translation_value = EXCLUDED.translation_value;
