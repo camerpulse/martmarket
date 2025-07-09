@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +9,8 @@ import { Heart, ArrowLeft, ShoppingCart, Trash2, Bitcoin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import TrustIndicator from '@/components/TrustIndicator';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 interface WishlistItem {
   id: string;
@@ -34,6 +37,7 @@ interface WishlistItem {
 
 const Wishlist = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -137,6 +141,7 @@ const Wishlist = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <div className="container mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
@@ -152,9 +157,9 @@ const Wishlist = () => {
           <div className="flex items-center space-x-3">
             <Heart className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold">My Wishlist</h1>
+              <h1 className="text-3xl font-bold">{t('wishlist.title')}</h1>
               <p className="text-muted-foreground">
-                {wishlistItems.length} {wishlistItems.length === 1 ? 'item' : 'items'} saved
+                {t('wishlist.subtitle')}
               </p>
             </div>
           </div>
@@ -272,6 +277,7 @@ const Wishlist = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

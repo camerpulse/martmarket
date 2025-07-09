@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,8 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link, Navigate } from 'react-router-dom';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { 
   ArrowLeft, 
   Share2, 
@@ -50,6 +53,7 @@ interface AffiliateReferral {
 
 const Affiliate = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [affiliateProgram, setAffiliateProgram] = useState<AffiliateProgram | null>(null);
   const [referrals, setReferrals] = useState<AffiliateReferral[]>([]);
   const [loading, setLoading] = useState(true);
@@ -161,6 +165,7 @@ const Affiliate = () => {
   if (!affiliateProgram) {
     return (
       <div className="min-h-screen bg-background">
+        <Header />
         <div className="container mx-auto p-6">
           <div className="mb-8">
             <Button variant="ghost" size="sm" asChild>
@@ -174,9 +179,9 @@ const Affiliate = () => {
           <Card className="max-w-2xl mx-auto">
             <CardHeader className="text-center">
               <Share2 className="h-12 w-12 text-primary mx-auto mb-4" />
-              <CardTitle className="text-2xl">Join Our Affiliate Program</CardTitle>
+              <CardTitle className="text-2xl">{t('affiliate.title')}</CardTitle>
               <p className="text-muted-foreground">
-                Earn Bitcoin commissions by referring new users to OpesMarket
+                {t('affiliate.subtitle')}
               </p>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -238,6 +243,7 @@ const Affiliate = () => {
             </CardContent>
           </Card>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -252,6 +258,7 @@ const Affiliate = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <div className="container mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
@@ -267,9 +274,9 @@ const Affiliate = () => {
           <div className="flex items-center space-x-3">
             <Share2 className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold">Affiliate Dashboard</h1>
+              <h1 className="text-3xl font-bold">{t('affiliate.title')}</h1>
               <p className="text-muted-foreground">
-                Your referral code: <strong>{affiliateProgram.referral_code}</strong>
+                {t('affiliate.subtitle')}
               </p>
             </div>
           </div>
@@ -512,6 +519,7 @@ const Affiliate = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <Footer />
     </div>
   );
 };

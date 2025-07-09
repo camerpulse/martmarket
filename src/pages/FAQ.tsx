@@ -7,8 +7,10 @@ import { Separator } from "@/components/ui/separator";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const FAQ = () => {
+  const { t } = useTranslation();
   const faqCategories = [
     {
       category: "Getting Started",
@@ -170,11 +172,10 @@ const FAQ = () => {
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-serif font-bold text-foreground mb-6 leading-tight">
-              Frequently Asked Questions
+              {t('faq.title')}
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
-              Find answers to common questions about OpesMarket, Bitcoin payments, security, 
-              ordering, and vendor interactions. Our comprehensive FAQ covers everything you need to know.
+              {t('faq.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="px-8 py-3" asChild>
