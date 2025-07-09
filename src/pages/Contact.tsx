@@ -87,10 +87,10 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
               <MessageCircle className="h-10 w-10 text-primary" />
             </div>
             <h1 className="text-3xl font-bold mb-4">
-              Contact OpesMarket  
+              {t('contact.title')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Get in touch with our team for support, questions, or partnership inquiries. All communications are encrypted and secure.
+              {t('contact.subtitle')}
             </p>
           </div>
 
