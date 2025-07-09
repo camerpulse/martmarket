@@ -110,6 +110,7 @@ export const TranslationProvider = ({ children }: TranslationProviderProps) => {
   const loadTranslations = async (language: string) => {
     try {
       setLoading(true);
+      console.log('🌍 Loading translations for language:', language);
       
       // Load translations from database
       const { data, error } = await supabase
@@ -119,6 +120,8 @@ export const TranslationProvider = ({ children }: TranslationProviderProps) => {
 
       if (error) throw error;
 
+      console.log('📊 Raw translation data from DB:', data);
+
       // Build translation object
       const dbTranslations: Translation = {};
       data?.forEach(item => {
@@ -126,14 +129,23 @@ export const TranslationProvider = ({ children }: TranslationProviderProps) => {
         dbTranslations[item.translation_key] = item.translation_value;
       });
 
+      console.log('🔧 Built DB translations object:', dbTranslations);
+
       // Merge with fallback translations
       const fallback = FALLBACK_TRANSLATIONS[language] || FALLBACK_TRANSLATIONS[DEFAULT_LANGUAGE];
-      setTranslations({ ...fallback, ...dbTranslations });
+      console.log('🔄 Fallback translations:', fallback);
+      
+      const finalTranslations = { ...fallback, ...dbTranslations };
+      console.log('✅ Final merged translations:', finalTranslations);
+      
+      setTranslations(finalTranslations);
       
     } catch (error) {
-      console.error('Error loading translations:', error);
+      console.error('❌ Error loading translations:', error);
       // Use fallback translations on error
-      setTranslations(FALLBACK_TRANSLATIONS[language] || FALLBACK_TRANSLATIONS[DEFAULT_LANGUAGE]);
+      const fallbackOnly = FALLBACK_TRANSLATIONS[language] || FALLBACK_TRANSLATIONS[DEFAULT_LANGUAGE];
+      console.log('🚨 Using fallback only:', fallbackOnly);
+      setTranslations(fallbackOnly);
     } finally {
       setLoading(false);
     }
@@ -145,18 +157,30 @@ export const TranslationProvider = ({ children }: TranslationProviderProps) => {
   };
 
   const t = (key: string, fallback?: string): string => {
+    console.log('🔍 Translation requested for key:', key);
+    console.log('📝 Available translations keys:', Object.keys(translations));
+    console.log('🎯 Current language:', currentLanguage);
+    
     // First try the exact key
-    if (translations[key]) return translations[key];
+    if (translations[key]) {
+      console.log('✅ Found exact match:', translations[key]);
+      return translations[key];
+    }
     
     // Then try without context (in case key includes context)
     const keyParts = key.split('.');
     if (keyParts.length > 1) {
       const baseKey = keyParts.slice(0, -1).join('.');
-      if (translations[baseKey]) return translations[baseKey];
+      if (translations[baseKey]) {
+        console.log('✅ Found base key match:', translations[baseKey]);
+        return translations[baseKey];
+      }
     }
     
     // Return fallback or key itself
-    return fallback || key;
+    const result = fallback || key;
+    console.log('❌ No translation found, returning:', result);
+    return result;
   };
 
   const value: TranslationContextType = {
