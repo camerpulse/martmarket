@@ -379,7 +379,7 @@ export function PredictiveAnalytics() {
                       <Badge variant="outline">{prediction.category}</Badge>
                       <Badge 
                         variant="secondary" 
-                        className={`${getImpactColor(prediction.impact)} text-white`}
+                        className={`${getImpactColor(prediction.impact)} text-primary-foreground`}
                       >
                         {prediction.impact.toUpperCase()}
                       </Badge>

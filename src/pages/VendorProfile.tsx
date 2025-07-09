@@ -213,7 +213,7 @@ const VendorProfile = () => {
                 {/* Online Status Indicator */}
                 <div className="absolute -bottom-1 -right-1">
                   {vendor.isOnline ? (
-                    <div className="flex items-center gap-1 bg-trust-high text-white px-2 py-1 rounded-full text-xs">
+                    <div className="flex items-center gap-1 bg-trust-high text-primary-foreground px-2 py-1 rounded-full text-xs">
                       <CheckCircle className="h-3 w-3" />
                       Online
                     </div>

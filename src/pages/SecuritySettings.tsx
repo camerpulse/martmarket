@@ -388,7 +388,7 @@ const SecuritySettings = () => {
                   <AlertDescription>
                     <div className="space-y-4">
                       <p>Scan this QR code with your authenticator app:</p>
-                      <div className="bg-white p-4 rounded-lg inline-block">
+                      <div className="bg-background p-4 rounded-lg inline-block border">
                         <img src={qrCode} alt="TOTP QR Code" className="w-48 h-48" />
                       </div>
                       <div>

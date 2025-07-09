@@ -425,7 +425,7 @@ export function AIEvolutionDashboard() {
                   impact: Math.random() * 30 + 10
                 })).map((milestone, index) => (
                   <div key={index} className="flex items-start gap-4 p-3 bg-muted/30 rounded-lg">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-bold">
                       {milestone.generation}
                     </div>
                     <div className="flex-1">

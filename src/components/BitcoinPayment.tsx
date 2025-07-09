@@ -7,6 +7,7 @@ import { AlertCircle, CheckCircle, Clock, Copy, ExternalLink, AlertTriangle, Bit
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import type { PaymentData } from '@/types/common';
 
 interface BitcoinPaymentProps {
   purpose: 'vendor_bond' | 'user_deposit' | 'order_payment';
@@ -18,7 +19,7 @@ interface BitcoinPaymentProps {
 const BitcoinPayment = ({ purpose, amountUsd, onPaymentComplete, showRefresh = true }: BitcoinPaymentProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [paymentData, setPaymentData] = useState<any>(null);
+  const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string>('pending');
   const [checking, setChecking] = useState(false);
 
@@ -45,7 +46,7 @@ const BitcoinPayment = ({ purpose, amountUsd, onPaymentComplete, showRefresh = t
       setPaymentData(data);
       console.log('Payment address generated:', data);
       
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Address generation failed",
         description: error.message,
@@ -84,8 +85,8 @@ const BitcoinPayment = ({ purpose, amountUsd, onPaymentComplete, showRefresh = t
         }
       }
       
-    } catch (error: any) {
-      console.error('Payment check failed:', error);
+    } catch (error) {
+      console.error('Payment check failed:', error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setChecking(false);
     }
@@ -171,7 +172,7 @@ const BitcoinPayment = ({ purpose, amountUsd, onPaymentComplete, showRefresh = t
         {/* Payment Status */}
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium">Status:</span>
-          <Badge className={`${getStatusColor(paymentStatus)} text-white`}>
+          <Badge className={`${getStatusColor(paymentStatus)} text-primary-foreground`}>
             <StatusIcon className="h-3 w-3 mr-1" />
             {paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1)}
           </Badge>
