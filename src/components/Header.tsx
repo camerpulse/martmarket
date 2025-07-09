@@ -46,7 +46,7 @@ const Header = () => {
         <nav className="hidden lg:flex items-center space-x-1">
           <BitcoinPrice />
           <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
-            <Link to="/shop">Shop</Link>
+            <Link to="/shop">{t('nav.shop')}</Link>
           </Button>
           <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
             <Link to="/forum">
@@ -134,11 +134,11 @@ const Header = () => {
                         </Button>
                       )}
                     </div>
-                  ) : (
-                    <Button size="sm" className="bg-primary hover:bg-primary/90" asChild>
-                      <Link to="/vendor/register">Become Vendor</Link>
-                    </Button>
-                  )}
+                   ) : (
+                     <Button size="sm" className="bg-primary hover:bg-primary/90" asChild>
+                       <Link to="/vendor/register">{t('nav.become_vendor')}</Link>
+                     </Button>
+                   )}
                 </>
               )}
               
@@ -154,7 +154,7 @@ const Header = () => {
             
             <Button variant="ghost" size="sm" onClick={signOut}>
                 <LogOut className="h-4 w-4 mr-1" />
-                Logout
+                {t('nav.logout')}
               </Button>
             </div>
           ) : (
@@ -162,11 +162,11 @@ const Header = () => {
               <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
                 <Link to="/auth">
                   <User className="h-4 w-4 mr-2" />
-                  Login
+                  {t('nav.login')}
                 </Link>
               </Button>
               <Button size="sm" className="bg-primary hover:bg-primary/90" asChild>
-                <Link to="/vendor/register">Become Vendor</Link>
+                <Link to="/vendor/register">{t('nav.become_vendor')}</Link>
               </Button>
             </>
           )}
@@ -197,7 +197,7 @@ const Header = () => {
                 {/* Mobile Navigation Links */}
                 <div className="flex flex-col space-y-3">
                   <Button variant="ghost" className="justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
-                    <Link to="/shop">Shop</Link>
+                    <Link to="/shop">{t('nav.shop')}</Link>
                   </Button>
                   
                   <Button variant="ghost" className="justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
@@ -281,7 +281,7 @@ const Header = () => {
                             </div>
                           ) : (
                             <Button className="justify-start bg-primary hover:bg-primary/90" asChild onClick={() => setMobileMenuOpen(false)}>
-                              <Link to="/vendor/register">Become Vendor</Link>
+                              <Link to="/vendor/register">{t('nav.become_vendor')}</Link>
                             </Button>
                           )}
                         </>
@@ -289,7 +289,7 @@ const Header = () => {
 
                       <Button variant="ghost" className="justify-start text-destructive" onClick={() => { signOut(); setMobileMenuOpen(false); }}>
                         <LogOut className="h-4 w-4 mr-2" />
-                        Logout
+                        {t('nav.logout')}
                       </Button>
                     </>
                   ) : (
@@ -297,11 +297,11 @@ const Header = () => {
                       <Button variant="outline" className="justify-start border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild onClick={() => setMobileMenuOpen(false)}>
                         <Link to="/auth">
                           <User className="h-4 w-4 mr-2" />
-                          Login
+                          {t('nav.login')}
                         </Link>
                       </Button>
                       <Button className="justify-start bg-primary hover:bg-primary/90" asChild onClick={() => setMobileMenuOpen(false)}>
-                        <Link to="/vendor/register">Become Vendor</Link>
+                        <Link to="/vendor/register">{t('nav.become_vendor')}</Link>
                       </Button>
                     </>
                   )}
