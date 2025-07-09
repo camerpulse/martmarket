@@ -197,7 +197,7 @@ const FeaturedVendors = () => {
         </div>
         
         <div className="relative overflow-hidden">
-          <div className="grid grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {currentVendors.map((vendor, index) => (
               <div 
                 key={`${vendor.name}-${currentIndex}`} 
