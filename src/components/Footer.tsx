@@ -36,27 +36,27 @@ const Footer = () => {
           
           {/* Marketplace */}
           <div>
-            <h3 className="font-semibold mb-4">Marketplace</h3>
+            <h3 className="font-semibold mb-4">{t('footer.menu.marketplace')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/shop" className="hover:text-primary transition-colors">Browse Products</Link></li>
-              <li><Link to="/vendors" className="hover:text-primary transition-colors">Verified Vendors</Link></li>
-              <li><Link to="/how-to-order" className="hover:text-primary transition-colors">How to Order</Link></li>
-              <li><Link to="/selling-guide" className="hover:text-primary transition-colors">Selling Guide</Link></li>
-              <li><Link to="/escrow-security" className="hover:text-primary transition-colors">Escrow Security</Link></li>
-              <li><Link to="/shop" className="hover:text-primary transition-colors">Categories</Link></li>
+              <li><Link to="/shop" className="hover:text-primary transition-colors">{t('footer.menu.browse_products')}</Link></li>
+              <li><Link to="/vendors" className="hover:text-primary transition-colors">{t('footer.menu.verified_vendors')}</Link></li>
+              <li><Link to="/how-to-order" className="hover:text-primary transition-colors">{t('footer.menu.how_to_order')}</Link></li>
+              <li><Link to="/selling-guide" className="hover:text-primary transition-colors">{t('footer.menu.selling_guide')}</Link></li>
+              <li><Link to="/escrow-security" className="hover:text-primary transition-colors">{t('footer.menu.escrow_security')}</Link></li>
+              <li><Link to="/shop" className="hover:text-primary transition-colors">{t('footer.menu.categories')}</Link></li>
             </ul>
           </div>
           
           {/* Support */}
           <div>
-            <h3 className="font-semibold mb-4">Support</h3>
+            <h3 className="font-semibold mb-4">{t('footer.menu.support')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
-              <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
-              <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
-              <li><Link to="/safety-terms" className="hover:text-primary transition-colors">Forbidden in Opes Market</Link></li>
-              <li><Link to="/pgp-tools" className="hover:text-primary transition-colors">PGP Tools</Link></li>
-              <li><Link to="/forum" className="hover:text-primary transition-colors">Help Center</Link></li>
+              <li><Link to="/faq" className="hover:text-primary transition-colors">{t('footer.menu.faq')}</Link></li>
+              <li><Link to="/about" className="hover:text-primary transition-colors">{t('footer.menu.about_us')}</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors">{t('footer.menu.contact')}</Link></li>
+              <li><Link to="/safety-terms" className="hover:text-primary transition-colors">{t('footer.menu.forbidden')}</Link></li>
+              <li><Link to="/pgp-tools" className="hover:text-primary transition-colors">{t('footer.menu.pgp_tools')}</Link></li>
+              <li><Link to="/forum" className="hover:text-primary transition-colors">{t('footer.menu.help_center')}</Link></li>
             </ul>
           </div>
         </div>
@@ -64,13 +64,13 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-sm text-muted-foreground mb-4 md:mb-0">
-            © 2025 OpesMarket. All rights reserved. Bitcoin-only anonymous marketplace.
+            {t('footer.copyright')}
           </div>
           
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <span>Secure • Anonymous • AI-Powered</span>
+            <span>{t('footer.status.secure')}</span>
             <div className="w-2 h-2 bg-trust-high rounded-full animate-trust-pulse" />
-            <span>Online</span>
+            <span>{t('footer.status.online')}</span>
           </div>
         </div>
       </div>

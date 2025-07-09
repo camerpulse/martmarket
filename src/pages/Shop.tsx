@@ -12,6 +12,7 @@ import ProductGrid from "@/components/ProductGrid";
 import ShopHeader from "@/components/ShopHeader";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface SearchFilters {
   search: string;
@@ -21,6 +22,7 @@ interface SearchFilters {
 }
 
 const Shop = () => {
+  const { t } = useTranslation();
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
     search: '',
     category: 'all',
@@ -81,7 +83,7 @@ const Shop = () => {
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            <span className="bitcoin-gradient">All Products</span>
+            <span className="bitcoin-gradient">{t('shop.title')}</span>
           </h1>
           <p className="text-muted-foreground">
             Discover thousands of products from verified vendors in our secure marketplace
@@ -101,13 +103,13 @@ const Shop = () => {
               {/* Search */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium">Search Products</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('ui.search')} Products</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
-                      placeholder="Search products..."
+                      placeholder={t('shop.search.placeholder')}
                       value={searchFilters.search}
                       onChange={(e) => handleSearchChange(e.target.value)}
                       className="pl-10"
@@ -119,15 +121,15 @@ const Shop = () => {
               {/* Categories */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium">Categories</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('shop.filters.category')}</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <Select value={searchFilters.category} onValueChange={handleCategoryChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All Categories" />
+                      <SelectValue placeholder={t('shop.filters.all_categories')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="all">{t('shop.filters.all_categories')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.name}
@@ -164,7 +166,7 @@ const Shop = () => {
               {/* Sort Options */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium">Sort By</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('shop.filters.sort_by')}</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <Select value={searchFilters.sortBy} onValueChange={handleSortChange}>
@@ -172,11 +174,11 @@ const Shop = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="newest">Newest First</SelectItem>
+                      <SelectItem value="newest">{t('shop.filters.newest')}</SelectItem>
                       <SelectItem value="oldest">Oldest First</SelectItem>
-                      <SelectItem value="price-low">Price: Low to High</SelectItem>
-                      <SelectItem value="price-high">Price: High to Low</SelectItem>
-                      <SelectItem value="popular">Most Popular</SelectItem>
+                      <SelectItem value="price-low">{t('shop.filters.price_low')}</SelectItem>
+                      <SelectItem value="price-high">{t('shop.filters.price_high')}</SelectItem>
+                      <SelectItem value="popular">{t('shop.filters.rating')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </CardContent>
@@ -187,7 +189,7 @@ const Shop = () => {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center gap-2">
                     <TrendingUp className="h-4 w-4" />
-                    Top Vendors
+                    {t('shop.top_vendors.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">

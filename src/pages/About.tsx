@@ -20,22 +20,22 @@ const About = () => {
               <span className="text-4xl font-bold bitcoin-gradient">OpesMarket</span>
             </div>
             <h1 className="text-3xl font-bold mb-4">
-              About OpesMarket
+              {t('about.title')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              The world's most secure anonymous marketplace, powered by Bitcoin and AI technology.
+              {t('about.subtitle')}
             </p>
           </div>
 
           {/* Mission Section */}
           <div className="mb-16">
             <h2 className="text-2xl font-bold mb-6 text-center">
-              Our Mission
+              {t('about.mission.title')}
             </h2>
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg leading-relaxed text-center">
-                  OpesMarket is dedicated to creating a secure, anonymous, and trustworthy marketplace where privacy is paramount. We leverage cutting-edge Bitcoin technology and AI-powered security systems to ensure safe transactions while maintaining complete user anonymity.
+                  {t('about.mission.content')}
                 </p>
               </CardContent>
             </Card>
@@ -47,10 +47,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Bitcoin className="h-12 w-12 text-primary mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  Bitcoin Only
+                  {t('about.features.bitcoin.title')}
                 </h3>
                 <p className="text-muted-foreground">
-                  All transactions are conducted exclusively in Bitcoin, ensuring true financial privacy and decentralization.
+                  {t('about.features.bitcoin.desc')}
                 </p>
               </CardContent>
             </Card>
@@ -59,10 +59,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Shield className="h-12 w-12 text-verified mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  AI Security
+                  {t('about.features.security.title')}
                 </h3>
                 <p className="text-muted-foreground">
-                  Advanced AI algorithms continuously monitor and protect against fraud, ensuring a safe trading environment.
+                  {t('about.features.security.desc')}
                 </p>
               </CardContent>
             </Card>
@@ -71,10 +71,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Lock className="h-12 w-12 text-trust-high mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  Anonymous
+                  {t('about.features.privacy.title')}
                 </h3>
                 <p className="text-muted-foreground">
-                  Complete anonymity with end-to-end encryption and no personal data collection.
+                  {t('about.features.privacy.desc')}
                 </p>
               </CardContent>
             </Card>
@@ -83,10 +83,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Users className="h-12 w-12 text-secondary mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  Verified Vendors
+                  {t('about.features.community.title')}
                 </h3>
                 <p className="text-muted-foreground">
-                  All vendors undergo strict verification processes to ensure product quality and reliability.
+                  {t('about.features.community.desc')}
                 </p>
               </CardContent>
             </Card>
@@ -95,10 +95,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Zap className="h-12 w-12 text-warning mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  Smart Escrow
+                  {t('about.features.ai.title')}
                 </h3>
                 <p className="text-muted-foreground">
-                  Automated escrow system protects both buyers and sellers with intelligent dispute resolution.
+                  {t('about.features.ai.desc')}
                 </p>
               </CardContent>
             </Card>
@@ -107,10 +107,10 @@ const About = () => {
               <CardContent className="p-6 text-center">
                 <Globe className="h-12 w-12 text-info mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3">
-                  Global Access
+                  {t('about.features.global.title')}
                 </h3>
                 <p className="text-muted-foreground">
-                  Available worldwide with multi-language support and 24/7 accessibility.
+                  {t('about.features.global.desc')}
                 </p>
               </CardContent>
             </Card>
