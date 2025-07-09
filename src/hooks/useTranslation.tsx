@@ -122,8 +122,8 @@ export const TranslationProvider = ({ children }: TranslationProviderProps) => {
       // Build translation object
       const dbTranslations: Translation = {};
       data?.forEach(item => {
-        const key = item.context ? `${item.translation_key}.${item.context}` : item.translation_key;
-        dbTranslations[key] = item.translation_value;
+        // The translation_key already includes the full path, no need to add context
+        dbTranslations[item.translation_key] = item.translation_value;
       });
 
       // Merge with fallback translations
