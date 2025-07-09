@@ -189,10 +189,10 @@ const FeaturedVendors = () => {
     <section className="py-16 bg-muted/20">
       <div className="container px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             <span className="bitcoin-gradient">{t('featured_vendors.title')}</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             {t('featured_vendors.subtitle')}
           </p>
         </div>

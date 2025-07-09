@@ -27,8 +27,8 @@ const Header = () => {
       <div className="container flex h-16 items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
-          <Bitcoin className="h-6 w-6 md:h-8 md:w-8 text-primary animate-glow" />
-          <span className="text-xl md:text-2xl font-bold bitcoin-gradient">OpesMarket</span>
+          <Bitcoin className="h-7 w-7 md:h-8 md:w-8 text-primary animate-glow" />
+          <span className="text-2xl md:text-2xl font-bold bitcoin-gradient">OpesMarket</span>
         </Link>
 
         {/* Desktop Search Bar */}

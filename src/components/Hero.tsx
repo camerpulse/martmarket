@@ -12,12 +12,12 @@ const Hero = () => {
       <div className="container relative px-4 py-20">
         <div className="text-center max-w-4xl mx-auto">
           {/* Main Heading */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fade-in text-center px-4">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in text-center px-4 leading-tight">
             <span className="bitcoin-gradient">{t('hero.title.ai_powered')}</span> {t('hero.title.anonymous_marketplace')}
           </h1>
           
           {/* Subheading */}
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in max-w-2xl mx-auto leading-relaxed px-4 text-center">
+          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 animate-fade-in max-w-2xl mx-auto leading-relaxed px-4 text-center">
             {t('hero.subtitle')}
           </p>
 
@@ -34,33 +34,33 @@ const Hero = () => {
           {/* Feature Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-fade-in px-4">
             <div className="flex flex-col items-center p-4 sm:p-6 card-gradient rounded-lg shadow-card transition-smooth hover:scale-105">
-              <Bitcoin className="h-6 w-6 sm:h-8 sm:w-8 text-primary mb-3" />
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">{t('hero.feature.bitcoin_only')}</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground text-center">
+              <Bitcoin className="h-8 w-8 sm:h-10 sm:w-10 text-primary mb-3" />
+              <h3 className="font-semibold mb-2 text-base sm:text-lg">{t('hero.feature.bitcoin_only')}</h3>
+              <p className="text-sm sm:text-base text-muted-foreground text-center leading-relaxed">
                 {t('hero.feature.bitcoin_desc')}
               </p>
             </div>
             
             <div className="flex flex-col items-center p-4 sm:p-6 card-gradient rounded-lg shadow-card transition-smooth hover:scale-105">
-              <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-verified mb-3" />
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">{t('hero.feature.verified_vendors')}</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground text-center">
+              <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-verified mb-3" />
+              <h3 className="font-semibold mb-2 text-base sm:text-lg">{t('hero.feature.verified_vendors')}</h3>
+              <p className="text-sm sm:text-base text-muted-foreground text-center leading-relaxed">
                 {t('hero.feature.verified_desc')}
               </p>
             </div>
             
             <div className="flex flex-col items-center p-4 sm:p-6 card-gradient rounded-lg shadow-card transition-smooth hover:scale-105">
-              <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-secondary mb-3" />
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">{t('hero.feature.ai_powered')}</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground text-center">
+              <Zap className="h-8 w-8 sm:h-10 sm:w-10 text-secondary mb-3" />
+              <h3 className="font-semibold mb-2 text-base sm:text-lg">{t('hero.feature.ai_powered')}</h3>
+              <p className="text-sm sm:text-base text-muted-foreground text-center leading-relaxed">
                 {t('hero.feature.ai_desc')}
               </p>
             </div>
             
             <div className="flex flex-col items-center p-4 sm:p-6 card-gradient rounded-lg shadow-card transition-smooth hover:scale-105">
-              <Lock className="h-6 w-6 sm:h-8 sm:w-8 text-trust-high mb-3" />
-              <h3 className="font-semibold mb-2 text-sm sm:text-base">{t('hero.feature.anonymous')}</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground text-center">
+              <Lock className="h-8 w-8 sm:h-10 sm:w-10 text-trust-high mb-3" />
+              <h3 className="font-semibold mb-2 text-base sm:text-lg">{t('hero.feature.anonymous')}</h3>
+              <p className="text-sm sm:text-base text-muted-foreground text-center leading-relaxed">
                 {t('hero.feature.anonymous_desc')}
               </p>
             </div>
