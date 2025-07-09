@@ -65,6 +65,39 @@ export default function MessageThread({ recipientId, recipientName, userId }: Me
     }
   };
 
+  const createThreadIfNeeded = async () => {
+    try {
+      // Check if a thread already exists
+      const { data: existingThread } = await supabase
+        .from('message_threads')
+        .select('id')
+        .or(`and(buyer_id.eq.${userId},vendor_id.eq.${recipientId}),and(buyer_id.eq.${recipientId},vendor_id.eq.${userId})`)
+        .maybeSingle();
+
+      if (existingThread) {
+        return existingThread.id;
+      }
+
+      // Create new thread using the function
+      const { data, error } = await supabase.rpc('create_general_message_thread', {
+        participant1_id: userId,
+        participant2_id: recipientId,
+        subject_text: `Conversation with ${recipientName}`
+      });
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Failed to create thread:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create conversation thread",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
   const loadMessages = async () => {
     try {
       const { data, error } = await supabase
@@ -133,6 +166,13 @@ export default function MessageThread({ recipientId, recipientName, userId }: Me
 
     setSending(true);
     try {
+      // Ensure thread exists
+      const threadId = await createThreadIfNeeded();
+      if (!threadId) {
+        setSending(false);
+        return;
+      }
+
       // Get recipient's public key
       const recipientPublicKey = await getRecipientPublicKey(recipientId);
       if (!recipientPublicKey) {
@@ -156,7 +196,8 @@ export default function MessageThread({ recipientId, recipientName, userId }: Me
           content: '[Encrypted Message]',
           encrypted_content: encryptedContent,
           is_encrypted: true,
-          message_type: 'text'
+          message_type: 'text',
+          thread_id: threadId
         });
 
       if (error) throw error;

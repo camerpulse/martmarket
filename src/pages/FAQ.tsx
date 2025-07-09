@@ -119,8 +119,8 @@ const FAQ = () => {
           answer: "Check vendor statistics: completion rate, response time, number of sales, customer reviews, and trust score. Look for vendors with high ratings, many positive reviews, and quick response times. Avoid new vendors with no history."
         },
         {
-          question: "Can I message vendors before ordering?",
-          answer: "Yes, you can message any vendor through our encrypted messaging system. This is recommended for custom orders, questions about products, or to verify availability. Reputable vendors respond within 24 hours."
+          question: "Can I message other users?",
+          answer: "Yes, you can message any user on the platform through our end-to-end encrypted messaging system. This includes vendors for questions about products, buyers for general inquiries, or anyone for community discussions. All messages are protected with military-grade PGP encryption."
         },
         {
           question: "How do vendor reviews work?",

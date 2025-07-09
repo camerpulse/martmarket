@@ -3379,6 +3379,14 @@ export type Database = {
         Args: { user_id: string; event_type: string; event_data: Json }
         Returns: number
       }
+      create_general_message_thread: {
+        Args: {
+          participant1_id: string
+          participant2_id: string
+          subject_text?: string
+        }
+        Returns: string
+      }
       get_dashboard_metrics: {
         Args: Record<PropertyKey, never>
         Returns: Json

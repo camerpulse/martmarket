@@ -76,7 +76,7 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
       const contactIds = Array.from(contactsMap.keys());
       if (contactIds.length > 0) {
         const { data: pgpKeys } = await supabase
-          .from('user_pgp_keys')
+          .from('pgp_keys')
           .select('user_id')
           .in('user_id', contactIds);
 
@@ -168,10 +168,10 @@ export default function ContactsList({ userId, selectedContactId, onContactSelec
       // Check if user has PGP key
       console.log('Checking PGP key for user:', userProfile.user_id);
       const { data: pgpKey, error: pgpError } = await supabase
-        .from('user_pgp_keys')
+        .from('pgp_keys')
         .select('id')
         .eq('user_id', userProfile.user_id)
-        .eq('is_default', true)
+        .eq('is_active', true)
         .maybeSingle();
 
       console.log('PGP key check result:', { pgpKey, pgpError });
