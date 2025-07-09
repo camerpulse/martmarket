@@ -36,7 +36,7 @@ const Header = () => {
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Search products, vendors..."
+              placeholder={t('nav.search', 'Search products, vendors...')}
               className="pl-10 bg-muted/50 border-border focus:border-primary"
             />
           </div>
@@ -46,12 +46,12 @@ const Header = () => {
         <nav className="hidden lg:flex items-center space-x-1">
           <BitcoinPrice />
           <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
-            <Link to="/shop">Shop</Link>
+            <Link to="/shop">{t('nav.shop', 'Shop')}</Link>
           </Button>
           <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
             <Link to="/forum">
               <Users className="h-4 w-4 mr-2" />
-              Forum
+              {t('nav.forum', 'Forum')}
             </Link>
           </Button>
           {user && (
@@ -59,13 +59,13 @@ const Header = () => {
               <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
                 <Link to="/wishlist">
                   <Heart className="h-4 w-4 mr-2" />
-                  Wishlist
+                  {t('nav.wishlist', 'Wishlist')}
                 </Link>
               </Button>
                <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
                  <Link to="/affiliate">
                    <DollarSign className="h-4 w-4 mr-2" />
-                   Affiliate
+                   {t('nav.affiliate', 'Affiliate')}
                  </Link>
                </Button>
                <Button variant="ghost" size="sm" className="hover:text-primary" asChild>
@@ -86,16 +86,16 @@ const Header = () => {
               
               {/* User Profile & Orders Links */}
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/orders">My Orders</Link>
+                <Link to="/orders">{t('nav.orders', 'My Orders')}</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/messages">
                   <MessageCircle className="h-4 w-4 mr-2" />
-                  Messages
+                  {t('nav.messages', 'Messages')}
                 </Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/profile">Profile</Link>
+                <Link to="/profile">{t('nav.profile', 'Profile')}</Link>
               </Button>
               
               {/* Admin Dashboard Link */}
@@ -136,7 +136,7 @@ const Header = () => {
                     </div>
                    ) : (
                      <Button size="sm" className="bg-primary hover:bg-primary/90" asChild>
-                       <Link to="/vendor/register">Become a Vendor</Link>
+                       <Link to="/vendor/register">{t('nav.become_vendor', 'Become a Vendor')}</Link>
                      </Button>
                    )}
                 </>
@@ -154,7 +154,7 @@ const Header = () => {
             
             <Button variant="ghost" size="sm" onClick={signOut}>
                 <LogOut className="h-4 w-4 mr-1" />
-                Logout
+                {t('nav.logout', 'Logout')}
               </Button>
             </div>
           ) : (
@@ -162,11 +162,11 @@ const Header = () => {
               <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
                 <Link to="/auth">
                   <User className="h-4 w-4 mr-2" />
-                  Login
+                  {t('nav.login', 'Login')}
                 </Link>
               </Button>
               <Button size="sm" className="bg-primary hover:bg-primary/90" asChild>
-                <Link to="/vendor/register">Become a Vendor</Link>
+                <Link to="/vendor/register">{t('nav.become_vendor', 'Become a Vendor')}</Link>
               </Button>
             </>
           )}
