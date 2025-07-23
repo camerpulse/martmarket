@@ -59,7 +59,104 @@ import {
   Building2,
   FileImage,
   Languages,
-  Palette
+  Palette,
+  Monitor,
+  HardDrive,
+  Network,
+  Smartphone,
+  Tablet,
+  Code,
+  LineChart,
+  PieChart,
+  BarChart,
+  Bookmark,
+  Tag,
+  Image,
+  Video,
+  Music,
+  File,
+  Folder,
+  Archive,
+  Clipboard,
+  Link as LinkIcon,
+  Repeat,
+  Share2,
+  Forward,
+  Reply,
+  Send,
+  Inbox,
+  Trash,
+  HeartHandshake,
+  Scale,
+  Gavel,
+  ScrollText,
+  Award,
+  Target,
+  Zap as Lightning,
+  Timer,
+  Hourglass,
+  Gauge,
+  Thermometer,
+  Battery,
+  Wifi,
+  Bluetooth,
+  Radio,
+  Satellite,
+  Router,
+  Cloud as CloudIcon,
+  HardDrive as HardDriveIcon,
+  Usb,
+  Printer,
+  Webcam,
+  Speaker,
+  Headphones,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  FastForward,
+  Rewind,
+  Shuffle,
+  RotateCcw,
+  RotateCw,
+  FlipHorizontal,
+  FlipVertical,
+  Maximize,
+  Minimize,
+  Move,
+  Copy,
+  Scissors,
+  PaintBucket,
+  Brush,
+  Pen,
+  Pencil,
+  Eraser,
+  Ruler,
+  Grid3X3,
+  Layout,
+  Sidebar,
+  PanelLeft,
+  PanelRight,
+  PanelTop,
+  PanelBottom,
+  Columns,
+  Rows,
+  Square,
+  Circle,
+  Triangle,
+  Hexagon,
+  Octagon,
+  Diamond,
+  Heart,
+  Infinity,
+  Hash,
+  AtSign,
+  Percent,
+  Equal,
+  MoreHorizontal,
+  MoreVertical
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -72,6 +169,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { ComprehensiveUserManagement } from '@/components/admin/ComprehensiveUserManagement';
 import { ProductManagement } from '@/components/admin/ProductManagement';
 import { SystemSettings } from '@/components/admin/SystemSettings';
+import { ComprehensiveOrderManagement } from '@/components/admin/ComprehensiveOrderManagement';
+import { ComprehensiveDisputeManagement } from '@/components/admin/ComprehensiveDisputeManagement';
+import { ComprehensiveSecurityManagement } from '@/components/admin/ComprehensiveSecurityManagement';
+import { ComprehensiveAIManagement } from '@/components/admin/ComprehensiveAIManagement';
+import { CategoryManagement } from '@/components/admin/CategoryManagement';
+import { TranslationManagement } from '@/components/admin/TranslationManagement';
 
 interface DashboardMetrics {
   total_users: number;
@@ -84,110 +187,20 @@ interface DashboardMetrics {
   platform_revenue_btc: number;
 }
 
+interface SystemHealth {
+  cpu_usage: number;
+  memory_usage: number;
+  disk_usage: number;
+  active_connections: number;
+  response_time: number;
+  uptime: number;
+}
+
 interface AdminProfile {
   admin_role: string;
   is_active: boolean;
+  permissions: any;
 }
-
-// Comprehensive admin sections
-const ADMIN_SECTIONS = [
-  {
-    id: 'dashboard',
-    title: 'Dashboard',
-    icon: BarChart3,
-    description: 'Overview and analytics'
-  },
-  {
-    id: 'users',
-    title: 'Users & Profiles',
-    icon: Users,
-    description: 'Manage all user accounts'
-  },
-  {
-    id: 'vendors',
-    title: 'Vendors & Stores',
-    icon: ShoppingBag,
-    description: 'Vendor applications and management'
-  },
-  {
-    id: 'products',
-    title: 'Products & Catalog',
-    icon: Package,
-    description: 'Product listings and categories'
-  },
-  {
-    id: 'orders',
-    title: 'Orders & Payments',
-    icon: ShoppingCart,
-    description: 'Transaction management'
-  },
-  {
-    id: 'disputes',
-    title: 'Disputes & Support',
-    icon: AlertTriangle,
-    description: 'Customer support and disputes'
-  },
-  {
-    id: 'reviews',
-    title: 'Reviews & Ratings',
-    icon: Star,
-    description: 'Review management and moderation'
-  },
-  {
-    id: 'messages',
-    title: 'Messages & Communications',
-    icon: MessageSquare,
-    description: 'Platform messaging system'
-  },
-  {
-    id: 'forum',
-    title: 'Forum & Community',
-    icon: Users,
-    description: 'Forum categories and posts'
-  },
-  {
-    id: 'security',
-    title: 'Security & Monitoring',
-    icon: Shield,
-    description: 'Security logs and monitoring'
-  },
-  {
-    id: 'payments',
-    title: 'Bitcoin & Payments',
-    icon: Wallet,
-    description: 'Payment processing and Bitcoin'
-  },
-  {
-    id: 'content',
-    title: 'Content & Media',
-    icon: FileImage,
-    description: 'Site content and media management'
-  },
-  {
-    id: 'translations',
-    title: 'Languages & Translations',
-    icon: Languages,
-    description: 'Multi-language content'
-  },
-  {
-    id: 'ai',
-    title: 'AI & Automation',
-    icon: Brain,
-    description: 'AI features and automation'
-  },
-  {
-    id: 'system',
-    title: 'System & Infrastructure',
-    icon: Server,
-    description: 'System health and settings'
-  },
-  {
-    id: 'design',
-    title: 'Design & Appearance',
-    icon: Palette,
-    description: 'Site design and branding'
-  }
-];
 
 const StatCard = ({ 
   title, 
@@ -195,7 +208,8 @@ const StatCard = ({
   icon: Icon, 
   change, 
   color = "default",
-  trend
+  trend,
+  onClick
 }: { 
   title: string; 
   value: string | number; 
@@ -203,6 +217,7 @@ const StatCard = ({
   change?: string;
   color?: "default" | "success" | "warning" | "destructive";
   trend?: number;
+  onClick?: () => void;
 }) => {
   const colorClasses = {
     default: "text-muted-foreground",
@@ -219,7 +234,10 @@ const StatCard = ({
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group border-l-4 border-l-primary/20 hover:border-l-primary">
+    <Card 
+      className={`hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group border-l-4 border-l-primary/20 hover:border-l-primary ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
           {title}
@@ -249,29 +267,35 @@ const StatCard = ({
   );
 };
 
-const AdminSectionCard = ({ section, onClick }: { section: typeof ADMIN_SECTIONS[0], onClick: () => void }) => (
+const QuickActionCard = ({ title, description, icon: Icon, onClick, badge }: {
+  title: string;
+  description: string;
+  icon: any;
+  onClick: () => void;
+  badge?: string;
+}) => (
   <Card 
     className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer group border hover:border-primary/50"
     onClick={onClick}
   >
-    <CardHeader className="pb-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-primary/10 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
-            <section.icon className="h-6 w-6" />
-          </div>
-          <div>
-            <CardTitle className="text-lg group-hover:text-primary transition-colors">
-              {section.title}
-            </CardTitle>
-            <CardDescription className="text-sm">
-              {section.description}
-            </CardDescription>
-          </div>
+    <CardContent className="p-6">
+      <div className="flex items-center justify-between mb-3">
+        <div className="p-3 rounded-xl bg-primary/10 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+          <Icon className="h-6 w-6" />
         </div>
-        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+        {badge && (
+          <Badge variant="destructive" className="text-xs">
+            {badge}
+          </Badge>
+        )}
       </div>
-    </CardHeader>
+      <h3 className="font-semibold text-lg group-hover:text-primary transition-colors mb-2">
+        {title}
+      </h3>
+      <p className="text-sm text-muted-foreground">
+        {description}
+      </p>
+    </CardContent>
   </Card>
 );
 
@@ -279,19 +303,13 @@ export default function AdminDashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
-
-  // Data states
-  const [users, setUsers] = useState<any[]>([]);
-  const [vendors, setVendors] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
-  const [disputes, setDisputes] = useState<any[]>([]);
-  const [reviews, setReviews] = useState<any[]>([]);
-  const [systemSettings, setSystemSettings] = useState<any>({});
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -303,7 +321,7 @@ export default function AdminDashboard() {
     try {
       const { data: adminData, error: adminError } = await supabase
         .from('admin_profiles')
-        .select('admin_role, is_active')
+        .select('admin_role, is_active, permissions')
         .eq('user_id', user?.id)
         .single();
 
@@ -317,7 +335,12 @@ export default function AdminDashboard() {
       }
 
       setAdminProfile(adminData);
-      loadDashboardMetrics();
+      await Promise.all([
+        loadDashboardMetrics(),
+        loadSystemHealth(),
+        loadNotifications(),
+        loadRecentActivities()
+      ]);
     } catch (error) {
       console.error('Error checking admin access:', error);
       toast({
@@ -340,63 +363,67 @@ export default function AdminDashboard() {
         description: "Failed to load dashboard metrics",
         variant: "destructive",
       });
+    }
+  };
+
+  const loadSystemHealth = async () => {
+    // Mock system health data - in real implementation, this would come from monitoring tools
+    setSystemHealth({
+      cpu_usage: Math.floor(Math.random() * 30) + 20,
+      memory_usage: Math.floor(Math.random() * 40) + 30,
+      disk_usage: Math.floor(Math.random() * 20) + 40,
+      active_connections: Math.floor(Math.random() * 500) + 100,
+      response_time: Math.floor(Math.random() * 50) + 50,
+      uptime: 99.9
+    });
+  };
+
+  const loadNotifications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('category', 'admin')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      setNotifications(data || []);
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  };
+
+  const loadRecentActivities = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('admin_actions')
+        .select('*, admin_profiles!inner()')
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      setActivities(data || []);
+    } catch (error) {
+      console.error('Error loading activities:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadUsers = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*, admin_profiles(*)')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (!error) setUsers(data || []);
-  };
-
-  const loadVendors = async () => {
-    const { data, error } = await supabase
-      .from('vendor_profiles')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (!error) setVendors(data || []);
-  };
-
-  const loadProducts = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*, categories(*), profiles!products_vendor_id_fkey(*)')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (!error) setProducts(data || []);
-  };
-
-  const loadOrders = async () => {
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*, products(*), profiles!orders_buyer_id_fkey(*)')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (!error) setOrders(data || []);
-  };
-
-  const loadDisputes = async () => {
-    const { data, error } = await supabase
-      .from('disputes')
-      .select('*, orders(*), profiles!disputes_buyer_id_fkey(*)')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (!error) setDisputes(data || []);
-  };
-
-  const loadReviews = async () => {
-    const { data, error } = await supabase
-      .from('reviews')
-      .select('*, orders(*), products(*), profiles!reviews_reviewer_id_fkey(*)')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (!error) setReviews(data || []);
+  const refreshData = async () => {
+    setLoading(true);
+    await Promise.all([
+      loadDashboardMetrics(),
+      loadSystemHealth(),
+      loadNotifications(),
+      loadRecentActivities()
+    ]);
+    setLoading(false);
+    toast({
+      title: "Success",
+      description: "Dashboard data refreshed",
+    });
   };
 
   if (loading) {
@@ -427,11 +454,6 @@ export default function AdminDashboard() {
     );
   }
 
-  const filteredSections = ADMIN_SECTIONS.filter(section =>
-    section.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    section.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <div className="container mx-auto p-6 max-w-7xl">
@@ -451,7 +473,11 @@ export default function AdminDashboard() {
               <Shield className="h-4 w-4 mr-2" />
               {adminProfile?.admin_role?.replace('_', ' ').toUpperCase()}
             </Badge>
-            <Button variant="outline" size="sm" className="px-6">
+            <Button variant="outline" size="sm" onClick={refreshData} disabled={loading}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setActiveSection('system')}>
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </Button>
@@ -459,7 +485,7 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-8 h-12 bg-muted/50 p-1 rounded-xl">
+          <TabsList className="grid w-full grid-cols-10 h-12 bg-muted/50 p-1 rounded-xl">
             <TabsTrigger value="dashboard" className="data-[state=active]:bg-background rounded-lg">
               <Home className="h-4 w-4 mr-2" />
               Dashboard
@@ -476,9 +502,17 @@ export default function AdminDashboard() {
               <ShoppingCart className="h-4 w-4 mr-2" />
               Orders
             </TabsTrigger>
+            <TabsTrigger value="disputes" className="data-[state=active]:bg-background rounded-lg">
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Disputes
+            </TabsTrigger>
             <TabsTrigger value="security" className="data-[state=active]:bg-background rounded-lg">
               <Shield className="h-4 w-4 mr-2" />
               Security
+            </TabsTrigger>
+            <TabsTrigger value="ai" className="data-[state=active]:bg-background rounded-lg">
+              <Brain className="h-4 w-4 mr-2" />
+              AI
             </TabsTrigger>
             <TabsTrigger value="content" className="data-[state=active]:bg-background rounded-lg">
               <FileText className="h-4 w-4 mr-2" />
@@ -488,276 +522,207 @@ export default function AdminDashboard() {
               <Server className="h-4 w-4 mr-2" />
               System
             </TabsTrigger>
-            <TabsTrigger value="more" className="data-[state=active]:bg-background rounded-lg">
-              <Layers className="h-4 w-4 mr-2" />
-              More
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-background rounded-lg">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analytics
             </TabsTrigger>
           </TabsList>
 
           {/* Dashboard Overview */}
           <TabsContent value="dashboard" className="space-y-8">
-            {/* Stats Cards */}
+            {/* Key Metrics */}
             {metrics && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
                   title="Total Users"
                   value={metrics.total_users.toLocaleString()}
                   icon={Users}
-                  change="+12% from last month"
+                  change="+12% this month"
                   color="success"
-                  trend={75}
+                  trend={12}
+                  onClick={() => setActiveSection('users')}
                 />
                 <StatCard
                   title="Active Vendors"
                   value={metrics.total_vendors.toLocaleString()}
-                  icon={UserCheck}
-                  change="+8% from last month"
+                  icon={ShoppingBag}
+                  change="+8% this month"
                   color="success"
-                  trend={60}
+                  trend={8}
+                  onClick={() => setActiveSection('users')}
                 />
                 <StatCard
-                  title="Total Orders"
-                  value={metrics.total_orders.toLocaleString()}
-                  icon={ShoppingCart}
-                  change="+18% from last month"
+                  title="Total Products"
+                  value={metrics.total_products.toLocaleString()}
+                  icon={Package}
+                  change="+15% this month"
                   color="success"
-                  trend={85}
+                  trend={15}
+                  onClick={() => setActiveSection('products')}
                 />
                 <StatCard
                   title="Platform Revenue"
                   value={`${metrics.platform_revenue_btc.toFixed(8)} BTC`}
                   icon={DollarSign}
-                  change="+5.2% from last month"
+                  change="+25% this month"
                   color="success"
-                  trend={45}
+                  trend={25}
+                  onClick={() => setActiveSection('analytics')}
+                />
+                <StatCard
+                  title="Total Orders"
+                  value={metrics.total_orders.toLocaleString()}
+                  icon={ShoppingCart}
+                  change="+18% this month"
+                  color="success"
+                  trend={18}
+                  onClick={() => setActiveSection('orders')}
+                />
+                <StatCard
+                  title="Pending Disputes"
+                  value={metrics.pending_disputes}
+                  icon={AlertTriangle}
+                  change={metrics.pending_disputes > 10 ? "High volume" : "Normal"}
+                  color={metrics.pending_disputes > 10 ? "warning" : "default"}
+                  onClick={() => setActiveSection('disputes')}
+                />
+                <StatCard
+                  title="Total Reviews"
+                  value={metrics.total_reviews.toLocaleString()}
+                  icon={Star}
+                  change="+22% this month"
+                  color="success"
+                  trend={22}
+                />
+                <StatCard
+                  title="Pending Verifications"
+                  value={metrics.pending_verifications}
+                  icon={UserCheck}
+                  change={metrics.pending_verifications > 5 ? "Needs attention" : "Normal"}
+                  color={metrics.pending_verifications > 5 ? "warning" : "default"}
+                  onClick={() => setActiveSection('users')}
                 />
               </div>
             )}
 
-            {/* Quick Access Grid */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Management Center</h2>
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      placeholder="Search admin sections..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 w-64"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredSections.map((section) => (
-                  <AdminSectionCard
-                    key={section.id}
-                    section={section}
-                    onClick={() => setActiveSection(section.id)}
-                  />
-                ))}
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Users Management */}
-          <TabsContent value="users" className="space-y-6">
-            <ComprehensiveUserManagement />
-          </TabsContent>
-
-          {/* Products Management */}
-          <TabsContent value="products" className="space-y-6">
-            <ProductManagement />
-          </TabsContent>
-
-          {/* Orders Management */}
-          <TabsContent value="orders" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <ShoppingCart className="h-6 w-6" />
-                      Order Management
-                    </CardTitle>
-                    <CardDescription>Monitor and manage all platform orders</CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button onClick={loadOrders} variant="outline">
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Refresh
-                    </Button>
-                    <Button variant="outline">
-                      <Download className="h-4 w-4 mr-2" />
-                      Export
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center py-8 text-muted-foreground">
-                    Click Refresh to load orders
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Security Management */}
-          <TabsContent value="security" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    Security Status
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                      <span className="font-medium">System Security</span>
-                      <Badge variant="default">Active</Badge>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                      <span className="font-medium">DDoS Protection</span>
-                      <Badge variant="default">Enabled</Badge>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                      <span className="font-medium">Failed Login Attempts</span>
-                      <Badge variant="destructive">23 Today</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
+            {/* System Health */}
+            {systemHealth && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Activity className="h-5 w-5" />
-                    Recent Security Events
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-2">
-                      <AlertCircle className="h-4 w-4 text-amber-500" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">Multiple login attempts detected</p>
-                        <p className="text-xs text-muted-foreground">2 minutes ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-2">
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">Security scan completed</p>
-                        <p className="text-xs text-muted-foreground">1 hour ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Content Management */}
-          <TabsContent value="content" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Content Editor
-                  </CardTitle>
-                  <CardDescription>Edit site pages and content</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <Button variant="outline" className="justify-start h-16 flex-col">
-                        <Home className="h-6 w-6 mb-2" />
-                        Homepage
-                      </Button>
-                      <Button variant="outline" className="justify-start h-16 flex-col">
-                        <Info className="h-6 w-6 mb-2" />
-                        About Page
-                      </Button>
-                      <Button variant="outline" className="justify-start h-16 flex-col">
-                        <Mail className="h-6 w-6 mb-2" />
-                        Contact Page
-                      </Button>
-                      <Button variant="outline" className="justify-start h-16 flex-col">
-                        <FileText className="h-6 w-6 mb-2" />
-                        Terms & Privacy
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileImage className="h-5 w-5" />
-                    Media Library
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload Images
-                    </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Gallery
-                    </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      <Settings className="h-4 w-4 mr-2" />
-                      Manage Assets
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* System Management */}
-          <TabsContent value="system" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Server className="h-5 w-5" />
                     System Health
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">CPU Usage</span>
-                        <span className="text-sm font-medium">45%</span>
+                      <div className="flex justify-between text-sm">
+                        <span>CPU Usage</span>
+                        <span>{systemHealth.cpu_usage}%</span>
                       </div>
-                      <Progress value={45} className="h-2" />
+                      <Progress value={systemHealth.cpu_usage} className="h-2" />
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Memory Usage</span>
-                        <span className="text-sm font-medium">62%</span>
+                      <div className="flex justify-between text-sm">
+                        <span>Memory</span>
+                        <span>{systemHealth.memory_usage}%</span>
                       </div>
-                      <Progress value={62} className="h-2" />
+                      <Progress value={systemHealth.memory_usage} className="h-2" />
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Database</span>
-                        <Badge variant="default">Connected</Badge>
+                      <div className="flex justify-between text-sm">
+                        <span>Disk Usage</span>
+                        <span>{systemHealth.disk_usage}%</span>
                       </div>
+                      <Progress value={systemHealth.disk_usage} className="h-2" />
                     </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{systemHealth.active_connections}</div>
+                      <div className="text-sm text-muted-foreground">Active Connections</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{systemHealth.response_time}ms</div>
+                      <div className="text-sm text-muted-foreground">Response Time</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{systemHealth.uptime}%</div>
+                      <div className="text-sm text-muted-foreground">Uptime</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightning className="h-5 w-5" />
+                  Quick Actions
+                </CardTitle>
+                <CardDescription>
+                  Common administrative tasks and shortcuts
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <QuickActionCard
+                    title="Review Disputes"
+                    description="Handle pending customer disputes"
+                    icon={AlertTriangle}
+                    onClick={() => setActiveSection('disputes')}
+                    badge={metrics?.pending_disputes > 0 ? metrics.pending_disputes.toString() : undefined}
+                  />
+                  <QuickActionCard
+                    title="Approve Vendors"
+                    description="Review vendor applications"
+                    icon={UserCheck}
+                    onClick={() => setActiveSection('users')}
+                    badge={metrics?.pending_verifications > 0 ? metrics.pending_verifications.toString() : undefined}
+                  />
+                  <QuickActionCard
+                    title="Moderate Content"
+                    description="Review flagged content"
+                    icon={Shield}
+                    onClick={() => setActiveSection('content')}
+                  />
+                  <QuickActionCard
+                    title="System Health"
+                    description="Monitor system performance"
+                    icon={Activity}
+                    onClick={() => setActiveSection('system')}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Activity & Notifications */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5" />
+                    Recent Admin Actions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4 max-h-96 overflow-y-auto">
+                    {activities.length > 0 ? activities.map((activity, index) => (
+                      <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                        <div className="p-2 rounded-full bg-primary/10">
+                          <Activity className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{activity.action_type}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(activity.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    )) : (
+                      <p className="text-muted-foreground text-center py-8">No recent activity</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -765,72 +730,100 @@ export default function AdminDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    Platform Settings
+                    <Bell className="h-5 w-5" />
+                    Admin Notifications
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="maintenance">Maintenance Mode</Label>
-                      <Switch id="maintenance" />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="signups">Allow New Signups</Label>
-                      <Switch id="signups" defaultChecked />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="api">API Access</Label>
-                      <Switch id="api" defaultChecked />
-                    </div>
-                    <Separator />
-                    <Button className="w-full">
-                      <Settings className="h-4 w-4 mr-2" />
-                      Advanced Settings
-                    </Button>
+                  <div className="space-y-4 max-h-96 overflow-y-auto">
+                    {notifications.length > 0 ? notifications.map((notification, index) => (
+                      <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                        <div className="p-2 rounded-full bg-primary/10">
+                          <Bell className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{notification.title}</p>
+                          <p className="text-xs text-muted-foreground">{notification.message}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(notification.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    )) : (
+                      <p className="text-muted-foreground text-center py-8">No notifications</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          {/* More sections */}
-          <TabsContent value="more" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ADMIN_SECTIONS.slice(8).map((section) => (
-                <AdminSectionCard
-                  key={section.id}
-                  section={section}
-                  onClick={() => setActiveSection(section.id)}
-                />
-              ))}
+          {/* Users Management */}
+          <TabsContent value="users">
+            <ComprehensiveUserManagement />
+          </TabsContent>
+
+          {/* Products Management */}
+          <TabsContent value="products">
+            <ProductManagement />
+          </TabsContent>
+
+          {/* Orders Management */}
+          <TabsContent value="orders">
+            <ComprehensiveOrderManagement />
+          </TabsContent>
+
+          {/* Disputes Management */}
+          <TabsContent value="disputes">
+            <ComprehensiveDisputeManagement />
+          </TabsContent>
+
+          {/* Security Management */}
+          <TabsContent value="security">
+            <ComprehensiveSecurityManagement />
+          </TabsContent>
+
+          {/* AI Management */}
+          <TabsContent value="ai">
+            <ComprehensiveAIManagement />
+          </TabsContent>
+
+          {/* Content Management */}
+          <TabsContent value="content">
+            <div className="grid gap-6">
+              <CategoryManagement />
+              <TranslationManagement />
             </div>
           </TabsContent>
 
-          {/* Individual section tabs */}
-          {ADMIN_SECTIONS.slice(8).map((section) => (
-            <TabsContent key={section.id} value={section.id} className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-2xl flex items-center gap-2">
-                    <section.icon className="h-6 w-6" />
-                    {section.title}
-                  </CardTitle>
-                  <CardDescription>{section.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-12 text-muted-foreground">
-                    <section.icon className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                    <h3 className="text-lg font-medium mb-2">{section.title} Management</h3>
-                    <p>This section is ready for implementation.</p>
-                    <Button className="mt-4">
-                      Configure {section.title}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          ))}
+          {/* System Management */}
+          <TabsContent value="system">
+            <SystemSettings />
+          </TabsContent>
+
+          {/* Analytics */}
+          <TabsContent value="analytics">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Platform Analytics
+                </CardTitle>
+                <CardDescription>
+                  Comprehensive platform performance metrics and insights
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <BarChart3 className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-xl font-semibold mb-2">Analytics Dashboard</h3>
+                  <p className="text-muted-foreground">
+                    Advanced analytics features coming soon
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
