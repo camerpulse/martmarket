@@ -1688,6 +1688,51 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          category: string | null
+          created_at: string
+          data: Json | null
+          expires_at: string | null
+          id: string
+          is_read: boolean | null
+          is_real_time: boolean | null
+          message: string
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          is_real_time?: boolean | null
+          message: string
+          read_at?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          is_real_time?: boolean | null
+          message?: string
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           buyer_id: string
@@ -3007,6 +3052,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_mfa: {
+        Row: {
+          backup_codes: string[] | null
+          created_at: string
+          enabled_at: string | null
+          id: string
+          is_enabled: boolean | null
+          secret: string
+          user_id: string
+        }
+        Insert: {
+          backup_codes?: string[] | null
+          created_at?: string
+          enabled_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          secret: string
+          user_id: string
+        }
+        Update: {
+          backup_codes?: string[] | null
+          created_at?: string
+          enabled_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          secret?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_pgp_keys: {
         Row: {
           created_at: string
@@ -3387,6 +3462,17 @@ export type Database = {
         }
         Returns: string
       }
+      create_notification: {
+        Args: {
+          p_user_id: string
+          p_title: string
+          p_message: string
+          p_type?: string
+          p_category?: string
+          p_data?: Json
+        }
+        Returns: string
+      }
       get_dashboard_metrics: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -3442,6 +3528,14 @@ export type Database = {
           p_filters?: Json
           p_results_count?: number
         }
+        Returns: undefined
+      }
+      mark_all_notifications_read: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      mark_notification_read: {
+        Args: { p_notification_id: string }
         Returns: undefined
       }
       mark_thread_as_read: {

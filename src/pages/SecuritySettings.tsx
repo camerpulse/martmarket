@@ -25,6 +25,7 @@ import {
   Fingerprint
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import TwoFactorAuth from '@/components/security/TwoFactorAuth';
 
 interface SecurityStatus {
   totp_enabled: boolean;
@@ -340,98 +341,7 @@ const SecuritySettings = () => {
 
         {/* Multi-Factor Authentication Tab */}
         <TabsContent value="mfa" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Smartphone className="h-5 w-5" />
-                Two-Factor Authentication (TOTP)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Authenticator App</p>
-                  <p className="text-sm text-muted-foreground">
-                    Use Google Authenticator, Authy, or similar apps
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {securityStatus?.totp_enabled ? (
-                    <>
-                      <Badge variant="outline" className="text-green-600 border-green-200">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Enabled
-                      </Badge>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={disableMFA}
-                        disabled={loading}
-                      >
-                        Disable
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      onClick={setupTOTP}
-                      disabled={loading}
-                    >
-                      {loading ? 'Setting up...' : 'Enable TOTP'}
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              {showSetupTOTP && qrCode && (
-                <Alert>
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    <div className="space-y-4">
-                      <p>Scan this QR code with your authenticator app:</p>
-                      <div className="bg-background p-4 rounded-lg inline-block border">
-                        <img src={qrCode} alt="TOTP QR Code" className="w-48 h-48" />
-                      </div>
-                      <div>
-                        <Label htmlFor="totp-verify">Enter verification code:</Label>
-                        <div className="flex gap-2 mt-2">
-                          <Input
-                            id="totp-verify"
-                            value={totpCode}
-                            onChange={(e) => setTotpCode(e.target.value)}
-                            placeholder="000000"
-                            maxLength={6}
-                            className="w-24"
-                          />
-                          <Button
-                            onClick={verifyTOTPSetup}
-                            disabled={loading || !totpCode}
-                          >
-                            Verify & Enable
-                          </Button>
-                        </div>
-                      </div>
-                      {backupCodes.length > 0 && (
-                        <div>
-                          <p className="font-medium mb-2">Backup Codes (Save these!):</p>
-                          <div className="grid grid-cols-2 gap-2 text-sm font-mono bg-gray-100 p-3 rounded">
-                            {backupCodes.map((code, index) => (
-                              <div key={index}>{code}</div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              {securityStatus?.backup_codes_count !== undefined && (
-                <div className="text-sm text-muted-foreground">
-                  Backup codes remaining: {securityStatus.backup_codes_count}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <TwoFactorAuth />
         </TabsContent>
 
         {/* PGP Encryption Tab */}
