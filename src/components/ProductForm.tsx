@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { X, Plus, Brain, TrendingUp, Lightbulb, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tables } from '@/integrations/supabase/types';
+import ImageUpload from '@/components/products/ImageUpload';
 
 type Product = Tables<'products'>;
 type Category = Tables<'categories'>;
@@ -383,6 +384,13 @@ const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) => {
               ))}
             </div>
           </div>
+
+          <ImageUpload 
+            images={formData.images}
+            onImagesChange={(images) => setFormData(prev => ({ ...prev, images }))}
+            maxImages={10}
+            maxSizeMB={10}
+          />
 
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
