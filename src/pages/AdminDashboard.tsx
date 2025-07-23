@@ -309,6 +309,8 @@ export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [categoryManagementOpen, setCategoryManagementOpen] = useState(false);
+  const [translationManagementOpen, setTranslationManagementOpen] = useState(false);
   const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
@@ -791,8 +793,29 @@ export default function AdminDashboard() {
           {/* Content Management */}
           <TabsContent value="content">
             <div className="grid gap-6">
-              <CategoryManagement />
-              <TranslationManagement />
+              <Card>
+                <CardHeader>
+                  <CardTitle>Content Management</CardTitle>
+                  <CardDescription>Manage categories and translations</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button onClick={() => setCategoryManagementOpen(true)}>
+                    Manage Categories
+                  </Button>
+                  <Button onClick={() => setTranslationManagementOpen(true)}>
+                    Manage Translations
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <CategoryManagement 
+                open={categoryManagementOpen}
+                onClose={() => setCategoryManagementOpen(false)}
+              />
+              <TranslationManagement 
+                open={translationManagementOpen}
+                onClose={() => setTranslationManagementOpen(false)}
+              />
             </div>
           </TabsContent>
 
