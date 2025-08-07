@@ -42,5 +42,17 @@ $stats = $stats ?? [];
   <p>
     <a class="btn secondary" href="/admin/categories">Categories</a>
     <a class="btn secondary" href="/admin/payments">Payments</a>
+    <a class="btn secondary" href="/admin/disputes">Disputes</a>
+    <a class="btn secondary" href="/admin/vendors">Vendor Verifications</a>
   </p>
 </div>
+<?php $alerts = $alerts ?? []; if($alerts): ?>
+<div class="card" style="border:1px solid #a00">
+  <h3>Security Alerts</h3>
+  <ul>
+    <?php foreach($alerts as $a): ?>
+      <li><strong style="text-transform:uppercase;opacity:.8"><?= htmlspecialchars($a['type']) ?>:</strong> <?= htmlspecialchars($a['text']) ?></li>
+    <?php endforeach; ?>
+  </ul>
+</div>
+<?php endif; ?>

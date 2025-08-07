@@ -161,6 +161,11 @@ $router->post('/disputes/create', [$disputes, 'create']);
 $router->get('/admin/categories', [$adminCategory, 'index']);
 $router->post('/admin/categories/create', [$adminCategory, 'create']);
 
+// Admin Vendors
+$router->get('/admin/vendors', [$adminVendor, 'index']);
+$router->post('/admin/vendors/approve', [$adminVendor, 'approve']);
+$router->post('/admin/vendors/reject', [$adminVendor, 'reject']);
+
 // Admin Payments
 $router->get('/admin/payments', [$adminPayments, 'settings']);
 $router->post('/admin/payments/save', [$adminPayments, 'save']);
