@@ -26,16 +26,18 @@ Note: Use test accounts (buyer, vendor, admin). For Bitcoin tests, configure Adm
 1.4 TOTP 2FA (optional)
 - Preconditions: Logged in
 - Steps:
-  1) /2fa/setup → see secret & provisioning URI
-  2) Add to Authenticator app → enter code → submit
-  3) Logout; login with email/password; enter TOTP
-- Expected: totp_secrets row saved encrypted; profile.twofa_enabled=1; login requires valid 6-digit code
+  1) Go to /2fa/setup → a QR, secret, and provisioning URI are shown
+  2) Add to an Authenticator app (TOTP, 30s) → enter current 6‑digit code → Submit
+  3) Logout; login with email/password → prompted for TOTP → enter valid code
+  4) Negative: enter an invalid/old code → expect rejection and retry prompt
+- Expected: totp_secrets row saved (encrypted); profile.twofa_enabled=1; login requires a valid 6‑digit code; minor clock drift (±1 step) is accepted; invalid codes are rejected without revealing details
 
 1.5 PGP Key Management
 - Steps:
-  1) /account/profile → PGP Keys → add key (armored), set default
-  2) Optionally set another key as default
-- Expected: pgp_keys row saved; fingerprint computed; profiles.pgp_default_key_id updated for default
+  1) /account/profile → PGP Keys → paste an ASCII‑armored public key → Save and set as Default
+  2) Add a second key → set it as Default
+  3) Negative: paste malformed text → expect validation error, no row created
+- Expected: pgp_keys row persisted; fingerprint computed and shown; profiles.pgp_default_key_id updated when default changes; only your own keys can be set as default
 
 1.6 Referral Tracking
 - Steps:
@@ -78,36 +80,50 @@ Note: Use test accounts (buyer, vendor, admin). For Bitcoin tests, configure Adm
 
 3) Orders & Bitcoin Payments with Escrow
 3.1 Place Order
-- Preconditions: Buyer logged in; Payments configured (Admin → Payments)
-- Steps: /product/{slug} → Buy Now (to /checkout/start) → redirected /checkout/view?id=...
-- Expected: orders+order_items rows; payments row; escrows row(holding); unique BTC address displayed with QR
+- Preconditions: Buyer logged in; Admin → Payments configured (Testnet recommended)
+- Steps:
+  1) /product/{slug} → Buy Now → redirected to /checkout/view?id=...
+- Expected:
+  - orders and order_items rows created; payments row created with status='awaiting'; escrows row with status='holding'
+  - A unique Bitcoin address is displayed with a scannable QR; amount and testnet notice shown; address is unique vs prior orders
 
-3.2 Payment Status Polling (Manual)
-- Steps: On /checkout/view page, observe periodic updates; or click Admin → Payments → Run Check Now
-- Expected: Payment status: awaiting → confirmed; order status: awaiting_payment/paid → in_escrow once confirmations ≥ required
+3.2 Manual Payment Check (Admin)
+- Steps:
+  1) From Admin → Payments click Run Check Now (or visit /cron/payments?token=YOUR_TOKEN in browser)
+  2) Send exact testnet BTC amount to the order address; wait for 0→N confirmations
+- Expected: payments.status transitions awaiting → confirmed as confirmations reach the configured threshold; orders.status moves awaiting_payment/paid → in_escrow; timestamps and confirmation count update visibly
 
 3.3 Cron Poller (Recommended)
-- Preconditions: cPanel cron to /cron/payments?token=...
-- Steps: Send testnet BTC to order address; wait for confirmations
-- Expected: Payment confirmed; order moves to in_escrow; both buyer/vendor receive email
+- Preconditions: cPanel cron pointing to /cron/payments?token=YOUR_TOKEN every 5–10 minutes
+- Steps:
+  1) Send testnet BTC; wait for next cron run
+  2) Negative: call /cron/payments with an invalid or missing token
+- Expected: With valid token, payment/order states update as in 3.2; with invalid/missing token the endpoint responds 401/403 and makes no changes
 
 3.4 Shipment and Completion
 - Steps:
-  1) Vendor: /vendor/orders/view?id=... → mark shipped (tracking, note)
+  1) Vendor: /vendor/orders/view?id=... → Mark Shipped (tracking optional)
   2) Buyer: /orders/view?id=... → Mark as Received
-- Expected: Order → shipped → completed; status history reflected
+- Expected: Order moves shipped → completed; status history shows transitions; both parties receive email notifications
 
 3.5 Escrow Release (Admin)
 - Steps: /admin/orders/view?id=... → Release Escrow
-- Expected: escrows.status=released; order set completed if not already; optional TXID recorded
+- Expected: escrows.status=released; order becomes completed if not already; optional payout TXID recorded
+
+3.6 Display/UX Checks
+- Steps:
+  1) On /checkout/view ensure QR renders, copy buttons work, and a testnet block explorer link (if shown) opens the correct address
+  2) Refresh page periodically to observe status polling without manual actions
+- Expected: No duplicate address generation; no page errors; status, confirmations, and totals are accurate
 
 4) Messaging, Reviews, Disputes
 4.1 Secure Messaging with PGP
-- Preconditions: Both buyer and vendor have default PGP keys
+- Preconditions: Both buyer and vendor have a default PGP key
 - Steps:
-  1) Start thread from order or /messages/start
-  2) In message form, check “Encrypt with recipient’s PGP key” → send
-- Expected: messages.is_pgp_encrypted=1; body is armored text; recipient can decrypt locally
+  1) Start a thread from an order or /messages/start
+  2) Check “Encrypt with recipient’s PGP key” → type message → Send
+  3) Negative: uncheck encryption and send; also try when recipient has no default key
+- Expected: When encrypted: messages.is_pgp_encrypted=1 and message body stored as ASCII‑armored text containing 'BEGIN PGP MESSAGE'; recipient can decrypt locally; when not encrypted: plaintext stored and flag=0; if recipient lacks a key, UI should prevent encryption or fall back to plaintext with a clear warning
 
 4.2 Product & Vendor Reviews
 - Preconditions: Order completed
@@ -118,14 +134,14 @@ Note: Use test accounts (buyer, vendor, admin). For Bitcoin tests, configure Adm
 
 4.3 Disputes
 - Buyer:
-  - Steps: /disputes/new?order_id=... → submit reason
-  - Expected: disputes row (open); vendor notified by email; /disputes lists it; /disputes/view?id=... shows timeline
+  - Steps: /disputes/new?order_id=... → enter reason and details → Submit
+  - Expected: disputes row created with status=open; visible in /disputes and /disputes/view?id=... with a timeline entry; vendor is notified by email
 - Vendor:
-  - Steps: /vendor/disputes → set status/resolution; submit
-  - Expected: dispute updated; buyer emailed
+  - Steps: /vendor/disputes → open dispute → provide response or propose resolution → Submit
+  - Expected: dispute updated; new timeline entry; buyer notified by email
 - Admin:
-  - Steps: /admin/disputes → set status/resolution; submit
-  - Expected: both parties emailed
+  - Steps: /admin/disputes → change status (e.g., under_review/resolved/rejected) and add notes → Submit
+  - Expected: status transitions saved; both parties emailed; only involved parties and admins can view the dispute; CSRF tokens validated on forms
 
 5) Admin Dashboard & Platform Controls
 - /admin (stats, quick links, security alerts)
