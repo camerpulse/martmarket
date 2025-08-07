@@ -175,6 +175,8 @@ $router->post('/wishlist/remove', [$wishlist, 'remove']);
 
 // Affiliate
 $router->get('/affiliate', [$affiliate, 'index']);
+$router->get('/affiliate/payouts', [$affiliate, 'payouts']);
+$router->post('/affiliate/payout/request', [$affiliate, 'requestPayout']);
 
 
 // Checkout

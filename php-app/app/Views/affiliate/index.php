@@ -3,6 +3,7 @@ $title = 'Affiliate & Referrals';
 $link = $referralLink ?? '';
 $rows = $rows ?? [];
 $stats = $stats ?? ['count'=>0];
+$commissionStats = $commissionStats ?? ['confirmed'=>'0','paid'=>'0','available'=>'0'];
 ?>
 <h1>Affiliate Program</h1>
 <div class="card">
@@ -10,6 +11,14 @@ $stats = $stats ?? ['count'=>0];
   <input type="text" value="<?= htmlspecialchars($link) ?>" readonly style="width:100%">
   <p>Share this link. When users register, they'll be linked to your account.</p>
   <p><strong>Total referrals:</strong> <?= (int)($stats['count'] ?? 0) ?></p>
+</div>
+
+<div class="card">
+  <h2>Earnings</h2>
+  <p><strong>Confirmed:</strong> <?= htmlspecialchars($commissionStats['confirmed']) ?> BTC</p>
+  <p><strong>Paid:</strong> <?= htmlspecialchars($commissionStats['paid']) ?> BTC</p>
+  <p><strong>Available:</strong> <?= htmlspecialchars($commissionStats['available']) ?> BTC</p>
+  <p><a href="/affiliate/payouts">Go to payouts »</a></p>
 </div>
 
 <div class="card">

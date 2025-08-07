@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 use Core\Controller;
 use Core\Csrf;
 use App\Models\Order;
+use App\Services\AffiliateService;
 
 class OrderAdminController extends Controller
 {
@@ -47,7 +48,11 @@ class OrderAdminController extends Controller
         $status = (string)($_POST['status'] ?? 'pending');
         if ($id > 0) {
             Order::setStatus($id, $status);
+            if ($status === 'completed') {
+                AffiliateService::handleOrderCompleted($id);
+            }
         }
         return $this->redirect('/admin/orders/view?id=' . $id);
     }
 }
+

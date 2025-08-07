@@ -298,3 +298,37 @@ CREATE TABLE IF NOT EXISTS password_resets (
   CONSTRAINT fk_pr_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   INDEX idx_pr_user (user_id)
 ) ENGINE=InnoDB;
+
+-- Affiliate commissions
+CREATE TABLE IF NOT EXISTS affiliate_commissions (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  referrer_user_id BIGINT UNSIGNED NOT NULL,
+  referred_user_id BIGINT UNSIGNED NULL,
+  order_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  amount_btc DECIMAL(18,8) NOT NULL,
+  rate_percent DECIMAL(5,2) NOT NULL,
+  status ENUM('pending','confirmed','paid','cancelled') DEFAULT 'pending',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  confirmed_at DATETIME NULL,
+  paid_at DATETIME NULL,
+  CONSTRAINT fk_ac_referrer FOREIGN KEY (referrer_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_ac_referred FOREIGN KEY (referred_user_id) REFERENCES users(id) ON DELETE SET NULL,
+  CONSTRAINT fk_ac_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  INDEX idx_ac_ref (referrer_user_id),
+  INDEX idx_ac_status (status)
+) ENGINE=InnoDB;
+
+-- Affiliate payout requests
+CREATE TABLE IF NOT EXISTS affiliate_payouts (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  referrer_user_id BIGINT UNSIGNED NOT NULL,
+  amount_btc DECIMAL(18,8) NOT NULL,
+  btc_address VARCHAR(128) NOT NULL,
+  status ENUM('requested','approved','paid','rejected') DEFAULT 'requested',
+  notes TEXT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  paid_at DATETIME NULL,
+  CONSTRAINT fk_ap_referrer FOREIGN KEY (referrer_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_ap_ref (referrer_user_id),
+  INDEX idx_ap_status (status)
+) ENGINE=InnoDB;
