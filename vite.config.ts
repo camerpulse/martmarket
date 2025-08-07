@@ -1,10 +1,14 @@
 // Placeholder Vite configuration to satisfy tooling after archiving the React app.
 // This file is intentionally minimal and not used by the PHP application.
 import { defineConfig } from 'vite'
+import { componentTagger } from 'lovable-tagger'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   server: {
     port: 8080,
   },
-  // No plugins or build steps; kept for TypeScript include compatibility only.
-})
+  plugins: [
+    mode === 'development' && componentTagger(),
+  ].filter(Boolean),
+  // Kept for TypeScript include compatibility only.
+}))
