@@ -60,6 +60,59 @@ class VendorProductController extends Controller
         return $this->redirect('/vendor/products');
     }
 
+    public function editForm(): string
+    {
+        $this->ensureRole('vendor');
+        $vendor = Vendor::byUser((int)$_SESSION['uid']);
+        if (!$vendor) { return $this->redirect('/vendor/dashboard'); }
+        $id = (int)($_GET['id'] ?? 0);
+        $product = $id > 0 ? Product::find($id) : null;
+        if (!$product || (int)$product['vendor_id'] !== (int)$vendor['id']) { http_response_code(404); return 'Product not found'; }
+        $categories = Category::all();
+        $images = \App\Models\ProductImage::listByProduct($id);
+        return $this->view('vendor/products/form', [
+            'title' => 'Edit Product',
+            'categories' => $categories,
+            'product' => $product,
+            'images' => $images,
+        ]);
+    }
+
+    public function update(): string
+    {
+        $this->ensureRole('vendor');
+        if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
+        $vendor = Vendor::byUser((int)$_SESSION['uid']);
+        if (!$vendor) { return $this->redirect('/vendor/dashboard'); }
+        $id = (int)($_POST['id'] ?? 0);
+        $existing = $id > 0 ? Product::find($id) : null;
+        if (!$existing || (int)$existing['vendor_id'] !== (int)$vendor['id']) { http_response_code(404); return 'Product not found'; }
+
+        $title = trim((string)($_POST['title'] ?? $existing['title']));
+        $slug = trim((string)($_POST['slug'] ?? $existing['slug'])) ?: $existing['slug'];
+        $desc = trim((string)($_POST['description'] ?? '')) ?: null;
+        $categoryId = (int)($_POST['category_id'] ?? 0) ?: null;
+        $priceBtc = (string)($_POST['price_btc'] ?? (string)$existing['price_btc']);
+        $priceUsd = (string)($_POST['price_usd'] ?? '');
+        $stock = (int)($_POST['stock_quantity'] ?? 0) ?: null;
+        $active = isset($_POST['is_active']);
+        if ($title === '' || bccomp($priceBtc, '0', 8) !== 1) {
+            return $this->redirect('/vendor/product/edit?id=' . $id);
+        }
+        Product::update($id, (int)$vendor['id'], [
+            'category_id' => $categoryId,
+            'title' => $title,
+            'slug' => $slug,
+            'description' => $desc,
+            'price_btc' => $priceBtc,
+            'price_usd' => $priceUsd ?: null,
+            'stock_quantity' => $stock,
+            'is_active' => $active
+        ]);
+        $this->handleUpload($id);
+        return $this->redirect('/vendor/products');
+    }
+
     private function handleUpload(int $productId): void
     {
         if (empty($_FILES['image']['name'])) return;
@@ -69,7 +122,7 @@ class VendorProductController extends Controller
         $fi = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($fi, $f['tmp_name']);
         finfo_close($fi);
-if (!in_array($mime, ['image/jpeg','image/png'])) return;
+        if (!in_array($mime, ['image/jpeg','image/png'])) return;
         $ext = $mime === 'image/png' ? 'png' : 'jpg';
         $dir = dirname(__DIR__,2) . '/public/uploads/products/';
         if (!is_dir($dir)) { @mkdir($dir, 0755, true); }

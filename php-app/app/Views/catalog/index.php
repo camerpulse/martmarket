@@ -36,7 +36,7 @@ $pages = (int)($pages ?? 1);
         <?php if(!empty($p['image_path'])): ?>
           <img src="<?= htmlspecialchars($p['image_path']) ?>" alt="<?= htmlspecialchars($p['title']) ?> product image" style="width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:8px">
         <?php endif; ?>
-        <h3 style="margin:4px 0;">&lt;?= htmlspecialchars($p['title']) ?&gt;</h3>
+        <h3 style="margin:4px 0;"><?= htmlspecialchars($p['title']) ?></h3>
         <p style="opacity:.8">Category: <?= htmlspecialchars($p['category_name'] ?? '—') ?></p>
         <p><strong>Price (BTC):</strong> <?= htmlspecialchars($p['price_btc']) ?></p>
         <div class="row">

@@ -13,7 +13,7 @@ $products = $products ?? [];
         <th style="text-align:left;border-bottom:1px solid #2b2f3a">Title</th>
         <th style="text-align:left;border-bottom:1px solid #2b2f3a">Price BTC</th>
         <th style="text-align:left;border-bottom:1px solid #2b2f3a">Active</th>
-        <th style="text-align:left;border-bottom:1px solid #2b2f3a">Link</th>
+        <th style="text-align:left;border-bottom:1px solid #2b2f3a">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -22,7 +22,7 @@ $products = $products ?? [];
           <td><?= htmlspecialchars($p['title']) ?></td>
           <td><?= htmlspecialchars($p['price_btc']) ?></td>
           <td><?= ((int)$p['is_active'])===1?'Yes':'No' ?></td>
-          <td><a class="btn secondary" href="/product/<?= htmlspecialchars($p['slug']) ?>">View</a></td>
+          <td><a class="btn secondary" href="/product/<?= htmlspecialchars($p['slug']) ?>">View</a> <a class="btn" href="/vendor/product/edit?id=<?= (int)$p['id'] ?>" style="margin-left:6px">Edit</a></td>
         </tr>
       <?php endforeach; ?>
     </tbody>

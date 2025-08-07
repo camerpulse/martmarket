@@ -123,7 +123,9 @@ $router->get('/product/([A-Za-z0-9\-]+)', [$catalog, 'product']); // handled via
 $router->get('/vendor/dashboard', [$vendorCtrl, 'dashboard']);
 $router->get('/vendor/products', [$vendorProd, 'index']);
 $router->get('/vendor/product/new', [$vendorProd, 'createForm']);
+$router->get('/vendor/product/edit', [$vendorProd, 'editForm']);
 $router->post('/vendor/product/store', [$vendorProd, 'store']);
+$router->post('/vendor/product/update', [$vendorProd, 'update']);
 $router->post('/vendor/request-verification', [$vendorCtrl, 'requestVerification']);
 $router->get('/vendor/view', [$vendorCtrl, 'view']);
 $router->get('/vendor/orders', [$vendorCtrl, 'orders']);
