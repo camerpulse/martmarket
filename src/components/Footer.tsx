@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="col-span-1 sm:col-span-2 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <Bitcoin className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-              <span className="text-xl sm:text-2xl font-bold bitcoin-gradient">OpesMarket</span>
+              <span className="text-xl sm:text-2xl font-bold bitcoin-gradient">MartMarket</span>
             </div>
             <p className="text-sm sm:text-base text-muted-foreground mb-4 max-w-md">
               The world's most secure anonymous marketplace. Trade with confidence using Bitcoin, verified vendors, and AI-powered security systems.
@@ -64,7 +64,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-sm text-muted-foreground mb-4 md:mb-0">
-            © 2024 OpesMarket. Secure, Anonymous, Decentralized.
+            © 2024 MartMarket. Secure, Anonymous, Decentralized.
           </div>
           
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">

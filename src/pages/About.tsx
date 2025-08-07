@@ -17,7 +17,7 @@ const About = () => {
           <div className="text-center mb-16">
             <div className="flex items-center justify-center space-x-2 mb-6">
               <Bitcoin className="h-12 w-12 text-primary animate-glow" />
-              <span className="text-4xl font-bold bitcoin-gradient">OpesMarket</span>
+              <span className="text-4xl font-bold bitcoin-gradient">MartMarket</span>
             </div>
             <h1 className="text-3xl font-bold mb-4">
               {t('about.title')}
