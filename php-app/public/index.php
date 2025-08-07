@@ -126,6 +126,9 @@ $router->get('/vendor/product/new', [$vendorProd, 'createForm']);
 $router->post('/vendor/product/store', [$vendorProd, 'store']);
 $router->post('/vendor/request-verification', [$vendorCtrl, 'requestVerification']);
 $router->get('/vendor/view', [$vendorCtrl, 'view']);
+$router->get('/vendor/orders', [$vendorCtrl, 'orders']);
+$router->get('/vendor/orders/view', [$vendorCtrl, 'orderView']);
+$router->post('/vendor/orders/ship', [$vendorCtrl, 'markShipped']);
 
 // Messages
 $router->get('/messages', [$messages, 'index']);

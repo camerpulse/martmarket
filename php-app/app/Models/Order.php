@@ -47,6 +47,13 @@ public static function updatePayment(int $orderId, string $paidAmount, int $conf
         return $stmt->fetchAll();
     }
 
+    public static function byVendor(int $vendorId, int $limit = 50, int $offset = 0): array
+    {
+        $stmt = DB::pdo()->prepare('SELECT * FROM orders WHERE vendor_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?');
+        $stmt->execute([$vendorId, $limit, $offset]);
+        return $stmt->fetchAll();
+    }
+
     public static function count(): int
     {
         return (int)DB::pdo()->query('SELECT COUNT(*) FROM orders')->fetchColumn();

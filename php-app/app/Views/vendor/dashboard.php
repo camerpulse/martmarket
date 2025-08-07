@@ -9,6 +9,7 @@ $vendor = $vendor ?? null;
   <p><strong>Store Name:</strong> <?= htmlspecialchars($vendor['store_name'] ?? 'Not set') ?></p>
   <p><strong>Verified:</strong> <?= !empty($vendor['is_verified']) ? 'Yes' : 'No' ?></p>
   <p><strong>Bond Amount:</strong> <?= htmlspecialchars($vendor['bond_amount'] ?? '0.00') ?></p>
+  <p><a href="/vendor/orders">View Orders</a> • <a href="/vendor/products">Manage Products</a></p>
 <?php endif; ?>
 <hr>
 <h2>Request Verification</h2>

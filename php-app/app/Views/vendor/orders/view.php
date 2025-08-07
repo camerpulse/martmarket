@@ -6,16 +6,14 @@ $title = 'Order #' . htmlspecialchars($order['order_number']);
 <h1><?= $title ?></h1>
 <div class="card">
   <p><strong>Status:</strong> <?= htmlspecialchars($order['status']) ?></p>
-  <p><strong>BTC Address:</strong> <?= htmlspecialchars($order['btc_address']) ?></p>
+  <p><strong>Buyer ID:</strong> #<?= (int)$order['buyer_id'] ?></p>
   <p><strong>Expected BTC:</strong> <?= htmlspecialchars($order['btc_expected_amount']) ?> • <strong>Paid:</strong> <?= htmlspecialchars($order['btc_paid_amount']) ?></p>
-  <p><strong>Confirmations:</strong> <?= (int)$order['confirmations'] ?></p>
-  <?php if(in_array($order['status'], ['in_escrow','shipped','paid'], true)): ?>
-    <form method="post" action="/orders/received" style="display:inline-block;margin-right:8px">
+  <?php if(in_array($order['status'], ['in_escrow','paid'], true)): ?>
+    <form method="post" action="/vendor/orders/ship">
       <input type="hidden" name="_csrf" value="<?= htmlspecialchars(\Core\Csrf::token()) ?>">
       <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
-      <button class="btn" type="submit">Mark as Received</button>
+      <button class="btn" type="submit">Mark as Shipped</button>
     </form>
-    <a class="btn secondary" href="/disputes/new?order_id=<?= (int)$order['id'] ?>">Open Dispute</a>
   <?php endif; ?>
 </div>
 <div class="card">

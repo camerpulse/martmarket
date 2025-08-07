@@ -9,6 +9,7 @@ $title = 'Order #' . htmlspecialchars($order['order_number']);
   <p><strong>BTC Address:</strong> <?= htmlspecialchars($order['btc_address']) ?></p>
   <p><strong>Expected BTC:</strong> <?= htmlspecialchars($order['btc_expected_amount']) ?> • <strong>Paid:</strong> <?= htmlspecialchars($order['btc_paid_amount']) ?></p>
   <p><strong>Confirmations:</strong> <?= (int)$order['confirmations'] ?></p>
+  <p><a href="/disputes/new?order_id=<?= (int)$order['id'] ?>">Open Dispute (as user)</a></p>
 </div>
 <div class="card">
   <h3>Update Status</h3>
