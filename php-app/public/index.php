@@ -60,6 +60,8 @@ require_once __DIR__ . '/../app/Controllers/DisputeController.php';
 require_once __DIR__ . '/../app/Controllers/WishlistController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/VendorAdminController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/CategoryAdminController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/UserAdminController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/OrderAdminController.php';
 require_once __DIR__ . '/../app/Controllers/CheckoutController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/PaymentSettingsController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/DisputeAdminController.php';
@@ -78,6 +80,8 @@ $wishlist = new App\Controllers\WishlistController();
 $checkout = new App\Controllers\CheckoutController();
 $adminVendor = new App\Controllers\Admin\VendorAdminController();
 $adminCategory = new App\Controllers\Admin\CategoryAdminController();
+$adminUsers = new App\Controllers\Admin\UserAdminController();
+$adminOrders = new App\Controllers\Admin\OrderAdminController();
 $adminPayments = new App\Controllers\Admin\PaymentSettingsController();
 $adminDisputes = new App\Controllers\Admin\DisputeAdminController();
 $adminDashboard = new App\Controllers\Admin\AdminDashboardController();
@@ -139,6 +143,15 @@ $router->post('/admin/payments/check', [$adminPayments, 'check']);
 
 // Admin Dashboard
 $router->get('/admin', [$adminDashboard, 'index']);
+
+// Admin Users
+$router->get('/admin/users', [$adminUsers, 'index']);
+$router->post('/admin/users/update', [$adminUsers, 'update']);
+
+// Admin Orders
+$router->get('/admin/orders', [$adminOrders, 'index']);
+$router->get('/admin/orders/view', [$adminOrders, 'view']);
+$router->post('/admin/orders/update', [$adminOrders, 'update']);
 
 // Admin Disputes
 $router->get('/admin/disputes', [$adminDisputes, 'index']);

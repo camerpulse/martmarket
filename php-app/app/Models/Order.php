@@ -34,9 +34,36 @@ class Order
         return $row ?: null;
     }
 
-    public static function updatePayment(int $orderId, string $paidAmount, int $confirmations, string $status): void
+public static function updatePayment(int $orderId, string $paidAmount, int $confirmations, string $status): void
     {
         DB::pdo()->prepare('UPDATE orders SET btc_paid_amount = ?, confirmations = ?, status = ? WHERE id = ?')
             ->execute([$paidAmount, $confirmations, $status, $orderId]);
     }
+
+    public static function list(int $limit = 50, int $offset = 0): array
+    {
+        $stmt = DB::pdo()->prepare('SELECT * FROM orders ORDER BY created_at DESC LIMIT ? OFFSET ?');
+        $stmt->execute([$limit, $offset]);
+        return $stmt->fetchAll();
+    }
+
+    public static function count(): int
+    {
+        return (int)DB::pdo()->query('SELECT COUNT(*) FROM orders')->fetchColumn();
+    }
+
+    public static function items(int $orderId): array
+    {
+        $stmt = DB::pdo()->prepare('SELECT * FROM order_items WHERE order_id = ? ORDER BY id ASC');
+        $stmt->execute([$orderId]);
+        return $stmt->fetchAll();
+    }
+
+    public static function setStatus(int $orderId, string $status): void
+    {
+        $allowed = ['pending','awaiting_payment','paid','in_escrow','shipped','completed','cancelled','disputed'];
+        if (!in_array($status, $allowed, true)) { return; }
+        DB::pdo()->prepare('UPDATE orders SET status = ? WHERE id = ?')->execute([$status, $orderId]);
+    }
 }
+

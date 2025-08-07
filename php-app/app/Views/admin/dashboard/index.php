@@ -8,6 +8,7 @@ $stats = $stats ?? [];
     <div class="card">
       <h3>Users</h3>
       <p><strong>Total:</strong> <?= (int)($stats['users'] ?? 0) ?></p>
+      <p><a class="btn secondary" href="/admin/users">Manage Users</a></p>
     </div>
   </div>
   <div class="col">
@@ -26,13 +27,12 @@ $stats = $stats ?? [];
       <p><strong>Total:</strong> <?= (int)($stats['orders_total'] ?? 0) ?></p>
       <p><strong>In Escrow:</strong> <?= (int)($stats['orders_escrow'] ?? 0) ?></p>
       <p><strong>Disputed:</strong> <?= (int)($stats['orders_disputed'] ?? 0) ?></p>
-      <p><a class="btn secondary" href="/admin/disputes">View Disputes</a></p>
+      <p><a class="btn secondary" href="/admin/orders">Manage Orders</a> <a class="btn secondary" href="/admin/disputes">View Disputes</a></p>
     </div>
   </div>
   <div class="col">
     <div class="card">
       <h3>Translations</h3>
-      <p><strong>Locales:</strong> <?= htmlspecialchars(implode(', ', $locales ?? [])) ?></p>
       <p><a class="btn" href="/admin/translations">Open Translations</a></p>
     </div>
   </div>

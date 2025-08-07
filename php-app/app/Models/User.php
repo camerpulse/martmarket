@@ -40,8 +40,33 @@ class User
         }
     }
 
-    private static function generateReferralCode(): string
+private static function generateReferralCode(): string
     {
         return substr(bin2hex(random_bytes(8)), 0, 16);
     }
+
+    public static function all(int $limit = 50, int $offset = 0): array
+    {
+        $stmt = DB::pdo()->prepare('SELECT * FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?');
+        $stmt->execute([$limit, $offset]);
+        return $stmt->fetchAll();
+    }
+
+    public static function count(): int
+    {
+        return (int)DB::pdo()->query('SELECT COUNT(*) FROM users')->fetchColumn();
+    }
+
+    public static function setRole(int $id, string $role): void
+    {
+        $allowed = ['buyer','vendor','admin'];
+        if (!in_array($role, $allowed, true)) { return; }
+        DB::pdo()->prepare('UPDATE users SET role = ? WHERE id = ?')->execute([$role, $id]);
+    }
+
+    public static function setActive(int $id, bool $active): void
+    {
+        DB::pdo()->prepare('UPDATE users SET is_active = ? WHERE id = ?')->execute([$active ? 1 : 0, $id]);
+    }
 }
+
