@@ -54,6 +54,7 @@ require_once __DIR__ . '/../app/Controllers/ProfileController.php';
 require_once __DIR__ . '/../app/Controllers/VendorController.php';
 require_once __DIR__ . '/../app/Controllers/VendorProductController.php';
 require_once __DIR__ . '/../app/Controllers/CatalogController.php';
+require_once __DIR__ . '/../app/Controllers/OrderController.php';
 require_once __DIR__ . '/../app/Controllers/MessageController.php';
 require_once __DIR__ . '/../app/Controllers/ReviewsController.php';
 require_once __DIR__ . '/../app/Controllers/DisputeController.php';
@@ -131,6 +132,11 @@ $router->get('/messages', [$messages, 'index']);
 $router->get('/messages/view', [$messages, 'view']);
 $router->post('/messages/start', [$messages, 'start']);
 $router->post('/messages/send', [$messages, 'send']);
+
+// Orders (buyer)
+$router->get('/orders', [new App\Controllers\OrderController(), 'index']);
+$router->get('/orders/view', [new App\Controllers\OrderController(), 'view']);
+$router->post('/orders/received', [new App\Controllers\OrderController(), 'markReceived']);
 
 // Reviews
 $router->get('/reviews/new', [$reviews, 'new']);

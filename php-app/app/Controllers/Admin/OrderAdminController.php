@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 use Core\Controller;
 use Core\Csrf;
 use App\Models\Order;
+use App\Models\Escrow;
 use App\Services\AffiliateService;
 
 class OrderAdminController extends Controller
@@ -54,5 +55,24 @@ class OrderAdminController extends Controller
         }
         return $this->redirect('/admin/orders/view?id=' . $id);
     }
+
+    public function release(): string
+    {
+        $this->ensureRole('admin');
+        if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
+        $id = (int)($_POST['id'] ?? 0);
+        $txid = trim((string)($_POST['txid'] ?? ''));
+        if ($id > 0) {
+            Escrow::release($id, (int)($_SESSION['uid'] ?? 0), $txid);
+            // Mark order completed if not already
+            $order = Order::find($id);
+            if ($order && $order['status'] !== 'completed') {
+                Order::setStatus($id, 'completed');
+                AffiliateService::handleOrderCompleted($id);
+            }
+        }
+        return $this->redirect('/admin/orders/view?id=' . $id);
+    }
 }
+
 

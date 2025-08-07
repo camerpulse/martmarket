@@ -9,29 +9,13 @@ $title = 'Order #' . htmlspecialchars($order['order_number']);
   <p><strong>BTC Address:</strong> <?= htmlspecialchars($order['btc_address']) ?></p>
   <p><strong>Expected BTC:</strong> <?= htmlspecialchars($order['btc_expected_amount']) ?> • <strong>Paid:</strong> <?= htmlspecialchars($order['btc_paid_amount']) ?></p>
   <p><strong>Confirmations:</strong> <?= (int)$order['confirmations'] ?></p>
-</div>
-<div class="card">
-  <h3>Update Status</h3>
-  <form method="post" action="/admin/orders/update">
-    <input type="hidden" name="_csrf" value="<?= htmlspecialchars(\Core\Csrf::token()) ?>">
-    <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
-    <select name="status">
-      <?php foreach(['pending','awaiting_payment','paid','in_escrow','shipped','completed','cancelled','disputed'] as $s): ?>
-        <option value="<?= $s ?>" <?= $order['status']===$s?'selected':'' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
-      <?php endforeach; ?>
-    </select>
-    <button class="btn" type="submit">Save</button>
-  </form>
-</div>
-<div class="card">
-  <h3>Release Escrow</h3>
-  <form method="post" action="/admin/orders/release">
-    <input type="hidden" name="_csrf" value="<?= htmlspecialchars(\Core\Csrf::token()) ?>">
-    <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
-    <label>Release TXID (optional note)</label>
-    <input type="text" name="txid" placeholder="Transaction ID used for release (if applicable)">
-    <button class="btn" type="submit">Mark Escrow Released</button>
-  </form>
+  <?php if(in_array($order['status'], ['in_escrow','shipped','paid'], true)): ?>
+    <form method="post" action="/orders/received">
+      <input type="hidden" name="_csrf" value="<?= htmlspecialchars(\Core\Csrf::token()) ?>">
+      <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
+      <button class="btn" type="submit">Mark as Received</button>
+    </form>
+  <?php endif; ?>
 </div>
 <div class="card">
   <h3>Items</h3>
