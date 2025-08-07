@@ -1,22 +1,7 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
+// Placeholder Vite configuration to satisfy tooling after archiving the React app.
+// This file is intentionally minimal and not used by the PHP application.
+import { defineConfig } from 'vite'
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-  },
-  plugins: [
-    react(),
-    mode === 'development' &&
-    componentTagger(),
-  ].filter(Boolean),
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-}));
+export default defineConfig({
+  // No plugins or build steps; kept for TypeScript include compatibility only.
+})
