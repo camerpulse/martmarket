@@ -42,6 +42,7 @@ namespace App\Views; // Not a real namespace, but this file is included to layou
       <a href="/account/profile">Profile</a>
       <a href="/messages">Messages</a>
       <a href="/wishlist">Wishlist</a>
+      <a href="/affiliate">Affiliate</a>
       <?php if(($_SESSION['role'] ?? 'buyer') === 'vendor'): ?>
         <a href="/vendor/dashboard">Vendor</a>
         <a href="/vendor/products">My Products</a>

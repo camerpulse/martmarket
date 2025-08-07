@@ -77,6 +77,7 @@ $messages = new App\Controllers\MessageController();
 $reviews = new App\Controllers\ReviewsController();
 $disputes = new App\Controllers\DisputeController();
 $wishlist = new App\Controllers\WishlistController();
+$affiliate = new App\Controllers\ReferralController();
 $checkout = new App\Controllers\CheckoutController();
 $adminVendor = new App\Controllers\Admin\VendorAdminController();
 $adminCategory = new App\Controllers\Admin\CategoryAdminController();
@@ -111,7 +112,9 @@ $router->post('/account/pgp/default', [$profile, 'setDefaultPGP']);
 
 // Catalog
 $router->get('/catalog', [$catalog, 'index']);
-$router->get('/product/view', [$catalog, 'product']);
+$router->get('/product/view', [$catalog, 'product']); // legacy
+$router->get('/product/([A-Za-z0-9\-]+)', [$catalog, 'product']); // handled via .htaccess rewrite
+
 
 // Vendor
 $router->get('/vendor/dashboard', [$vendorCtrl, 'dashboard']);
@@ -169,6 +172,10 @@ $router->post('/admin/translations/save', [$adminTranslations, 'save']);
 $router->get('/wishlist', [$wishlist, 'index']);
 $router->post('/wishlist/add', [$wishlist, 'add']);
 $router->post('/wishlist/remove', [$wishlist, 'remove']);
+
+// Affiliate
+$router->get('/affiliate', [$affiliate, 'index']);
+
 
 // Checkout
 $router->get('/checkout/start', [$checkout, 'start']);
