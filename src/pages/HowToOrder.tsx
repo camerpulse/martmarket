@@ -39,7 +39,7 @@ const HowToOrder = () => {
     {
       step: 3,
       title: "Fund Your Wallet",
-      description: "Add Bitcoin to your secure OpesMarket wallet",
+      description: "Add Bitcoin to your secure MartMarket wallet",
       icon: <Bitcoin className="h-6 w-6" />,
       details: [
         "Generate unique deposit address",
@@ -95,7 +95,7 @@ const HowToOrder = () => {
       title: "Account Security",
       tips: [
         "Never share your login credentials",
-        "Use unique passwords for OpesMarket",
+        "Use unique passwords for MartMarket",
         "Enable 2FA on all accounts",
         "Log out after each session",
         "Use VPN for additional privacy"

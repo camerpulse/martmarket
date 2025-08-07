@@ -530,7 +530,7 @@ const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) => {
                 <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
                   <div className="flex items-center space-x-2">
                     <Sparkles className="h-3 w-3" />
-                    <span>OpesMarket AI is continuously learning from market trends and user behavior to provide better recommendations.</span>
+                    <span>MartMarket AI is continuously learning from market trends and user behavior to provide better recommendations.</span>
                   </div>
                 </div>
               </CardContent>

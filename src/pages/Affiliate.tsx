@@ -438,7 +438,7 @@ const Affiliate = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Use these ready-made materials to promote OpesMarket:
+                    Use these ready-made materials to promote MartMarket:
                   </p>
                   <div className="space-y-2">
                     <Button variant="outline" className="w-full justify-start">

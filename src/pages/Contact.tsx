@@ -196,7 +196,7 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
                 <CardContent className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <Mail className="h-4 w-4 text-primary" />
-                    <span className="text-sm">opesmarket@opesmail.com</span>
+                    <span className="text-sm">martmarket@martmail.com</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Bitcoin className="h-4 w-4 text-primary" />
@@ -251,7 +251,7 @@ WuYFHdDx3M8sZqJ9H1fK8bYxKz+dHN2m
             <CardHeader className="border-b bg-muted/20">
               <CardTitle className="text-2xl font-serif flex items-center gap-3">
                 <Key className="h-6 w-6 text-primary" />
-                OpesMarket PGP Public Key
+                MartMarket PGP Public Key
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">

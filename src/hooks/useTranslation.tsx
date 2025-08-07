@@ -93,7 +93,7 @@ interface TranslationProviderProps {
 export const TranslationProvider = ({ children }: TranslationProviderProps) => {
   const [currentLanguage, setCurrentLanguage] = useState(() => {
     // Get language from localStorage or browser setting
-    const saved = localStorage.getItem('opesmarket_language');
+    const saved = localStorage.getItem('martmarket_language');
     if (saved) return saved;
     
     const browserLang = navigator.language.split('-')[0];
@@ -145,7 +145,7 @@ export const TranslationProvider = ({ children }: TranslationProviderProps) => {
 
   const setLanguage = (language: string) => {
     setCurrentLanguage(language);
-    localStorage.setItem('opesmarket_language', language);
+    localStorage.setItem('martmarket_language', language);
   };
 
   const t = (key: string, fallback?: string): string => {

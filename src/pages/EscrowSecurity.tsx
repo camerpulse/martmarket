@@ -248,7 +248,7 @@ const EscrowSecurity = () => {
             <h2 className="text-4xl font-serif font-bold text-foreground mb-4">Service Comparison</h2>
             <Separator className="w-24 mx-auto mb-6" />
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              See how OpesMarket's escrow service compares to traditional alternatives.
+              See how MartMarket's escrow service compares to traditional alternatives.
             </p>
           </div>
 
@@ -260,7 +260,7 @@ const EscrowSecurity = () => {
                     <tr className="bg-muted/50 border-b-2">
                       <th className="text-left p-6 font-serif font-bold text-foreground">Feature</th>
                       <th className="text-center p-6 font-serif font-bold text-muted-foreground">Traditional Escrow</th>
-                      <th className="text-center p-6 font-serif font-bold text-primary">OpesMarket Escrow</th>
+                      <th className="text-center p-6 font-serif font-bold text-primary">MartMarket Escrow</th>
                     </tr>
                   </thead>
                   <tbody>

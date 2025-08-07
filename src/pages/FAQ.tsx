@@ -17,19 +17,19 @@ const FAQ = () => {
       icon: <User className="h-5 w-5" />,
       questions: [
         {
-          question: "How do I create an account on OpesMarket?",
+          question: "How do I create an account on MartMarket?",
           answer: "Creating an account is simple and anonymous. Visit our registration page, choose a unique username, set a strong password, and enable two-factor authentication. We recommend using a VPN and Tor browser for additional privacy. No personal information is required."
         },
         {
-          question: "What do I need to start buying on OpesMarket?",
+          question: "What do I need to start buying on MartMarket?",
           answer: "You need: 1) A verified account with 2FA enabled, 2) Bitcoin to fund your wallet, 3) A secure communication method (our encrypted messaging), and 4) A delivery address. We recommend using a VPN and secure email for additional privacy."
         },
         {
-          question: "Is OpesMarket legal to use?",
-          answer: "OpesMarket operates as a marketplace platform. Users are responsible for complying with their local laws and regulations. We prohibit illegal activities and have strict vendor verification processes. Always research your local laws before making purchases."
+          question: "Is MartMarket legal to use?",
+          answer: "MartMarket operates as a marketplace platform. Users are responsible for complying with their local laws and regulations. We prohibit illegal activities and have strict vendor verification processes. Always research your local laws before making purchases."
         },
         {
-          question: "How do I fund my OpesMarket wallet?",
+          question: "How do I fund my MartMarket wallet?",
           answer: "We accept Bitcoin only. Go to your wallet section, generate a unique deposit address, and send Bitcoin from your external wallet. Wait for network confirmations (usually 1-3 confirmations). Your balance will appear once confirmed."
         }
       ]
@@ -39,7 +39,7 @@ const FAQ = () => {
       icon: <Bitcoin className="h-5 w-5" />,
       questions: [
         {
-          question: "Why does OpesMarket only accept Bitcoin?",
+          question: "Why does MartMarket only accept Bitcoin?",
           answer: "Bitcoin provides the best combination of privacy, security, and decentralization. Unlike traditional payment methods, Bitcoin transactions can't be reversed, don't require personal information, and give users complete control over their funds."
         },
         {
@@ -47,7 +47,7 @@ const FAQ = () => {
           answer: "Our multi-signature escrow holds your Bitcoin securely until order completion. Funds are released to vendors only after you confirm delivery or after 14 days automatically. If there's a dispute, our mediation team reviews the case and makes a fair decision."
         },
         {
-          question: "What fees does OpesMarket charge?",
+          question: "What fees does MartMarket charge?",
           answer: "We charge a 2.5% escrow fee on completed transactions. Vendors pay an additional 1% processing fee. Bitcoin network fees are handled automatically. There are no hidden fees - all costs are displayed clearly during checkout."
         },
         {
@@ -65,7 +65,7 @@ const FAQ = () => {
       icon: <Shield className="h-5 w-5" />,
       questions: [
         {
-          question: "How secure is OpesMarket?",
+          question: "How secure is MartMarket?",
           answer: "We use bank-level security including: multi-signature Bitcoin wallets, end-to-end encrypted messaging, 2FA requirements, cold storage for 99% of funds, regular security audits, and 24/7 monitoring systems. We never store personal information."
         },
         {
@@ -73,11 +73,11 @@ const FAQ = () => {
           answer: "We maintain minimal logs necessary for security and dispute resolution. We don't track browsing habits, don't store personal information, and automatically delete old logs. We operate under strict privacy policies and never cooperate with authorities without valid legal orders."
         },
         {
-          question: "Should I use Tor or VPN with OpesMarket?",
+          question: "Should I use Tor or VPN with MartMarket?",
           answer: "We strongly recommend using Tor browser and/or a VPN for additional privacy. Our site works perfectly with Tor and we have onion addresses available. This provides an extra layer of anonymity and protects your identity and location."
         },
         {
-          question: "How do I secure my OpesMarket account?",
+          question: "How do I secure my MartMarket account?",
           answer: "Enable 2FA immediately, use a unique strong password, never share login credentials, always log out after sessions, use secure email, enable login notifications, and regularly review your account activity."
         },
         {
@@ -130,7 +130,7 @@ const FAQ = () => {
         },
         {
           question: "What should I do if a vendor asks me to pay outside the platform?",
-          answer: "Never pay vendors outside of OpesMarket's escrow system. This is against our terms of service and removes all buyer protections. Report any vendor who asks for direct payments immediately."
+          answer: "Never pay vendors outside of MartMarket's escrow system. This is against our terms of service and removes all buyer protections. Report any vendor who asks for direct payments immediately."
         }
       ]
     },

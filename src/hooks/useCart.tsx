@@ -54,7 +54,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   // Load cart from localStorage on mount
   useEffect(() => {
     try {
-      const savedCart = localStorage.getItem('opesmarket-cart');
+      const savedCart = localStorage.getItem('martmarket-cart');
       if (savedCart) {
         setItems(JSON.parse(savedCart));
       }
@@ -66,7 +66,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   // Save cart to localStorage whenever items change
   useEffect(() => {
     try {
-      localStorage.setItem('opesmarket-cart', JSON.stringify(items));
+      localStorage.setItem('martmarket-cart', JSON.stringify(items));
     } catch (error) {
       console.error('Error saving cart to localStorage:', error);
     }
