@@ -19,6 +19,18 @@ class MessageThread
 
     public static function create(int $buyerId, int $vendorId, ?int $orderId, ?string $subject): int
     {
+        // Reuse existing thread for same buyer/vendor/order if present
+        if ($orderId) {
+            $stmt = DB::pdo()->prepare('SELECT id FROM message_threads WHERE buyer_id = ? AND vendor_id = ? AND order_id = ? LIMIT 1');
+            $stmt->execute([$buyerId, $vendorId, $orderId]);
+            $existing = $stmt->fetchColumn();
+            if ($existing) { return (int)$existing; }
+        } else {
+            $stmt = DB::pdo()->prepare('SELECT id FROM message_threads WHERE buyer_id = ? AND vendor_id = ? AND order_id IS NULL LIMIT 1');
+            $stmt->execute([$buyerId, $vendorId]);
+            $existing = $stmt->fetchColumn();
+            if ($existing) { return (int)$existing; }
+        }
         DB::pdo()->prepare('INSERT INTO message_threads (buyer_id, vendor_id, order_id, subject) VALUES (?,?,?,?)')
             ->execute([$buyerId, $vendorId, $orderId, $subject]);
         return (int)DB::pdo()->lastInsertId();

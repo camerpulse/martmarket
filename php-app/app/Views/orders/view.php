@@ -19,7 +19,14 @@ $title = 'Order #' . htmlspecialchars($order['order_number']);
       <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
       <button class="btn" type="submit">Mark as Received</button>
     </form>
-    <a class="btn secondary" href="/disputes/new?order_id=<?= (int)$order['id'] ?>">Open Dispute</a>
+    <a class="btn secondary" href="/disputes/new?order_id=<?= (int)$order['id'] ?>" style="margin-right:8px">Open Dispute</a>
+    <form method="post" action="/messages/start" style="display:inline-block">
+      <input type="hidden" name="_csrf" value="<?= htmlspecialchars(\Core\Csrf::token()) ?>">
+      <input type="hidden" name="vendor_id" value="<?= (int)$order['vendor_id'] ?>">
+      <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
+      <input type="hidden" name="subject" value="Regarding Order #<?= htmlspecialchars($order['order_number']) ?>">
+      <button class="btn secondary" type="submit">Message Vendor</button>
+    </form>
   <?php endif; ?>
 </div>
 <div class="card">
