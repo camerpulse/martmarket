@@ -52,12 +52,25 @@ class VendorController extends Controller
         $vendor = Vendor::byUser((int)$_SESSION['uid']);
         if (!$vendor) { http_response_code(403); return 'Vendor profile required'; }
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $perPage = 50; $offset = ($page - 1) * $perPage;
-        $rows = Order::byVendor((int)$vendor['id'], $perPage, $offset);
+        $perPage = 20; $offset = ($page - 1) * $perPage;
+        $status = (string)($_GET['status'] ?? '');
+        $allowed = ['pending','awaiting_payment','paid','in_escrow','shipped','completed','cancelled','disputed'];
+        if (!in_array($status, $allowed, true)) { $status = ''; }
+        $filters = [
+            'status' => $status,
+            'q' => trim((string)($_GET['q'] ?? '')),
+            'from' => trim((string)($_GET['from'] ?? '')),
+            'to' => trim((string)($_GET['to'] ?? '')),
+        ];
+        $total = \App\Models\Order::countByVendor((int)$vendor['id'], $filters);
+        $rows = \App\Models\Order::byVendorFiltered((int)$vendor['id'], $filters, $perPage, $offset);
+        $pages = (int)max(1, ceil($total / $perPage));
         return $this->view('vendor/orders/index', [
             'title' => 'Vendor Orders',
             'rows' => $rows,
             'page' => $page,
+            'pages' => $pages,
+            'filters' => $filters,
         ]);
     }
 
@@ -75,6 +88,42 @@ class VendorController extends Controller
             'order' => $order,
             'items' => $items,
         ]);
+    }
+
+    public function exportOrders(): string
+    {
+        $this->ensureRole('vendor');
+        $vendor = Vendor::byUser((int)$_SESSION['uid']);
+        if (!$vendor) { http_response_code(403); return 'Vendor profile required'; }
+        $status = (string)($_GET['status'] ?? '');
+        $allowed = ['pending','awaiting_payment','paid','in_escrow','shipped','completed','cancelled','disputed'];
+        if (!in_array($status, $allowed, true)) { $status = ''; }
+        $filters = [
+            'status' => $status,
+            'q' => trim((string)($_GET['q'] ?? '')),
+            'from' => trim((string)($_GET['from'] ?? '')),
+            'to' => trim((string)($_GET['to'] ?? '')),
+        ];
+        $rows = \App\Models\Order::byVendorFiltered((int)$vendor['id'], $filters, 10000, 0);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="vendor-orders-' . date('Ymd-His') . '.csv"');
+        $out = fopen('php://output', 'w');
+        fputcsv($out, ['Order #','Status','BTC Expected','BTC Paid','Confirmations','Buyer ID','Created At','Shipped At','Tracking']);
+        foreach ($rows as $r) {
+            fputcsv($out, [
+                $r['order_number'],
+                $r['status'],
+                $r['btc_expected_amount'],
+                $r['btc_paid_amount'],
+                $r['confirmations'],
+                $r['buyer_id'],
+                $r['created_at'],
+                $r['shipped_at'] ?? '',
+                $r['tracking_number'] ?? '',
+            ]);
+        }
+        fclose($out);
+        return '';
     }
 
     public function markShipped(): string

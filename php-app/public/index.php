@@ -129,6 +129,7 @@ $router->get('/vendor/view', [$vendorCtrl, 'view']);
 $router->get('/vendor/orders', [$vendorCtrl, 'orders']);
 $router->get('/vendor/orders/view', [$vendorCtrl, 'orderView']);
 $router->post('/vendor/orders/ship', [$vendorCtrl, 'markShipped']);
+$router->get('/vendor/orders/export', [$vendorCtrl, 'exportOrders']);
 
 // Messages
 $router->get('/messages', [$messages, 'index']);
