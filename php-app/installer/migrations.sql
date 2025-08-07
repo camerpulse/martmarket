@@ -59,4 +59,30 @@ CREATE TABLE IF NOT EXISTS referrals (
   INDEX idx_ref_code (code)
 ) ENGINE=InnoDB;
 
--- Future tables (vendors, products, orders, etc.) will be added in next sprints
+-- Vendors
+CREATE TABLE IF NOT EXISTS vendors (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  store_name VARCHAR(128) UNIQUE NULL,
+  description TEXT NULL,
+  is_verified TINYINT(1) DEFAULT 0,
+  bond_amount DECIMAL(12,2) DEFAULT 0.00,
+  trust_score INT DEFAULT 0,
+  total_sales INT DEFAULT 0,
+  response_time_hours INT DEFAULT 24,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_vendors_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS vendor_verifications (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  vendor_id BIGINT UNSIGNED NOT NULL,
+  status ENUM('pending','approved','rejected') DEFAULT 'pending',
+  notes TEXT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_vv_vendor FOREIGN KEY (vendor_id) REFERENCES vendors(id) ON DELETE CASCADE,
+  UNIQUE KEY uniq_vv_vendor (vendor_id)
+) ENGINE=InnoDB;
+

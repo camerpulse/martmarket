@@ -11,6 +11,7 @@ use App\Models\Profile;
 use App\Models\TotpSecret;
 use App\Models\Referral as ReferralModel;
 use App\Services\TOTPService;
+use App\Models\Vendor;
 
 class AuthController extends Controller
 {
@@ -81,8 +82,9 @@ class AuthController extends Controller
             if ($refUser) { $referredBy = $refCode; }
         }
 
-        $uid = User::create($email, $password, $role === 'admin' ? 'buyer' : $role, $referredBy);
-        Profile::create($uid, $display);
+$uid = User::create($email, $password, $role === 'admin' ? 'buyer' : $role, $referredBy);
+Profile::create($uid, $display);
+if (($role === 'vendor')) { \App\Models\Vendor::createForUser($uid); }
 
         // Record referral row if applicable
         if ($refCode && isset($refUser['id'])) {

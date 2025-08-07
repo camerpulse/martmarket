@@ -48,9 +48,13 @@ $router->get('/', function() {
 // Auth routes
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/ProfileController.php';
+require_once __DIR__ . '/../app/Controllers/VendorController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/VendorAdminController.php';
 
 $auth = new App\Controllers\AuthController();
 $profile = new App\Controllers\ProfileController();
+$vendorCtrl = new App\Controllers\VendorController();
+$adminVendor = new App\Controllers\Admin\VendorAdminController();
 
 $router->get('/login', [$auth, 'loginForm']);
 $router->post('/login', [$auth, 'login']);
@@ -67,4 +71,12 @@ $router->post('/account/profile', [$profile, 'updateProfile']);
 $router->post('/account/pgp/add', [$profile, 'addPGP']);
 $router->post('/account/pgp/default', [$profile, 'setDefaultPGP']);
 
+// Vendor
+$router->get('/vendor/dashboard', [$vendorCtrl, 'dashboard']);
+$router->post('/vendor/request-verification', [$vendorCtrl, 'requestVerification']);
+
+// Admin Vendors
+$router->get('/admin/vendors', [$adminVendor, 'index']);
+$router->post('/admin/vendors/approve', [$adminVendor, 'approve']);
+$router->post('/admin/vendors/reject', [$adminVendor, 'reject']);
 $router->dispatch();
