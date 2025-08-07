@@ -67,6 +67,7 @@ require_once __DIR__ . '/../app/Controllers/Admin/PaymentSettingsController.php'
 require_once __DIR__ . '/../app/Controllers/Admin/DisputeAdminController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/AdminDashboardController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/TranslationAdminController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/AffiliateAdminController.php';
 
 $auth = new App\Controllers\AuthController();
 $profile = new App\Controllers\ProfileController();
@@ -87,6 +88,7 @@ $adminPayments = new App\Controllers\Admin\PaymentSettingsController();
 $adminDisputes = new App\Controllers\Admin\DisputeAdminController();
 $adminDashboard = new App\Controllers\Admin\AdminDashboardController();
 $adminTranslations = new App\Controllers\Admin\TranslationAdminController();
+$adminAffiliate = new App\Controllers\Admin\AffiliateAdminController();
 
 // Home -> Catalog
 $router->get('/', [$catalog, 'index']);
@@ -177,7 +179,9 @@ $router->post('/wishlist/remove', [$wishlist, 'remove']);
 $router->get('/affiliate', [$affiliate, 'index']);
 $router->get('/affiliate/payouts', [$affiliate, 'payouts']);
 $router->post('/affiliate/payout/request', [$affiliate, 'requestPayout']);
-
+// Admin Affiliate
+$router->get('/admin/affiliate/payouts', [$adminAffiliate, 'payouts']);
+$router->post('/admin/affiliate/payouts/update', [$adminAffiliate, 'updatePayout']);
 
 // Checkout
 $router->get('/checkout/start', [$checkout, 'start']);

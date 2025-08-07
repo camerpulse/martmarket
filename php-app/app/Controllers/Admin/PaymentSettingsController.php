@@ -18,6 +18,7 @@ class PaymentSettingsController extends Controller
             'network' => Settings::get('btc_network', 'testnet'),
             'confirmations' => Settings::get('btc_confirmations', '3'),
             'xpub' => Settings::get('btc_xpub', ''),
+            'affiliate_rate' => Settings::get('affiliate.rate_percent', '5'),
         ];
         return $this->view('admin/payments/settings', ['title' => 'Payments Settings', 'cfg' => $data]);
     }
@@ -32,6 +33,11 @@ class PaymentSettingsController extends Controller
         Settings::set('btc_confirmations', (string)$conf);
         $xpub = trim((string)($_POST['xpub'] ?? ''));
         if ($xpub) { Settings::set('btc_xpub', $xpub); }
+        // Affiliate
+        $rate = (float)($_POST['affiliate_rate'] ?? 5);
+        if ($rate < 0) { $rate = 0; }
+        if ($rate > 50) { $rate = 50; }
+        Settings::set('affiliate.rate_percent', (string)$rate);
         return $this->redirect('/admin/payments');
     }
 

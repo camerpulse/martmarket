@@ -19,6 +19,8 @@ $cfg = $cfg ?? ['provider'=>'blockstream','network'=>'testnet','confirmations'=>
   <input type="number" name="confirmations" min="1" max="6" value="<?= (int)$cfg['confirmations'] ?>">
   <label>Watch-only XPUB</label>
   <input type="text" name="xpub" value="<?= htmlspecialchars($cfg['xpub']) ?>" placeholder="tpub... or xpub..." />
+  <label>Affiliate Commission Rate (%)</label>
+  <input type="number" name="affiliate_rate" min="0" max="50" step="0.1" value="<?= htmlspecialchars($cfg['affiliate_rate'] ?? '5') ?>">
   <button class="btn" type="submit">Save Settings</button>
 </form>
 <hr>

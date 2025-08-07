@@ -34,11 +34,28 @@ class AffiliateCommission
         FROM affiliate_commissions WHERE referrer_user_id = ?');
         $stmt->execute([$referrerUserId]);
         $row = $stmt->fetch();
+        $confirmed = (string)($row['confirmed'] ?? '0');
+        $paid = (string)($row['paid'] ?? '0');
         return [
             'pending' => (string)($row['pending'] ?? '0'),
-            'confirmed' => (string)($row['confirmed'] ?? '0'),
-            'paid' => (string)($row['paid'] ?? '0'),
-            'available' => bcsub((string)($row['confirmed'] ?? '0'), (string)($row['paid'] ?? '0'), 8),
+            'confirmed' => $confirmed,
+            'paid' => $paid,
+            'available' => bcsub($confirmed, $paid, 8),
         ];
+    }
+
+    public static function confirmedByReferrer(int $referrerUserId): array
+    {
+        $stmt = DB::pdo()->prepare('SELECT id, amount_btc FROM affiliate_commissions WHERE referrer_user_id = ? AND status = "confirmed" ORDER BY created_at ASC, id ASC');
+        $stmt->execute([$referrerUserId]);
+        return $stmt->fetchAll();
+    }
+
+    public static function markPaid(array $ids): void
+    {
+        if (!$ids) { return; }
+        $in = implode(',', array_fill(0, count($ids), '?'));
+        $sql = 'UPDATE affiliate_commissions SET status = "paid", paid_at = CURRENT_TIMESTAMP WHERE id IN (' . $in . ')';
+        DB::pdo()->prepare($sql)->execute($ids);
     }
 }
