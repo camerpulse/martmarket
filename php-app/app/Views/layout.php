@@ -7,6 +7,10 @@ namespace App\Views; // Not a real namespace, but this file is included to layou
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= htmlspecialchars($title ?? 'MartMarket') ?></title>
+  <?php $metaDescription = $metaDescription ?? 'MartMarket anonymous marketplace – browse products, vendors, and secure escrow with Bitcoin payments.'; ?>
+  <meta name="description" content="<?= htmlspecialchars($metaDescription) ?>">
+  <?php $canonical = (($_SERVER['HTTPS'] ?? 'off') === 'on' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($_SERVER['REQUEST_URI'] ?? '/'); ?>
+  <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -39,7 +43,9 @@ namespace App\Views; // Not a real namespace, but this file is included to layou
       <?php if(($_SESSION['role'] ?? 'buyer') === 'admin'): ?>
         <a href="/admin">Admin</a>
         <a href="/admin/vendors">Vendor Verifications</a>
+        <a href="/admin/disputes">Disputes</a>
         <a href="/admin/categories">Categories</a>
+        <a href="/admin/translations">Translations</a>
         <a href="/admin/payments">Payments</a>
       <?php endif; ?>
       <a href="/logout">Logout</a>
