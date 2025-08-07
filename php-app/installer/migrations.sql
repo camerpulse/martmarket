@@ -1,0 +1,62 @@
+-- MartMarket initial schema (Sprint 0-1)
+SET NAMES utf8mb4;
+
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(191) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('buyer','vendor','admin') NOT NULL DEFAULT 'buyer',
+  email_verified TINYINT(1) DEFAULT 0,
+  referral_code VARCHAR(16) UNIQUE,
+  referred_by_code VARCHAR(16) NULL,
+  is_active TINYINT(1) DEFAULT 1,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS profiles (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  display_name VARCHAR(64) NOT NULL,
+  avatar_url VARCHAR(255) NULL,
+  bio TEXT NULL,
+  pgp_default_key_id BIGINT UNSIGNED NULL,
+  twofa_enabled TINYINT(1) DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_profiles_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS totp_secrets (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  secret VARBINARY(1024) NOT NULL,
+  nonce VARBINARY(255) NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_totp_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS pgp_keys (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  key_name VARCHAR(64) NOT NULL,
+  public_key MEDIUMTEXT NOT NULL,
+  fingerprint VARCHAR(64) NOT NULL,
+  is_default TINYINT(1) DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_pgp_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_pgp_user (user_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS referrals (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  referrer_user_id BIGINT UNSIGNED NOT NULL,
+  referred_user_id BIGINT UNSIGNED NOT NULL,
+  code VARCHAR(16) NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_ref_referrer FOREIGN KEY (referrer_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_ref_referred FOREIGN KEY (referred_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_ref_code (code)
+) ENGINE=InnoDB;
+
+-- Future tables (vendors, products, orders, etc.) will be added in next sprints

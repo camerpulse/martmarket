@@ -1,0 +1,19 @@
+{
+  "name": "opesmarket/martmarket",
+  "description": "MartMarket - PHP MVC marketplace (shared hosting ready)",
+  "type": "project",
+  "require": {
+    "php": ">=8.1",
+    "ext-pdo": "*",
+    "ext-openssl": "*",
+    "spomky-labs/otphp": "^11.3",
+    "singpolyma/openpgp-php": "^0.6.1",
+    "phpmailer/phpmailer": "^6.9"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Core\\": "core/"
+    }
+  }
+}
