@@ -24,5 +24,6 @@ $thread = $thread ?? null; $messages = $messages ?? [];
   <label>Message</label>
   <textarea name="body" rows="4" required></textarea>
   <label><input type="checkbox" name="pgp"> Message is already PGP-encrypted</label>
+  <label><input type="checkbox" name="pgp_auto"> Encrypt with recipient's PGP key</label>
   <button class="btn" type="submit">Send</button>
 </form>

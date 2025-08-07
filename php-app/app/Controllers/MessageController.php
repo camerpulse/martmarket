@@ -54,16 +54,39 @@ class MessageController extends Controller
         return $this->view('messages/thread', ['title' => 'Thread', 'thread' => $thread, 'messages' => $msgs]);
     }
 
-    public function send(): string
+public function send(): string
     {
         $this->ensureAuth();
         if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
         $threadId = (int)($_POST['thread_id'] ?? 0);
         $body = trim((string)($_POST['body'] ?? ''));
-        $pgp = isset($_POST['pgp']);
+        $pgpProvided = isset($_POST['pgp']); // user says they already encrypted
+        $pgpAuto = isset($_POST['pgp_auto']); // auto-encrypt with recipient's key
         if ($threadId <= 0 || $body === '') return $this->redirect('/messages');
-        // TODO: integrate server-side PGP encrypt using recipient key
-        Message::send($threadId, (int)$_SESSION['uid'], $body, $pgp, null);
+
+        $isEncrypted = false;
+        if ($pgpProvided) {
+            $isEncrypted = true;
+        } elseif ($pgpAuto) {
+            $thread = MessageThread::find($threadId);
+            if ($thread) {
+                $recipientUserId = null;
+                if (($_SESSION['role'] ?? 'buyer') === 'vendor') {
+                    // vendor sends to buyer
+                    $recipientUserId = (int)$thread['buyer_id'];
+                } else {
+                    // buyer sends to vendor -> need vendor's user_id
+                    $vendor = Vendor::find((int)$thread['vendor_id']);
+                    $recipientUserId = $vendor ? (int)$vendor['user_id'] : null;
+                }
+                if ($recipientUserId) {
+                    $enc = \App\Services\PGPService::encryptToUser($recipientUserId, $body);
+                    if ($enc) { $body = $enc; $isEncrypted = true; }
+                }
+            }
+        }
+
+        Message::send($threadId, (int)$_SESSION['uid'], $body, $isEncrypted, null);
         return $this->redirect('/messages/view?id=' . $threadId);
     }
 }

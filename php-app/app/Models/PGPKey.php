@@ -21,10 +21,23 @@ class PGPKey
         DB::pdo()->prepare('UPDATE profiles SET pgp_default_key_id = ? WHERE user_id = ?')->execute([$keyId, $userId]);
     }
 
-    public static function list(int $userId): array
+public static function list(int $userId): array
     {
         $stmt = DB::pdo()->prepare('SELECT * FROM pgp_keys WHERE user_id = ? ORDER BY created_at DESC');
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
+    }
+
+    public static function getDefaultForUser(int $userId): ?array
+    {
+        $stmt = DB::pdo()->prepare('SELECT k.* FROM pgp_keys k JOIN profiles p ON p.pgp_default_key_id = k.id WHERE p.user_id = ? LIMIT 1');
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch();
+        if ($row) return $row;
+        // Fallback: first key
+        $stmt = DB::pdo()->prepare('SELECT * FROM pgp_keys WHERE user_id = ? ORDER BY is_default DESC, created_at DESC LIMIT 1');
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch();
+        return $row ?: null;
     }
 }
