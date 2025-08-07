@@ -66,6 +66,9 @@ $adminVendor = new App\Controllers\Admin\VendorAdminController();
 $adminCategory = new App\Controllers\Admin\CategoryAdminController();
 $adminPayments = new App\Controllers\Admin\PaymentSettingsController();
 
+// Home -> Catalog
+$router->get('/', [$catalog, 'index']);
+
 $router->get('/login', [$auth, 'loginForm']);
 $router->post('/login', [$auth, 'login']);
 $router->get('/register', [$auth, 'registerForm']);

@@ -39,6 +39,7 @@ namespace App\Views; // Not a real namespace, but this file is included to layou
       <?php if(($_SESSION['role'] ?? 'buyer') === 'admin'): ?>
         <a href="/admin/vendors">Admin</a>
         <a href="/admin/categories">Categories</a>
+        <a href="/admin/payments">Payments</a>
       <?php endif; ?>
       <a href="/logout">Logout</a>
     <?php else: ?>
