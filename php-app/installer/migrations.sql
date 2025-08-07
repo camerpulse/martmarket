@@ -1,4 +1,4 @@
--- MartMarket initial schema (Sprint 0-1)
+-- MartMarket initial schema (Sprint 0-2)
 SET NAMES utf8mb4;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -86,3 +86,44 @@ CREATE TABLE IF NOT EXISTS vendor_verifications (
   UNIQUE KEY uniq_vv_vendor (vendor_id)
 ) ENGINE=InnoDB;
 
+-- Categories
+CREATE TABLE IF NOT EXISTS categories (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  parent_id BIGINT UNSIGNED NULL,
+  name VARCHAR(128) NOT NULL UNIQUE,
+  slug VARCHAR(128) NOT NULL UNIQUE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_cat_parent FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- Products
+CREATE TABLE IF NOT EXISTS products (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  vendor_id BIGINT UNSIGNED NOT NULL,
+  category_id BIGINT UNSIGNED NULL,
+  title VARCHAR(191) NOT NULL,
+  slug VARCHAR(191) NOT NULL UNIQUE,
+  description TEXT NULL,
+  price_btc DECIMAL(18,8) NOT NULL,
+  price_usd DECIMAL(12,2) NULL,
+  stock_quantity INT NULL,
+  is_active TINYINT(1) DEFAULT 1,
+  is_featured TINYINT(1) DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_prod_vendor FOREIGN KEY (vendor_id) REFERENCES vendors(id) ON DELETE CASCADE,
+  CONSTRAINT fk_prod_cat FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+  INDEX idx_prod_active (is_active),
+  INDEX idx_prod_vendor (vendor_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS product_images (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  product_id BIGINT UNSIGNED NOT NULL,
+  image_path VARCHAR(255) NOT NULL,
+  sort_order INT DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_img_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  INDEX idx_img_prod (product_id)
+) ENGINE=InnoDB;

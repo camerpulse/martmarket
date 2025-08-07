@@ -29,13 +29,16 @@ namespace App\Views; // Not a real namespace, but this file is included to layou
 <header>
   <nav>
     <a href="/">Home</a>
+    <a href="/catalog">Shop</a>
     <?php if(!empty($_SESSION['uid'])): ?>
       <a href="/account/profile">Profile</a>
       <?php if(($_SESSION['role'] ?? 'buyer') === 'vendor'): ?>
         <a href="/vendor/dashboard">Vendor</a>
+        <a href="/vendor/products">My Products</a>
       <?php endif; ?>
       <?php if(($_SESSION['role'] ?? 'buyer') === 'admin'): ?>
         <a href="/admin/vendors">Admin</a>
+        <a href="/admin/categories">Categories</a>
       <?php endif; ?>
       <a href="/logout">Logout</a>
     <?php else: ?>
