@@ -54,6 +54,10 @@ require_once __DIR__ . '/../app/Controllers/ProfileController.php';
 require_once __DIR__ . '/../app/Controllers/VendorController.php';
 require_once __DIR__ . '/../app/Controllers/VendorProductController.php';
 require_once __DIR__ . '/../app/Controllers/CatalogController.php';
+require_once __DIR__ . '/../app/Controllers/MessageController.php';
+require_once __DIR__ . '/../app/Controllers/ReviewsController.php';
+require_once __DIR__ . '/../app/Controllers/DisputeController.php';
+require_once __DIR__ . '/../app/Controllers/WishlistController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/VendorAdminController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/CategoryAdminController.php';
 require_once __DIR__ . '/../app/Controllers/CheckoutController.php';
@@ -67,6 +71,10 @@ $profile = new App\Controllers\ProfileController();
 $vendorCtrl = new App\Controllers\VendorController();
 $vendorProd = new App\Controllers\VendorProductController();
 $catalog = new App\Controllers\CatalogController();
+$messages = new App\Controllers\MessageController();
+$reviews = new App\Controllers\ReviewsController();
+$disputes = new App\Controllers\DisputeController();
+$wishlist = new App\Controllers\WishlistController();
 $checkout = new App\Controllers\CheckoutController();
 $adminVendor = new App\Controllers\Admin\VendorAdminController();
 $adminCategory = new App\Controllers\Admin\CategoryAdminController();
@@ -103,11 +111,22 @@ $router->get('/vendor/products', [$vendorProd, 'index']);
 $router->get('/vendor/product/new', [$vendorProd, 'createForm']);
 $router->post('/vendor/product/store', [$vendorProd, 'store']);
 $router->post('/vendor/request-verification', [$vendorCtrl, 'requestVerification']);
+$router->get('/vendor/view', [$vendorCtrl, 'view']);
 
-// Admin Vendors
-$router->get('/admin/vendors', [$adminVendor, 'index']);
-$router->post('/admin/vendors/approve', [$adminVendor, 'approve']);
-$router->post('/admin/vendors/reject', [$adminVendor, 'reject']);
+// Messages
+$router->get('/messages', [$messages, 'index']);
+$router->get('/messages/view', [$messages, 'view']);
+$router->post('/messages/start', [$messages, 'start']);
+$router->post('/messages/send', [$messages, 'send']);
+
+// Reviews
+$router->get('/reviews/new', [$reviews, 'new']);
+$router->post('/reviews/create', [$reviews, 'create']);
+
+// User Disputes
+$router->get('/disputes', [$disputes, 'index']);
+$router->get('/disputes/new', [$disputes, 'new']);
+$router->post('/disputes/create', [$disputes, 'create']);
 
 // Admin Categories
 $router->get('/admin/categories', [$adminCategory, 'index']);
@@ -128,6 +147,11 @@ $router->post('/admin/disputes/update', [$adminDisputes, 'update']);
 // Admin Translations
 $router->get('/admin/translations', [$adminTranslations, 'index']);
 $router->post('/admin/translations/save', [$adminTranslations, 'save']);
+
+// Wishlist
+$router->get('/wishlist', [$wishlist, 'index']);
+$router->post('/wishlist/add', [$wishlist, 'add']);
+$router->post('/wishlist/remove', [$wishlist, 'remove']);
 
 // Checkout
 $router->get('/checkout/start', [$checkout, 'start']);

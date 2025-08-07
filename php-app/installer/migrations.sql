@@ -275,3 +275,15 @@ CREATE TABLE IF NOT EXISTS translations (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uniq_locale_key (locale, `key`)
 ) ENGINE=InnoDB;
+
+-- Wishlists
+CREATE TABLE IF NOT EXISTS wishlists (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_wl_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_wl_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  UNIQUE KEY uniq_wishlist (user_id, product_id),
+  INDEX idx_wl_user (user_id)
+) ENGINE=InnoDB;

@@ -27,4 +27,18 @@ class VendorController extends Controller
         VendorVerification::request((int)$vendor['id'], trim((string)($_POST['notes'] ?? '')) ?: null);
         return $this->redirect('/vendor/dashboard');
     }
+
+    public function view(): string
+    {
+        $vendorId = (int)($_GET['id'] ?? 0);
+        if ($vendorId <= 0) { http_response_code(404); return 'Vendor not found'; }
+        $vendor = Vendor::find($vendorId);
+        if (!$vendor) { http_response_code(404); return 'Vendor not found'; }
+        $products = \App\Models\Product::byVendor((int)$vendor['id']);
+        return $this->view('vendor/storefront', [
+            'title' => ($vendor['store_name'] ?? 'Vendor') . ' – Storefront',
+            'vendor' => $vendor,
+            'products' => $products
+        ]);
+    }
 }

@@ -21,8 +21,17 @@ class Vendor
         return $row ?: null;
     }
 
-    public static function setStoreName(int $userId, string $storeName): void
+public static function setStoreName(int $userId, string $storeName): void
     {
         DB::pdo()->prepare('UPDATE vendors SET store_name = ? WHERE user_id = ?')->execute([$storeName, $userId]);
     }
+
+    public static function find(int $vendorId): ?array
+    {
+        $stmt = DB::pdo()->prepare('SELECT * FROM vendors WHERE id = ?');
+        $stmt->execute([$vendorId]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
 }

@@ -40,7 +40,7 @@ class Product
         return $row ?: null;
     }
 
-    public static function search(?int $categoryId, ?string $q, int $limit = 20, int $offset = 0): array
+public static function search(?int $categoryId, ?string $q, int $limit = 20, int $offset = 0): array
     {
         $w = ['p.is_active = 1'];
         $args = [];
@@ -52,5 +52,17 @@ class Product
         $stmt = DB::pdo()->prepare($sql);
         $stmt->execute($args);
         return $stmt->fetchAll();
+    }
+
+    public static function countSearch(?int $categoryId, ?string $q): int
+    {
+        $w = ['is_active = 1'];
+        $args = [];
+        if ($categoryId) { $w[] = 'category_id = ?'; $args[] = $categoryId; }
+        if ($q) { $w[] = '(title LIKE ? OR description LIKE ?)'; $args[] = "%$q%"; $args[] = "%$q%"; }
+        $where = $w ? ('WHERE ' . implode(' AND ', $w)) : '';
+        $stmt = DB::pdo()->prepare('SELECT COUNT(*) FROM products ' . $where);
+        $stmt->execute($args);
+        return (int)$stmt->fetchColumn();
     }
 }

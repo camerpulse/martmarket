@@ -7,18 +7,27 @@ use App\Models\Product;
 
 class CatalogController extends Controller
 {
-    public function index(): string
+public function index(): string
     {
         $categories = Category::all();
         $categoryId = isset($_GET['category']) ? (int)$_GET['category'] : null;
         $q = isset($_GET['q']) ? trim((string)$_GET['q']) : null;
-        $products = Product::search($categoryId, $q, 30, 0);
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 24;
+        $total = Product::countSearch($categoryId, $q);
+        $offset = ($page - 1) * $perPage;
+        $products = Product::search($categoryId, $q, $perPage, $offset);
+        $pages = (int)max(1, ceil($total / $perPage));
         return $this->view('catalog/index', [
             'title' => 'Browse Products',
+            'metaDescription' => 'Browse products on MartMarket with secure Bitcoin escrow. Search, filter categories, and shop anonymously.',
             'categories' => $categories,
             'products' => $products,
             'q' => $q,
-            'categoryId' => $categoryId
+            'categoryId' => $categoryId,
+            'page' => $page,
+            'pages' => $pages,
+            'total' => $total
         ]);
     }
 
