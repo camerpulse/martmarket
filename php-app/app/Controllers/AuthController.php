@@ -137,6 +137,56 @@ if (($role === 'vendor')) { \App\Models\Vendor::createForUser($uid); }
         return $this->redirect('/account/profile');
     }
 
+    // Password reset
+    public function forgotForm(): string
+    {
+        return $this->view('auth/forgot', ['title' => 'Forgot Password']);
+    }
+
+    public function forgot(): string
+    {
+        if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
+        $email = trim((string)($_POST['email'] ?? ''));
+        $user = $email ? User::findByEmail($email) : null;
+        if ($user) {
+            $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+            $expires = date('Y-m-d H:i:s', time() + 3600);
+            \App\Models\PasswordReset::deleteByUser((int)$user['id']);
+            \App\Models\PasswordReset::create((int)$user['id'], $token, $expires);
+            $base = rtrim((string)Config::get('app.base_url', ''), '/');
+            $link = ($base ?: ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']==='on' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost'))) . '/password/reset?token=' . urlencode($token);
+            $body = '<p>Use the link below to reset your password. This link expires in 1 hour.</p><p><a href="'.$link.'">Reset Password</a></p>';
+            \App\Services\MailService::send($email, $user['email'], 'Reset your MartMarket password', $body);
+        }
+        // Always show success to avoid user enumeration
+        return $this->view('auth/forgot', ['title' => 'Forgot Password', 'success' => true]);
+    }
+
+    public function resetForm(): string
+    {
+        $token = (string)($_GET['token'] ?? '');
+        return $this->view('auth/reset', ['title' => 'Reset Password', 'token' => $token]);
+    }
+
+    public function reset(): string
+    {
+        if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
+        $token = (string)($_POST['token'] ?? '');
+        $pass = (string)($_POST['password'] ?? '');
+        $confirm = (string)($_POST['password_confirm'] ?? '');
+        if (strlen($pass) < 12 || $pass !== $confirm) {
+            return $this->view('auth/reset', ['title' => 'Reset Password', 'token' => $token, 'error' => 'Passwords must match and be at least 12 characters.']);
+        }
+        $row = \App\Models\PasswordReset::findValidByToken($token);
+        if (!$row) {
+            return $this->view('auth/reset', ['title' => 'Reset Password', 'error' => 'Invalid or expired link.']);
+        }
+        $hash = \Core\Hash::make($pass);
+        DB::pdo()->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([$hash, (int)$row['user_id']]);
+        \App\Models\PasswordReset::consume($token);
+        return $this->redirect('/login');
+    }
+
     private function ensureAuth(): void
     {
         if (empty($_SESSION['uid'])) { $this->redirect('/login'); }

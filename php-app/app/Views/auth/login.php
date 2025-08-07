@@ -13,6 +13,7 @@ $title = 'Login';
   <input type="text" name="totp" pattern="\\d{6}" placeholder="123456">
   <button class="btn" type="submit">Sign In</button>
 </form>
+<p><a href="/password/forgot">Forgot your password?</a></p>
 <?php if(!empty($twofa_setup)): ?>
   <hr>
   <h2>Enable 2FA</h2>

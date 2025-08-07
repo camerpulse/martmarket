@@ -98,6 +98,10 @@ $router->get('/logout', [$auth, 'logout']);
 $router->get('/2fa/setup', [$auth, 'twofaSetupForm']);
 $router->post('/2fa/setup', [$auth, 'twofaSetup']);
 $router->post('/2fa/verify', [$auth, 'twofaVerify']);
+$router->get('/password/forgot', [$auth, 'forgotForm']);
+$router->post('/password/forgot', [$auth, 'forgot']);
+$router->get('/password/reset', [$auth, 'resetForm']);
+$router->post('/password/reset', [$auth, 'reset']);
 
 // Profile
 $router->get('/account/profile', [$profile, 'profileForm']);
