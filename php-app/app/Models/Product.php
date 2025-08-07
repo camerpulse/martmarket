@@ -46,8 +46,10 @@ public static function search(?int $categoryId, ?string $q, int $limit = 20, int
         $args = [];
         if ($categoryId) { $w[] = 'p.category_id = ?'; $args[] = $categoryId; }
         if ($q) { $w[] = '(p.title LIKE ? OR p.description LIKE ?)'; $args[] = "%$q%"; $args[] = "%$q%"; }
-        $where = $w ? ('WHERE ' . implode(' AND ', $w)) : '';
-        $sql = 'SELECT p.*, c.name AS category_name FROM products p LEFT JOIN categories c ON c.id = p.category_id ' . $where . ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
+$where = $w ? ('WHERE ' . implode(' AND ', $w)) : '';
+        $sql = 'SELECT p.*, c.name AS category_name,
+          (SELECT image_path FROM product_images pi WHERE pi.product_id = p.id ORDER BY sort_order ASC, id ASC LIMIT 1) AS image_path
+          FROM products p LEFT JOIN categories c ON c.id = p.category_id ' . $where . ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
         $args[] = $limit; $args[] = $offset;
         $stmt = DB::pdo()->prepare($sql);
         $stmt->execute($args);

@@ -31,12 +31,20 @@ public function index(): string
         ]);
     }
 
-    public function product(): string
+public function product(): string
     {
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) { http_response_code(404); return 'Product not found'; }
         $product = Product::find($id);
         if (!$product || (int)$product['is_active'] !== 1) { http_response_code(404); return 'Product not found'; }
-        return $this->view('catalog/product', [ 'title' => $product['title'] . ' – Product', 'product' => $product ]);
+        $images = \App\Models\ProductImage::listByProduct($id);
+        $vendor = \App\Models\Vendor::find((int)$product['vendor_id']);
+        return $this->view('catalog/product', [ 
+            'title' => $product['title'] . ' – Product',
+            'metaDescription' => substr(strip_tags((string)($product['description'] ?? '')), 0, 150),
+            'product' => $product,
+            'images' => $images,
+            'vendor' => $vendor,
+        ]);
     }
 }

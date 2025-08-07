@@ -69,15 +69,15 @@ class VendorProductController extends Controller
         $fi = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($fi, $f['tmp_name']);
         finfo_close($fi);
-        if (!in_array($mime, ['image/jpeg','image/png'])) return;
+if (!in_array($mime, ['image/jpeg','image/png'])) return;
         $ext = $mime === 'image/png' ? 'png' : 'jpg';
-        $dir = dirname(__DIR__,2) . '/storage/uploads/products/';
+        $dir = dirname(__DIR__,2) . '/public/uploads/products/';
         if (!is_dir($dir)) { @mkdir($dir, 0755, true); }
         $name = bin2hex(random_bytes(12)) . '.' . $ext;
         $path = $dir . $name;
         if (move_uploaded_file($f['tmp_name'], $path)) {
             \Core\DB::pdo()->prepare('INSERT INTO product_images (product_id, image_path) VALUES (?, ?)')
-                ->execute([$productId, '/storage/uploads/products/' . $name]);
+                ->execute([$productId, '/uploads/products/' . $name]);
         }
     }
 }
