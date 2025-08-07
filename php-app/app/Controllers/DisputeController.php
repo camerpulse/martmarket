@@ -29,7 +29,18 @@ class DisputeController extends Controller
         $orderId = (int)($_POST['order_id'] ?? 0);
         $reason = trim((string)($_POST['reason'] ?? ''));
         if ($orderId <= 0 || $reason === '') return $this->redirect('/disputes');
-        Dispute::open($orderId, (int)$_SESSION['uid'], $reason);
+        $did = Dispute::open($orderId, (int)$_SESSION['uid'], $reason);
+        // Notify vendor
+        $order = \App\Models\Order::find($orderId);
+        if ($order) {
+            $vendor = \App\Models\Vendor::find((int)$order['vendor_id']);
+            $vendorUser = $vendor ? \App\Models\User::find((int)$vendor['user_id']) : null;
+            if (!empty($vendorUser['email'])) {
+                $subj = 'New dispute opened for order #' . ($order['order_number'] ?? $orderId);
+                $body = '<p>A buyer opened a dispute for order #' . htmlspecialchars($order['order_number'] ?? (string)$orderId) . '.</p>';
+                \App\Services\MailService::send($vendorUser['email'], $vendorUser['email'], $subj, $body);
+            }
+        }
         return $this->redirect('/disputes');
     }
 
@@ -72,6 +83,13 @@ class DisputeController extends Controller
         $row = Dispute::findWithOrderAndVendor($id);
         if (!$row || (int)$row['vendor_id'] !== (int)$vendor['id']) { http_response_code(403); return 'Forbidden'; }
         Dispute::updateStatus($id, $status, $resolution);
+        // Notify buyer
+        $buyer = \App\Models\User::find((int)$row['opened_by']);
+        if (!empty($buyer['email'])) {
+            $subj = 'Dispute #' . (int)$row['id'] . ' updated by vendor';
+            $body = '<p>Status: ' . htmlspecialchars($status) . '</p>' . ($resolution ? '<p>Vendor note: ' . nl2br(htmlspecialchars($resolution)) . '</p>' : '');
+            \App\Services\MailService::send($buyer['email'], $buyer['email'], $subj, $body);
+        }
         return $this->redirect('/vendor/disputes');
     }
 }
