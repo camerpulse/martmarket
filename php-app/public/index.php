@@ -55,6 +55,9 @@ require_once __DIR__ . '/../app/Controllers/Admin/VendorAdminController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/CategoryAdminController.php';
 require_once __DIR__ . '/../app/Controllers/CheckoutController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/PaymentSettingsController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/DisputeAdminController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/AdminDashboardController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/TranslationAdminController.php';
 
 $auth = new App\Controllers\AuthController();
 $profile = new App\Controllers\ProfileController();
@@ -65,6 +68,9 @@ $checkout = new App\Controllers\CheckoutController();
 $adminVendor = new App\Controllers\Admin\VendorAdminController();
 $adminCategory = new App\Controllers\Admin\CategoryAdminController();
 $adminPayments = new App\Controllers\Admin\PaymentSettingsController();
+$adminDisputes = new App\Controllers\Admin\DisputeAdminController();
+$adminDashboard = new App\Controllers\Admin\AdminDashboardController();
+$adminTranslations = new App\Controllers\Admin\TranslationAdminController();
 
 // Home -> Catalog
 $router->get('/', [$catalog, 'index']);
@@ -108,6 +114,17 @@ $router->post('/admin/categories/create', [$adminCategory, 'create']);
 $router->get('/admin/payments', [$adminPayments, 'settings']);
 $router->post('/admin/payments/save', [$adminPayments, 'save']);
 $router->post('/admin/payments/check', [$adminPayments, 'check']);
+
+// Admin Dashboard
+$router->get('/admin', [$adminDashboard, 'index']);
+
+// Admin Disputes
+$router->get('/admin/disputes', [$adminDisputes, 'index']);
+$router->post('/admin/disputes/update', [$adminDisputes, 'update']);
+
+// Admin Translations
+$router->get('/admin/translations', [$adminTranslations, 'index']);
+$router->post('/admin/translations/save', [$adminTranslations, 'save']);
 
 // Checkout
 $router->get('/checkout/start', [$checkout, 'start']);

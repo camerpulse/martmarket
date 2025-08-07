@@ -264,3 +264,14 @@ CREATE TABLE IF NOT EXISTS disputes (
   CONSTRAINT fk_disp_openedby FOREIGN KEY (opened_by) REFERENCES users(id) ON DELETE CASCADE,
   INDEX idx_disp_status (status)
 ) ENGINE=InnoDB;
+
+-- Translations
+CREATE TABLE IF NOT EXISTS translations (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  locale VARCHAR(16) NOT NULL,
+  `key` VARCHAR(191) NOT NULL,
+  `value` TEXT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_locale_key (locale, `key`)
+) ENGINE=InnoDB;
