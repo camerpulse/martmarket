@@ -35,10 +35,12 @@ class VendorController extends Controller
         $vendor = Vendor::find($vendorId);
         if (!$vendor) { http_response_code(404); return 'Vendor not found'; }
         $products = \App\Models\Product::byVendor((int)$vendor['id']);
+        $rating = \App\Models\Review::summaryForVendor((int)$vendor['id']);
         return $this->view('vendor/storefront', [
             'title' => ($vendor['store_name'] ?? 'Vendor') . ' – Storefront',
             'vendor' => $vendor,
-            'products' => $products
+            'products' => $products,
+            'rating' => $rating,
         ]);
     }
 }

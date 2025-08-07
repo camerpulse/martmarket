@@ -17,4 +17,20 @@ class Review
         $stmt->execute([$productId]);
         return $stmt->fetchAll();
     }
+
+    public static function summaryForProduct(int $productId): array
+    {
+        $stmt = DB::pdo()->prepare('SELECT COUNT(*) AS cnt, AVG(rating) AS avg_rating FROM reviews WHERE product_id = ?');
+        $stmt->execute([$productId]);
+        $row = $stmt->fetch() ?: ['cnt' => 0, 'avg_rating' => null];
+        return ['count' => (int)($row['cnt'] ?? 0), 'avg' => $row['avg_rating'] !== null ? round((float)$row['avg_rating'], 2) : null];
+    }
+
+    public static function summaryForVendor(int $vendorId): array
+    {
+        $stmt = DB::pdo()->prepare('SELECT COUNT(*) AS cnt, AVG(rating) AS avg_rating FROM reviews WHERE vendor_id = ?');
+        $stmt->execute([$vendorId]);
+        $row = $stmt->fetch() ?: ['cnt' => 0, 'avg_rating' => null];
+        return ['count' => (int)($row['cnt'] ?? 0), 'avg' => $row['avg_rating'] !== null ? round((float)$row['avg_rating'], 2) : null];
+    }
 }

@@ -39,8 +39,36 @@ $title = htmlspecialchars($product['title']);
     </div>
   </div>
 </div>
-<script type="application/ld+json">
-<?= json_encode([
+
+<div class="card">
+  <h2>Reviews</h2>
+  <?php $reviewSummary = $reviewSummary ?? ['count'=>0,'avg'=>null]; $reviews = $reviews ?? []; ?>
+  <p>
+    <?php if(($reviewSummary['count'] ?? 0) > 0): ?>
+      Average rating: <strong><?= number_format((float)$reviewSummary['avg'], 2) ?></strong> (<?= (int)$reviewSummary['count'] ?> reviews)
+    <?php else: ?>
+      No reviews yet.
+    <?php endif; ?>
+    <?php if(!empty($_SESSION['uid'])): ?>
+      <a class="btn secondary" href="/reviews/new?product_id=<?= (int)$product['id'] ?>&vendor_id=<?= (int)$product['vendor_id'] ?>" style="margin-left:8px">Write a Review</a>
+    <?php endif; ?>
+  </p>
+  <?php if(!empty($reviews)): ?>
+    <ul>
+      <?php foreach($reviews as $r): ?>
+        <li style="margin-bottom:8px">
+          <strong><?= htmlspecialchars($r['display_name'] ?? 'User #'.(int)$r['user_id']) ?></strong>
+          – Rating: <?= (int)$r['rating'] ?>/5
+          <div><?= nl2br(htmlspecialchars($r['comment'] ?? '')) ?></div>
+          <small style="opacity:.7"><?= htmlspecialchars($r['created_at'] ?? '') ?></small>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  <?php endif; ?>
+</div>
+
+<?php
+$jsonLd = [
   '@context' => 'https://schema.org/',
   '@type' => 'Product',
   'name' => $product['title'],
@@ -53,5 +81,15 @@ $title = htmlspecialchars($product['title']);
     'priceCurrency' => 'XBT',
     'availability' => 'https://schema.org/InStock'
   ]
-], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT) ?>
+];
+if (!empty($reviewSummary['count'])) {
+  $jsonLd['aggregateRating'] = [
+    '@type' => 'AggregateRating',
+    'ratingValue' => (string)$reviewSummary['avg'],
+    'reviewCount' => (int)$reviewSummary['count']
+  ];
+}
+?>
+<script type="application/ld+json">
+<?= json_encode($jsonLd, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT) ?>
 </script>

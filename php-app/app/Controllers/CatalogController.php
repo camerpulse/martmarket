@@ -44,12 +44,16 @@ public function index(): string
         if (!$product || (int)$product['is_active'] !== 1) { http_response_code(404); return 'Product not found'; }
         $images = \App\Models\ProductImage::listByProduct((int)$product['id']);
         $vendor = \App\Models\Vendor::find((int)$product['vendor_id']);
+        $reviewSummary = \App\Models\Review::summaryForProduct((int)$product['id']);
+        $reviews = \App\Models\Review::forProduct((int)$product['id']);
         return $this->view('catalog/product', [ 
             'title' => $product['title'] . ' – Product',
             'metaDescription' => substr(strip_tags((string)($product['description'] ?? '')), 0, 150),
             'product' => $product,
             'images' => $images,
             'vendor' => $vendor,
+            'reviewSummary' => $reviewSummary,
+            'reviews' => $reviews,
         ]);
     }
 }

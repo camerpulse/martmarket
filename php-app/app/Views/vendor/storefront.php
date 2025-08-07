@@ -13,6 +13,8 @@ namespace App\Views; // placeholder
       <?php endif; ?>
     </h2>
     <p>Total sales: <?= (int)($vendor['total_sales'] ?? 0) ?> • Trust score: <?= (int)($vendor['trust_score'] ?? 0) ?></p>
+    <?php $rating = $rating ?? ['avg'=>null,'count'=>0]; ?>
+    <p>Rating: <?= !empty($rating['count']) ? (number_format((float)$rating['avg'],2) . ' (' . (int)$rating['count'] . ' reviews)') : 'No reviews yet' ?></p>
   </div>
   <?php if(!$products): ?>
     <p>No products yet.</p>
