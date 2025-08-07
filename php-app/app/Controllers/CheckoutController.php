@@ -48,4 +48,33 @@ class CheckoutController extends Controller
         $confirmationsRequired = (int)Settings::get('btc_confirmations', '3');
         return $this->view('checkout/view', ['title' => 'Checkout', 'order' => $order, 'confirmationsRequired' => $confirmationsRequired]);
     }
+
+    public function status(): string
+    {
+        $this->ensureAuth();
+        header('Content-Type: application/json');
+        $id = (int)($_GET['id'] ?? 0);
+        $order = Order::find($id);
+        if (!$order || (int)$order['buyer_id'] !== (int)$_SESSION['uid']) { http_response_code(404); return json_encode(['error' => 'Not found']); }
+        $required = (int)Settings::get('btc_confirmations', '3');
+        $status = PaymentService::checkAddressStatus($order['btc_address']);
+        $received = (string)($status['received_btc'] ?? '0');
+        $conf = (int)($status['confirmations'] ?? 0);
+        $txid = $status['txid'] ?? null;
+        $newPaymentStatus = bccomp($received, $order['btc_expected_amount'], 8) >= 0 ? ($conf >= $required ? 'confirmed' : 'awaiting') : 'awaiting';
+        Payment::updateByOrder($id, $txid, $received, $newPaymentStatus, date('Y-m-d H:i:s'));
+        if ($newPaymentStatus === 'confirmed') {
+            Order::updatePayment($id, $received, $conf, 'in_escrow');
+            $order['status'] = 'in_escrow';
+        } else {
+            Order::updatePayment($id, $received, $conf, $order['status']);
+        }
+        $resp = [
+            'status' => $order['status'],
+            'received_btc' => $received,
+            'confirmations' => $conf,
+            'expected_btc' => $order['btc_expected_amount'],
+        ];
+        return json_encode($resp);
+    }
 }

@@ -167,6 +167,7 @@ $router->post('/admin/users/update', [$adminUsers, 'update']);
 $router->get('/admin/orders', [$adminOrders, 'index']);
 $router->get('/admin/orders/view', [$adminOrders, 'view']);
 $router->post('/admin/orders/update', [$adminOrders, 'update']);
+$router->post('/admin/orders/release', [$adminOrders, 'release']);
 
 // Admin Disputes
 $router->get('/admin/disputes', [$adminDisputes, 'index']);
@@ -192,5 +193,6 @@ $router->post('/admin/affiliate/payouts/update', [$adminAffiliate, 'updatePayout
 // Checkout
 $router->get('/checkout/start', [$checkout, 'start']);
 $router->get('/checkout/view', [$checkout, 'view']);
+$router->get('/checkout/status', [$checkout, 'status']);
 
 $router->dispatch();
