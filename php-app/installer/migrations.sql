@@ -1,4 +1,4 @@
--- MartMarket initial schema (Sprint 0-4)
+-- MartMarket initial schema (Sprint 0-5)
 SET NAMES utf8mb4;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -200,4 +200,67 @@ CREATE TABLE IF NOT EXISTS settings (
   `value` TEXT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Messaging
+CREATE TABLE IF NOT EXISTS message_threads (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  subject VARCHAR(191) NULL,
+  buyer_id BIGINT UNSIGNED NOT NULL,
+  vendor_id BIGINT UNSIGNED NOT NULL,
+  order_id BIGINT UNSIGNED NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_mt_buyer FOREIGN KEY (buyer_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_mt_vendor FOREIGN KEY (vendor_id) REFERENCES vendors(id) ON DELETE CASCADE,
+  CONSTRAINT fk_mt_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL,
+  INDEX idx_mt_buyer (buyer_id),
+  INDEX idx_mt_vendor (vendor_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS messages (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  thread_id BIGINT UNSIGNED NOT NULL,
+  sender_user_id BIGINT UNSIGNED NOT NULL,
+  is_pgp_encrypted TINYINT(1) DEFAULT 0,
+  body MEDIUMTEXT NOT NULL,
+  signature MEDIUMTEXT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_msg_thread FOREIGN KEY (thread_id) REFERENCES message_threads(id) ON DELETE CASCADE,
+  CONSTRAINT fk_msg_sender FOREIGN KEY (sender_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_msg_thread (thread_id)
+) ENGINE=InnoDB;
+
+-- Reviews
+CREATE TABLE IF NOT EXISTS reviews (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NULL,
+  product_id BIGINT UNSIGNED NULL,
+  vendor_id BIGINT UNSIGNED NULL,
+  user_id BIGINT UNSIGNED NOT NULL,
+  rating TINYINT NOT NULL,
+  comment TEXT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_rev_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL,
+  CONSTRAINT fk_rev_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,
+  CONSTRAINT fk_rev_vendor FOREIGN KEY (vendor_id) REFERENCES vendors(id) ON DELETE SET NULL,
+  CONSTRAINT fk_rev_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_rev_product (product_id),
+  INDEX idx_rev_vendor (vendor_id)
+) ENGINE=InnoDB;
+
+-- Disputes
+CREATE TABLE IF NOT EXISTS disputes (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL,
+  opened_by BIGINT UNSIGNED NOT NULL,
+  status ENUM('open','in_review','resolved_buyer','resolved_vendor','cancelled') DEFAULT 'open',
+  reason TEXT NULL,
+  resolution TEXT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_disp_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  CONSTRAINT fk_disp_openedby FOREIGN KEY (opened_by) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_disp_status (status)
 ) ENGINE=InnoDB;
