@@ -35,7 +35,7 @@ $title = 'Order #' . htmlspecialchars($order['order_number']);
     <p>No items.</p>
   <?php else: ?>
     <table style="width:100%;border-collapse:collapse">
-      <thead><tr><th style="text-align:left;border-bottom:1px solid #2b2f3a">Product</th><th style="text-align:left;border-bottom:1px solid #2b2f3a">Qty</th><th style="text-align:left;border-bottom:1px solid #2b2f3a">Price BTC</th><th style="text-align:left;border-bottom:1px solid #2b2f3a">Subtotal</th></tr></thead>
+      <thead><tr><th style="text-align:left;border-bottom:1px solid #2b2f3a">Product</th><th style="text-align:left;border-bottom:1px solid #2b2f3a">Qty</th><th style="text-align:left;border-bottom:1px solid #2b2f3a">Price BTC</th><th style="text-align:left;border-bottom:1px solid #2b2f3a">Subtotal</th><th></th></tr></thead>
       <tbody>
         <?php foreach($items as $it): ?>
           <tr>
@@ -43,9 +43,20 @@ $title = 'Order #' . htmlspecialchars($order['order_number']);
             <td><?= (int)$it['quantity'] ?></td>
             <td><?= htmlspecialchars($it['price_btc']) ?></td>
             <td><?= htmlspecialchars($it['subtotal_btc']) ?></td>
+            <td>
+              <?php if($order['status'] === 'completed'): ?>
+                <a href="/reviews/new?order_id=<?= (int)$order['id'] ?>&product_id=<?= (int)$it['product_id'] ?>&vendor_id=<?= (int)$order['vendor_id'] ?>">Review Product</a>
+              <?php endif; ?>
+            </td>
           </tr>
         <?php endforeach; ?>
       </tbody>
     </table>
   <?php endif; ?>
 </div>
+<?php if($order['status'] === 'completed'): ?>
+<div class="card">
+  <h3>Review Vendor</h3>
+  <a class="btn secondary" href="/reviews/new?order_id=<?= (int)$order['id'] ?>&vendor_id=<?= (int)$order['vendor_id'] ?>">Write Vendor Review</a>
+</div>
+<?php endif; ?>

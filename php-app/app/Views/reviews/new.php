@@ -1,10 +1,11 @@
 <?php
 $title = 'Write Review';
-$productId = $productId ?? null; $vendorId = $vendorId ?? null;
+$orderId = $orderId ?? null; $productId = $productId ?? null; $vendorId = $vendorId ?? null;
 ?>
 <h1>Write a Review</h1>
 <form method="post" action="/reviews/create">
   <input type="hidden" name="_csrf" value="<?= htmlspecialchars(\Core\Csrf::token()) ?>">
+  <?php if($orderId): ?><input type="hidden" name="order_id" value="<?= (int)$orderId ?>"><?php endif; ?>
   <label>Product ID (optional)</label>
   <input type="number" name="product_id" value="<?= (int)($productId ?: 0) ?>">
   <label>Vendor ID (optional)</label>
