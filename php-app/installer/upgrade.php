@@ -18,9 +18,23 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
   try{
     $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4', $db['db']['host'], (int)$db['db']['port'], $db['db']['database']);
     $pdo = new PDO($dsn, $db['db']['user'], $db['db']['password'], [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
+
+    // Create JSON backup snapshot before upgrade
+    $backupDir = $root . '/storage/backups';
+    if (!is_dir($backupDir)) { @mkdir($backupDir, 0755, true); }
+    $snapshot = ['created_at' => date('c'), 'database' => $db['db']['database'], 'tables' => []];
+    foreach ($pdo->query('SHOW TABLES') as $row) {
+      $table = array_values($row)[0];
+      $stmt = $pdo->query('SELECT * FROM `'.$table.'`');
+      $snapshot['tables'][$table] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    $file = $backupDir . '/db-snapshot-' . date('Ymd-His') . '.json';
+    file_put_contents($file, json_encode($snapshot, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
+
+    // Apply idempotent migrations
     $sql = file_get_contents(__DIR__ . '/migrations.sql');
     $pdo->exec($sql);
-    $msg = 'Migrations re-applied successfully.';
+    $msg = 'Backup saved to ' . basename($file) . '. Migrations re-applied successfully.';
   }catch(Exception $e){
     $err = 'Upgrade failed: ' . $e->getMessage();
   }
