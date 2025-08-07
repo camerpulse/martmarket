@@ -70,7 +70,12 @@ public static function updatePayment(int $orderId, string $paidAmount, int $conf
     {
         $allowed = ['pending','awaiting_payment','paid','in_escrow','shipped','completed','cancelled','disputed'];
         if (!in_array($status, $allowed, true)) { return; }
-        DB::pdo()->prepare('UPDATE orders SET status = ? WHERE id = ?')->execute([$status, $orderId]);
+        DB::pdo()->prepare('UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')->execute([$status, $orderId]);
     }
-}
+
+    public static function setShipment(int $orderId, string $trackingNumber, ?string $note = null): void
+    {
+        DB::pdo()->prepare('UPDATE orders SET status = "shipped", tracking_number = ?, shipping_note = ?, shipped_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+            ->execute([$trackingNumber ?: null, $note, $orderId]);
+    }
 

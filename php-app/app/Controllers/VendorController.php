@@ -84,10 +84,17 @@ class VendorController extends Controller
         $vendor = Vendor::byUser((int)$_SESSION['uid']);
         if (!$vendor) { http_response_code(403); return 'Vendor profile required'; }
         $id = (int)($_POST['id'] ?? 0);
+        $tracking = trim((string)($_POST['tracking_number'] ?? ''));
+        $note = trim((string)($_POST['shipping_note'] ?? '')) ?: null;
         $order = Order::find($id);
         if (!$order || (int)$order['vendor_id'] !== (int)$vendor['id']) { http_response_code(404); return 'Order not found'; }
         if (in_array($order['status'], ['in_escrow','paid'], true)) {
-            Order::setStatus($id, 'shipped');
+            Order::setShipment($id, $tracking, $note);
+            // Notify buyer by email (best-effort)
+            $buyer = \App\Models\User::find((int)$order['buyer_id']);
+            if ($buyer) {
+                \App\Services\MailService::send($buyer['email'], $buyer['email'], 'Your order has shipped', '<p>Your order #' . htmlspecialchars($order['order_number']) . ' has been marked as shipped.</p>' . ($tracking ? '<p>Tracking: ' . htmlspecialchars($tracking) . '</p>' : '') . ($note ? '<p>Note: ' . nl2br(htmlspecialchars($note)) . '</p>' : ''));
+            }
         }
         return $this->redirect('/vendor/orders/view?id=' . $id);
     }

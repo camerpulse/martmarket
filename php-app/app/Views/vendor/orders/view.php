@@ -8,10 +8,18 @@ $title = 'Order #' . htmlspecialchars($order['order_number']);
   <p><strong>Status:</strong> <?= htmlspecialchars($order['status']) ?></p>
   <p><strong>Buyer ID:</strong> #<?= (int)$order['buyer_id'] ?></p>
   <p><strong>Expected BTC:</strong> <?= htmlspecialchars($order['btc_expected_amount']) ?> • <strong>Paid:</strong> <?= htmlspecialchars($order['btc_paid_amount']) ?></p>
+  <?php if(!empty($order['tracking_number'])): ?>
+    <p><strong>Tracking:</strong> <?= htmlspecialchars($order['tracking_number']) ?> <?= !empty($order['shipped_at']) ? ' • Shipped: '.htmlspecialchars($order['shipped_at']) : '' ?></p>
+    <?php if(!empty($order['shipping_note'])): ?><p><strong>Note:</strong> <?= nl2br(htmlspecialchars($order['shipping_note'])) ?></p><?php endif; ?>
+  <?php endif; ?>
   <?php if(in_array($order['status'], ['in_escrow','paid'], true)): ?>
     <form method="post" action="/vendor/orders/ship">
       <input type="hidden" name="_csrf" value="<?= htmlspecialchars(\Core\Csrf::token()) ?>">
       <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
+      <label>Tracking Number (optional)</label>
+      <input type="text" name="tracking_number" placeholder="e.g. 1Z...">
+      <label>Shipping Note (optional)</label>
+      <textarea name="shipping_note" rows="3" placeholder="Any details for buyer..."></textarea>
       <button class="btn" type="submit">Mark as Shipped</button>
     </form>
   <?php endif; ?>
