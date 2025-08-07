@@ -20,7 +20,8 @@ $title = htmlspecialchars($product['title']);
     <p><strong>Price (BTC):</strong> <?= htmlspecialchars($product['price_btc']) ?></p>
     <p><?= nl2br(htmlspecialchars($product['description'] ?? '')) ?></p>
     <?php if($vendor): ?>
-      <p>Sold by: <a href="/vendor/view?id=<?= (int)$vendor['id'] ?>"><?= htmlspecialchars($vendor['store_name'] ?? ('Vendor #' . (int)$vendor['id'])) ?></a>
+      <?php $vs = strtolower(preg_replace('/[^a-z0-9-]+/i','-', (string)($vendor['store_name'] ?? 'vendor'))); ?>
+      <p>Sold by: <a href="/vendor/<?= htmlspecialchars($vs) ?>-<?= (int)$vendor['id'] ?>"><?= htmlspecialchars($vendor['store_name'] ?? ('Vendor #' . (int)$vendor['id'])) ?></a>
         <?php if(!empty($vendor['is_verified'])): ?><span style="font-size:12px;background:#2b2f3a;border-radius:6px;padding:2px 6px;margin-left:6px">Verified</span><?php endif; ?>
       </p>
     <?php endif; ?>

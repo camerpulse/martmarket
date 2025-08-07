@@ -22,7 +22,7 @@ namespace App\Views; // placeholder
         <div class="card" style="width:280px">
           <h3><?= htmlspecialchars($p['title']) ?></h3>
           <p><strong>BTC:</strong> <?= htmlspecialchars($p['price_btc']) ?></p>
-          <a class="btn" href="/product/view?id=<?= (int)$p['id'] ?>">View</a>
+          <a class="btn" href="/product/<?= htmlspecialchars($p['slug']) ?>">View</a>
         </div>
       <?php endforeach; ?>
     </div>

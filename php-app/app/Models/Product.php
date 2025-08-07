@@ -67,4 +67,12 @@ $where = $w ? ('WHERE ' . implode(' AND ', $w)) : '';
         $stmt->execute($args);
         return (int)$stmt->fetchColumn();
     }
+
+    public static function findBySlug(string $slug): ?array
+    {
+        $stmt = DB::pdo()->prepare('SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON c.id = p.category_id WHERE p.slug = ? LIMIT 1');
+        $stmt->execute([$slug]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
 }

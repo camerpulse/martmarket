@@ -31,13 +31,18 @@ public function index(): string
         ]);
     }
 
-public function product(): string
+    public function product(): string
     {
+        $slug = isset($_GET['slug']) ? trim((string)$_GET['slug']) : null;
         $id = (int)($_GET['id'] ?? 0);
-        if ($id <= 0) { http_response_code(404); return 'Product not found'; }
-        $product = Product::find($id);
+        $product = null;
+        if ($slug) {
+            $product = Product::findBySlug($slug);
+        } elseif ($id > 0) {
+            $product = Product::find($id);
+        }
         if (!$product || (int)$product['is_active'] !== 1) { http_response_code(404); return 'Product not found'; }
-        $images = \App\Models\ProductImage::listByProduct($id);
+        $images = \App\Models\ProductImage::listByProduct((int)$product['id']);
         $vendor = \App\Models\Vendor::find((int)$product['vendor_id']);
         return $this->view('catalog/product', [ 
             'title' => $product['title'] . ' – Product',

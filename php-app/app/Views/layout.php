@@ -11,6 +11,10 @@ namespace App\Views; // Not a real namespace, but this file is included to layou
   <meta name="description" content="<?= htmlspecialchars($metaDescription) ?>">
   <?php $canonical = (($_SERVER['HTTPS'] ?? 'off') === 'on' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($_SERVER['REQUEST_URI'] ?? '/'); ?>
   <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
+  <meta property="og:title" content="<?= htmlspecialchars($title ?? 'MartMarket') ?>">
+  <meta property="og:description" content="<?= htmlspecialchars($metaDescription) ?>">
+  <meta property="og:url" content="<?= htmlspecialchars($canonical) ?>">
+  <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
