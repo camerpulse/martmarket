@@ -9,32 +9,7 @@ const BitcoinPrice = () => {
   useEffect(() => {
     const fetchRealBitcoinPrice = async () => {
       try {
-        // Try CoinCap API first (no auth needed, reliable)
-        try {
-          const response = await fetch('https://api.coincap.io/v2/assets/bitcoin', {
-            headers: {
-              'Accept': 'application/json',
-            },
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            
-            if (data.data) {
-              const price = parseFloat(data.data.priceUsd);
-              const change = parseFloat(data.data.changePercent24Hr) || 0;
-              
-              if (price > 0) {
-                setPrice(price);
-                setChange24h(change);
-                setLoading(false);
-                return;
-              }
-            }
-          }
-        } catch (error) {
-          // Silent fail, try next API
-        }
+        // Skipped CoinCap (unreliable in this environment)
 
         // Try CryptoCompare as backup (no API key needed)
         try {
