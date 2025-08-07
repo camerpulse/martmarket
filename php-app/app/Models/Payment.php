@@ -22,4 +22,13 @@ class Payment
         $stmt = DB::pdo()->query('SELECT * FROM payments WHERE status = "awaiting"');
         return $stmt->fetchAll();
     }
+
+    public static function findByOrder(int $orderId): ?array
+    {
+        $stmt = DB::pdo()->prepare('SELECT * FROM payments WHERE order_id = ? LIMIT 1');
+        $stmt->execute([$orderId]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
 }
+

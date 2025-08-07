@@ -36,6 +36,20 @@ class CheckoutController extends Controller
         Payment::create($orderId, $address, $amountBtc);
         Escrow::create($orderId);
 
+        // Notify buyer & vendor
+        $buyer = \App\Models\User::find((int)$_SESSION['uid']);
+        $vendorUserId = (int)($vendorId ? (\App\Models\Vendor::find($vendorId)['user_id'] ?? 0) : 0);
+        $vendorUser = $vendorUserId ? \App\Models\User::find($vendorUserId) : null;
+        $buyerEmail = $buyer['email'] ?? null; $vendorEmail = $vendorUser['email'] ?? null;
+        $subjBuyer = 'Your order #' . $orderNumber . ' – Payment Instructions';
+        $bodyBuyer = '<p>Thank you for your order.</p><p>Send exactly <strong>' . htmlspecialchars($amountBtc) . ' BTC</strong> to <code>' . htmlspecialchars($address) . '</code>.</p>';
+        if ($buyerEmail) { \App\Services\MailService::send($buyerEmail, $buyerEmail, $subjBuyer, $bodyBuyer); }
+        if ($vendorEmail) {
+            $subjVendor = 'New order #' . $orderNumber . ' placed';
+            $bodyVendor = '<p>A new order was placed. Awaiting payment.</p>';
+            \App\Services\MailService::send($vendorEmail, $vendorEmail, $subjVendor, $bodyVendor);
+        }
+
         return $this->redirect('/checkout/view?id=' . $orderId);
     }
 
@@ -62,9 +76,19 @@ class CheckoutController extends Controller
         $conf = (int)($status['confirmations'] ?? 0);
         $txid = $status['txid'] ?? null;
         $newPaymentStatus = bccomp($received, $order['btc_expected_amount'], 8) >= 0 ? ($conf >= $required ? 'confirmed' : 'awaiting') : 'awaiting';
+        $prev = Payment::findByOrder($id);
         Payment::updateByOrder($id, $txid, $received, $newPaymentStatus, date('Y-m-d H:i:s'));
-        if ($newPaymentStatus === 'confirmed') {
+        if ($newPaymentStatus === 'confirmed' && ($prev['status'] ?? '') !== 'confirmed') {
             Order::updatePayment($id, $received, $conf, 'in_escrow');
+            // Notify parties once
+            $buyer = \App\Models\User::find((int)$order['buyer_id']);
+            $vendorUserId = (int)(\App\Models\Vendor::find((int)$order['vendor_id'])['user_id'] ?? 0);
+            $vendorUser = $vendorUserId ? \App\Models\User::find($vendorUserId) : null;
+            $buyerEmail = $buyer['email'] ?? null; $vendorEmail = $vendorUser['email'] ?? null;
+            $subj = 'Payment confirmed for order #' . $order['order_number'] . ' – In Escrow';
+            $body = '<p>Your Bitcoin payment was confirmed.</p><p>Funds are now held in escrow.</p>';
+            if ($buyerEmail) { \App\Services\MailService::send($buyerEmail, $buyerEmail, $subj, $body); }
+            if ($vendorEmail) { \App\Services\MailService::send($vendorEmail, $vendorEmail, $subj, $body); }
             $order['status'] = 'in_escrow';
         } else {
             Order::updatePayment($id, $received, $conf, $order['status']);

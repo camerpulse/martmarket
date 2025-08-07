@@ -19,6 +19,7 @@ class PaymentSettingsController extends Controller
             'confirmations' => Settings::get('btc_confirmations', '3'),
             'xpub' => Settings::get('btc_xpub', ''),
             'affiliate_rate' => Settings::get('affiliate.rate_percent', '5'),
+            'cron_token' => Settings::get('cron_token', ''),
         ];
         return $this->view('admin/payments/settings', ['title' => 'Payments Settings', 'cfg' => $data]);
     }
@@ -38,6 +39,10 @@ class PaymentSettingsController extends Controller
         if ($rate < 0) { $rate = 0; }
         if ($rate > 50) { $rate = 50; }
         Settings::set('affiliate.rate_percent', (string)$rate);
+        // Cron token
+        $token = trim((string)($_POST['cron_token'] ?? ''));
+        if ($token === '') { $token = rtrim(strtr(base64_encode(random_bytes(24)), '+/', '-_'), '='); }
+        Settings::set('cron_token', $token);
         return $this->redirect('/admin/payments');
     }
 

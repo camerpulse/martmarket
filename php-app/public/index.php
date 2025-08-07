@@ -69,6 +69,7 @@ require_once __DIR__ . '/../app/Controllers/Admin/DisputeAdminController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/AdminDashboardController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/TranslationAdminController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/AffiliateAdminController.php';
+require_once __DIR__ . '/../app/Controllers/CronController.php';
 
 $auth = new App\Controllers\AuthController();
 $profile = new App\Controllers\ProfileController();
@@ -203,5 +204,8 @@ $router->post('/admin/affiliate/payouts/update', [$adminAffiliate, 'updatePayout
 $router->get('/checkout/start', [$checkout, 'start']);
 $router->get('/checkout/view', [$checkout, 'view']);
 $router->get('/checkout/status', [$checkout, 'status']);
+
+// Cron endpoints (token protected)
+$router->get('/cron/payments', [new App\Controllers\CronController(), 'payments']);
 
 $router->dispatch();
