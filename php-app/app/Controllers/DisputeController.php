@@ -4,6 +4,7 @@ namespace App\Controllers;
 use Core\Controller;
 use Core\Csrf;
 use App\Models\Dispute;
+use App\Models\Vendor;
 
 class DisputeController extends Controller
 {
@@ -30,5 +31,33 @@ class DisputeController extends Controller
         if ($orderId <= 0 || $reason === '') return $this->redirect('/disputes');
         Dispute::open($orderId, (int)$_SESSION['uid'], $reason);
         return $this->redirect('/disputes');
+    }
+
+    // Vendor-facing disputes list
+    public function vendorIndex(): string
+    {
+        $this->ensureRole('vendor');
+        $vendor = Vendor::byUser((int)$_SESSION['uid']);
+        if (!$vendor) { http_response_code(403); return 'Forbidden'; }
+        $rows = Dispute::forVendor((int)$vendor['id']);
+        return $this->view('vendor/disputes/index', ['title' => 'Disputes', 'rows' => $rows]);
+    }
+
+    // Vendor updates dispute status/resolution
+    public function vendorUpdate(): string
+    {
+        $this->ensureRole('vendor');
+        if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
+        $id = (int)($_POST['id'] ?? 0);
+        $status = (string)($_POST['status'] ?? 'in_review');
+        $resolution = trim((string)($_POST['resolution'] ?? '')) ?: null;
+        $allowed = ['open','in_review','resolved_buyer','resolved_vendor','cancelled'];
+        if ($id <= 0 || !in_array($status, $allowed, true)) { return $this->redirect('/vendor/disputes'); }
+        $vendor = Vendor::byUser((int)$_SESSION['uid']);
+        if (!$vendor) { http_response_code(403); return 'Forbidden'; }
+        $row = Dispute::findWithOrderAndVendor($id);
+        if (!$row || (int)$row['vendor_id'] !== (int)$vendor['id']) { http_response_code(403); return 'Forbidden'; }
+        Dispute::updateStatus($id, $status, $resolution);
+        return $this->redirect('/vendor/disputes');
     }
 }

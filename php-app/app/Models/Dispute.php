@@ -28,4 +28,21 @@ class Dispute
     {
         DB::pdo()->prepare('UPDATE disputes SET status = ?, resolution = ? WHERE id = ?')->execute([$status, $resolution, $id]);
     }
+
+    public static function forVendor(int $vendorId): array
+    {
+        $sql = 'SELECT d.*, o.vendor_id, o.order_number FROM disputes d JOIN orders o ON o.id = d.order_id WHERE o.vendor_id = ? ORDER BY d.created_at DESC';
+        $stmt = DB::pdo()->prepare($sql);
+        $stmt->execute([$vendorId]);
+        return $stmt->fetchAll();
+    }
+
+    public static function findWithOrderAndVendor(int $id): ?array
+    {
+        $sql = 'SELECT d.*, o.vendor_id FROM disputes d JOIN orders o ON o.id = d.order_id WHERE d.id = ? LIMIT 1';
+        $stmt = DB::pdo()->prepare($sql);
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
 }
