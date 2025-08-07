@@ -7,6 +7,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   file_put_contents($root . '/config/app.php', "<?php\nreturn [\n  'app' => [\n    'name' => '".addslashes($_SESSION['app']['name'])."',\n    'base_url' => '".addslashes($_SESSION['app']['base_url'])."',\n    'timezone' => '".addslashes($_SESSION['app']['timezone'])."'\n  ]\n];\n");
   file_put_contents($root . '/config/database.php', "<?php\nreturn [\n  'db' => [\n    'host' => '".addslashes($_SESSION['db']['host'])."',\n    'port' => ".(int)$_SESSION['db']['port'].",\n    'database' => '".addslashes($_SESSION['db']['database'])."',\n    'user' => '".addslashes($_SESSION['db']['user'])."',\n    'password' => '".addslashes($_SESSION['db']['password'])."'\n  ]\n];\n");
   file_put_contents($root . '/config/security.php', "<?php\nreturn [\n  'security' => [\n    'app_key_base64' => '".$_SESSION['security']['app_key_base64']."'\n  ]\n];\n");
+  // optional configs
+  if (!empty($_SESSION['mail'])) {
+    file_put_contents($root . '/config/mail.php', "<?php\nreturn [\n  'mail' => [\n    'host' => '".addslashes($_SESSION['mail']['host'])."',\n    'port' => ".(int)$_SESSION['mail']['port'].",\n    'username' => '".addslashes($_SESSION['mail']['username'])."',\n    'password' => '".addslashes($_SESSION['mail']['password'])."',\n    'encryption' => '".addslashes($_SESSION['mail']['encryption'])."',\n    'from_email' => '".addslashes($_SESSION['mail']['from_email'])."',\n    'from_name' => '".addslashes($_SESSION['mail']['from_name'])."'\n  ]\n];\n");
+  }
+  if (!empty($_SESSION['payments'])) {
+    file_put_contents($root . '/config/payments.php', "<?php\nreturn [\n  'payments' => [\n    'btc_network' => '".addslashes($_SESSION['payments']['network'])."',\n    'btc_provider' => '".addslashes($_SESSION['payments']['provider'])."',\n    'btc_confirmations' => ".(int)$_SESSION['payments']['confirmations'].",\n    'btc_xpub' => '".addslashes($_SESSION['payments']['xpub'])."'\n  ]\n];\n");
+  }
 
   // run migrations
   try {
@@ -23,8 +30,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $uid = (int)$pdo->lastInsertId();
     $pdo->prepare('INSERT INTO profiles (user_id, display_name, twofa_enabled) VALUES (?, ?, 0)')->execute([$uid, $_SESSION['admin']['display']]);
 
+    // seed payment settings
+    if (!empty($_SESSION['payments'])) {
+      $pdo->prepare('INSERT INTO settings (`key`,`value`) VALUES ("btc_provider", ?)
+        ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)')->execute([$_SESSION['payments']['provider']]);
+      $pdo->prepare('INSERT INTO settings (`key`,`value`) VALUES ("btc_network", ?)
+        ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)')->execute([$_SESSION['payments']['network']]);
+      $pdo->prepare('INSERT INTO settings (`key`,`value`) VALUES ("btc_confirmations", ?)
+        ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)')->execute([(string)$_SESSION['payments']['confirmations']]);
+      if (!empty($_SESSION['payments']['xpub'])) {
+        $pdo->prepare('INSERT INTO settings (`key`,`value`) VALUES ("btc_xpub", ?)
+          ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)')->execute([$_SESSION['payments']['xpub']]);
+      }
+    }
+
     echo '<p>Installation complete. <a href="/">Go to site</a></p>';
-    echo '<p><strong>Important:</strong> Delete the installer/ directory now.</p>';
+    echo '<p><strong>Important:</strong> Delete the installer/ directory now, or restrict access. For future updates, use <code>/installer/upgrade.php</code>.</p>';
     session_destroy();
     exit;
   } catch (Exception $e) {

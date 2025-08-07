@@ -32,6 +32,9 @@ if (!file_exists(__DIR__ . '/../config/app.php') || !file_exists(__DIR__ . '/../
 Config::load(__DIR__ . '/../config/app.php');
 Config::load(__DIR__ . '/../config/database.php');
 Config::load(__DIR__ . '/../config/security.php');
+// Optional configs
+Config::load(__DIR__ . '/../config/mail.php');
+Config::load(__DIR__ . '/../config/payments.php');
 
 // Basic security headers
 header('X-Frame-Options: SAMEORIGIN');
