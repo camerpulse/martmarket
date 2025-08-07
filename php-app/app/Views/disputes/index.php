@@ -20,7 +20,7 @@ $rows = $rows ?? [];
     <tbody>
       <?php foreach($rows as $r): ?>
         <tr>
-          <td><?= (int)$r['id'] ?></td>
+          <td><a href="/disputes/view?id=<?= (int)$r['id'] ?>">#<?= (int)$r['id'] ?></a></td>
           <td>#<?= (int)$r['order_id'] ?></td>
           <td><?= htmlspecialchars($r['status']) ?></td>
           <td><?= nl2br(htmlspecialchars($r['reason'] ?? '')) ?></td>

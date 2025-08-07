@@ -33,6 +33,20 @@ class DisputeController extends Controller
         return $this->redirect('/disputes');
     }
 
+    // Buyer dispute detail view
+    public function view(): string
+    {
+        $this->ensureAuth();
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id <= 0) { http_response_code(404); return 'Dispute not found'; }
+        $row = Dispute::findWithOrderAndVendor($id);
+        if (!$row || (int)$row["opened_by"] !== (int)$_SESSION['uid']) { http_response_code(403); return 'Forbidden'; }
+        return $this->view('disputes/view', [
+            'title' => 'Dispute #' . (int)$row['id'],
+            'd' => $row,
+        ]);
+    }
+
     // Vendor-facing disputes list
     public function vendorIndex(): string
     {

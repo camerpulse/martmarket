@@ -151,6 +151,7 @@ $router->post('/reviews/create', [$reviews, 'create']);
 // User Disputes
 $router->get('/disputes', [$disputes, 'index']);
 $router->get('/disputes/new', [$disputes, 'new']);
+$router->get('/disputes/view', [$disputes, 'view']);
 $router->post('/disputes/create', [$disputes, 'create']);
 
 // Admin Categories
