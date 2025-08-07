@@ -42,7 +42,7 @@ $router = new Router();
 
 // Routes
 $router->get('/', function() {
-    echo \Core\View::render('auth/login', ['title' => 'Login']);
+    echo \Core\View::render('catalog/index', ['title' => 'Browse Products']);
 });
 
 // Auth routes
@@ -53,14 +53,18 @@ require_once __DIR__ . '/../app/Controllers/VendorProductController.php';
 require_once __DIR__ . '/../app/Controllers/CatalogController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/VendorAdminController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/CategoryAdminController.php';
+require_once __DIR__ . '/../app/Controllers/CheckoutController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/PaymentSettingsController.php';
 
 $auth = new App\Controllers\AuthController();
 $profile = new App\Controllers\ProfileController();
 $vendorCtrl = new App\Controllers\VendorController();
 $vendorProd = new App\Controllers\VendorProductController();
 $catalog = new App\Controllers\CatalogController();
+$checkout = new App\Controllers\CheckoutController();
 $adminVendor = new App\Controllers\Admin\VendorAdminController();
 $adminCategory = new App\Controllers\Admin\CategoryAdminController();
+$adminPayments = new App\Controllers\Admin\PaymentSettingsController();
 
 $router->get('/login', [$auth, 'loginForm']);
 $router->post('/login', [$auth, 'login']);
@@ -96,5 +100,14 @@ $router->post('/admin/vendors/reject', [$adminVendor, 'reject']);
 // Admin Categories
 $router->get('/admin/categories', [$adminCategory, 'index']);
 $router->post('/admin/categories/create', [$adminCategory, 'create']);
+
+// Admin Payments
+$router->get('/admin/payments', [$adminPayments, 'settings']);
+$router->post('/admin/payments/save', [$adminPayments, 'save']);
+$router->post('/admin/payments/check', [$adminPayments, 'check']);
+
+// Checkout
+$router->get('/checkout/start', [$checkout, 'start']);
+$router->get('/checkout/view', [$checkout, 'view']);
 
 $router->dispatch();

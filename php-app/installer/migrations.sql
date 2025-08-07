@@ -1,4 +1,4 @@
--- MartMarket initial schema (Sprint 0-2)
+-- MartMarket initial schema (Sprint 0-4)
 SET NAMES utf8mb4;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -126,4 +126,78 @@ CREATE TABLE IF NOT EXISTS product_images (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_img_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
   INDEX idx_img_prod (product_id)
+) ENGINE=InnoDB;
+
+-- Orders
+CREATE TABLE IF NOT EXISTS orders (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  buyer_id BIGINT UNSIGNED NOT NULL,
+  vendor_id BIGINT UNSIGNED NOT NULL,
+  order_number VARCHAR(20) NOT NULL UNIQUE,
+  status ENUM('pending','awaiting_payment','paid','in_escrow','shipped','completed','cancelled','disputed') DEFAULT 'pending',
+  btc_address VARCHAR(128) NOT NULL,
+  btc_expected_amount DECIMAL(18,8) NOT NULL,
+  btc_paid_amount DECIMAL(18,8) DEFAULT 0,
+  confirmations INT DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_order_buyer FOREIGN KEY (buyer_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_order_vendor FOREIGN KEY (vendor_id) REFERENCES vendors(id) ON DELETE CASCADE,
+  INDEX idx_order_status (status)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS order_items (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  title VARCHAR(191) NOT NULL,
+  price_btc DECIMAL(18,8) NOT NULL,
+  quantity INT NOT NULL,
+  subtotal_btc DECIMAL(18,8) NOT NULL,
+  CONSTRAINT fk_item_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  CONSTRAINT fk_item_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS payments (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  txid VARCHAR(128) NULL,
+  address VARCHAR(128) NOT NULL,
+  expected_amount DECIMAL(18,8) NOT NULL,
+  received_amount DECIMAL(18,8) DEFAULT 0,
+  status ENUM('awaiting','confirmed','underpaid','overpaid','invalid') DEFAULT 'awaiting',
+  last_checked_at DATETIME NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_payment_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  INDEX idx_payment_status (status)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS escrows (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  status ENUM('holding','released','refunded') DEFAULT 'holding',
+  released_by BIGINT UNSIGNED NULL,
+  released_txid VARCHAR(128) NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_escrow_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS order_status_history (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL,
+  old_status VARCHAR(32) NULL,
+  new_status VARCHAR(32) NOT NULL,
+  changed_by BIGINT UNSIGNED NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_osh_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS settings (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `key` VARCHAR(64) NOT NULL UNIQUE,
+  `value` TEXT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
