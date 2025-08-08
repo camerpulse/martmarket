@@ -24,7 +24,7 @@ $action = __DIR__ . '/../installer/index.php';
   <h1>MartMarket Installer</h1>
   <p>Step <?= (int)$step ?> of 4</p>
   <div class="card">
-    <?php include __DIR__ . '/../installer/steps/' . (int)$step . '_step.php'; ?>
+    <?php include __DIR__ . '/../steps/' . (int)$step . '_step.php'; ?>
   </div>
 </main>
 </body>
