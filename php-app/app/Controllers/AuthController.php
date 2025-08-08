@@ -1,19 +1,19 @@
 <?php
-namespace App.Controllers;
+namespace App\Controllers;
 
-use Core.Controller;
-use Core.Csrf;
-use Core.Session;
-use Core.Config;
-use Core.DB;
-use Core.RateLimiter;
-use Core.Logger;
-use App.Models.User;
-use App.Models.Profile;
-use App.Models.TotpSecret;
-use App.Models.Referral as ReferralModel;
-use App.Services.TOTPService;
-use App.Models.Vendor;
+use Core\Controller;
+use Core\Csrf;
+use Core\Session;
+use Core\Config;
+use Core\DB;
+use Core\RateLimiter;
+use Core\Logger;
+use App\Models\User;
+use App\Models\Profile;
+use App\Models\TotpSecret;
+use App\Models\Referral as ReferralModel;
+use App\Services\TOTPService;
+use App\Models\Vendor;
 
 class AuthController extends Controller
 {

@@ -54,9 +54,33 @@ class PaymentService
 
     private static function httpGet(string $url)
     {
-        $opts = ["http" => ["method" => "GET", "timeout" => 10, 'header' => "User-Agent: MartMarket/1.0\r\n"]];
+        // Prefer cURL when available (shared hosting friendly)
+        if (function_exists('curl_init')) {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_CONNECTTIMEOUT => 5,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_USERAGENT => 'MartMarket/1.0',
+                CURLOPT_HTTPHEADER => ['Accept: application/json'],
+            ]);
+            $res = curl_exec($ch);
+            curl_close($ch);
+            $data = json_decode($res ?: 'null', true);
+            return is_array($data) ? $data : [];
+        }
+        // Fallback to file_get_contents
+        $opts = [
+            'http' => [
+                'method' => 'GET',
+                'timeout' => 10,
+                'header' => "User-Agent: MartMarket/1.0\r\nAccept: application/json\r\n",
+            ],
+        ];
         $ctx = stream_context_create($opts);
-        $res = file_get_contents($url, false, $ctx);
-        return json_decode($res ?? 'null', true);
+        $res = @file_get_contents($url, false, $ctx);
+        $data = json_decode($res ?: 'null', true);
+        return is_array($data) ? $data : [];
     }
 }
