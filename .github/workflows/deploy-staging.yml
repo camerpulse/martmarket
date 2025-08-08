@@ -1,0 +1,49 @@
+name: Deploy PHP app to Staging
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: FTP Deploy (php-app ➜ staging)
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: ${{ secrets.STAGING_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          # Remove the next line if your host requires a different path format
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          local-dir: php-app/
+          exclude: |
+            **/.git*
+            archives/**
+            node_modules/**
+            **/node_modules/**
+            **/.DS_Store
+            storage/**
+            config/**
+            public/uploads/**
+            storage/uploads/**
+            storage/backups/**
+      
+      - name: Post Deploy Summary
+        if: always()
+        run: |
+          echo "✅ Deployed to: ${{ secrets.STAGING_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "Tip: Point your staging subdomain's document root to the 'public' folder inside the deployed directory." >> $GITHUB_STEP_SUMMARY
