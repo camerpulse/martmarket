@@ -24,7 +24,14 @@ $action = __DIR__ . '/../installer/index.php';
   <h1>MartMarket Installer</h1>
   <p>Step <?= (int)$step ?> of 4</p>
   <div class="card">
-    <?php include __DIR__ . '/../steps/' . (int)$step . '_step.php'; ?>
+    <?php 
+      $stepFile = __DIR__ . '/../steps/' . (int)$step . '_step.php';
+      if (file_exists($stepFile)) {
+        include $stepFile;
+      } else {
+        echo '<p style="color:#ff6b6b">Installer step file not found: ' . h($stepFile) . '</p>';
+      }
+    ?>
   </div>
 </main>
 </body>
