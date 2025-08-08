@@ -1,7 +1,8 @@
 <?php
 // Step 4: Write config, run migrations, create admin
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $root = dirname(__DIR__);
+  $installerRoot = dirname(__DIR__);
+  $root = dirname($installerRoot);
   // write config files
   if (!is_dir($root . '/config')) mkdir($root . '/config', 0755, true);
   file_put_contents($root . '/config/app.php', "<?php\nreturn [\n  'app' => [\n    'name' => '".addslashes($_SESSION['app']['name'])."',\n    'base_url' => '".addslashes($_SESSION['app']['base_url'])."',\n    'timezone' => '".addslashes($_SESSION['app']['timezone'])."'\n  ]\n];\n");
@@ -19,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   try {
     $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4', $_SESSION['db']['host'], (int)$_SESSION['db']['port'], $_SESSION['db']['database']);
     $pdo = new PDO($dsn, $_SESSION['db']['user'], $_SESSION['db']['password'], [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
-    $sql = file_get_contents(__DIR__ . '/migrations.sql');
+    $sql = file_get_contents($installerRoot . '/migrations.sql');
     $pdo->exec($sql);
 
     // create admin user
