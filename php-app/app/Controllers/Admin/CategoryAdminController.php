@@ -3,6 +3,7 @@ namespace App\Controllers\Admin;
 
 use Core\Controller;
 use Core\Csrf;
+use Core\Slug;
 use App\Models\Category;
 
 class CategoryAdminController extends Controller
@@ -19,7 +20,7 @@ class CategoryAdminController extends Controller
         $this->ensureRole('admin');
         if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
         $name = trim((string)($_POST['name'] ?? ''));
-        $slug = strtolower(preg_replace('/[^a-z0-9-]+/i', '-', $name));
+        $slug = Slug::unique('categories', 'slug', $name);
         if ($name && $slug) { Category::create($name, $slug); }
         return $this->redirect('/admin/categories');
     }

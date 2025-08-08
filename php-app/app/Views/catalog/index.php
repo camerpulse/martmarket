@@ -1,5 +1,5 @@
 <?php
-$title = 'Browse Products';
+// $title is set by controller
 $categories = $categories ?? [];
 $products = $products ?? [];
 $q = $q ?? '';
@@ -26,6 +26,12 @@ $pages = (int)($pages ?? 1);
     <button class="btn" type="submit">Filter</button>
   </div>
 </form>
+
+<nav aria-label="Browse by category" style="margin:8px 0">
+  <?php foreach($categories as $c): ?>
+    <a class="btn secondary" href="/category/<?= htmlspecialchars($c['slug']) ?>" style="margin-right:6px;margin-bottom:6px;display:inline-block"><?= htmlspecialchars($c['name']) ?></a>
+  <?php endforeach; ?>
+</nav>
 
 <?php if(!$products): ?>
   <p>No products found.</p>

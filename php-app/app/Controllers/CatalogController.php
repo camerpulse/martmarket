@@ -10,7 +10,21 @@ class CatalogController extends Controller
 public function index(): string
     {
         $categories = Category::all();
-        $categoryId = isset($_GET['category']) ? (int)$_GET['category'] : null;
+        $categoryParam = $_GET['category'] ?? null;
+        $categorySlug = isset($_GET['category_slug']) ? trim((string)$_GET['category_slug']) : null;
+        $activeCategory = null;
+        $categoryId = null;
+        if ($categorySlug) {
+            $activeCategory = Category::findBySlug($categorySlug);
+            if ($activeCategory) { $categoryId = (int)$activeCategory['id']; }
+        } elseif ($categoryParam !== null && $categoryParam !== '') {
+            if (ctype_digit((string)$categoryParam)) {
+                $categoryId = (int)$categoryParam;
+            } else {
+                $activeCategory = Category::findBySlug(trim((string)$categoryParam));
+                if ($activeCategory) { $categoryId = (int)$activeCategory['id']; }
+            }
+        }
         $q = isset($_GET['q']) ? trim((string)$_GET['q']) : null;
         $page = max(1, (int)($_GET['page'] ?? 1));
         $perPage = 24;
@@ -18,13 +32,19 @@ public function index(): string
         $offset = ($page - 1) * $perPage;
         $products = Product::search($categoryId, $q, $perPage, $offset);
         $pages = (int)max(1, ceil($total / $perPage));
+        $title = $activeCategory ? ('Browse ' . $activeCategory['name']) : 'Browse Products';
+        if ($q) { $title .= ' – Search: ' . $q; }
+        $metaDescription = $activeCategory
+            ? ('Browse ' . $activeCategory['name'] . ' on MartMarket. Secure Bitcoin escrow, anonymous shopping.')
+            : 'Browse products on MartMarket with secure Bitcoin escrow. Search, filter categories, and shop anonymously.';
         return $this->view('catalog/index', [
-            'title' => 'Browse Products',
-            'metaDescription' => 'Browse products on MartMarket with secure Bitcoin escrow. Search, filter categories, and shop anonymously.',
+            'title' => $title,
+            'metaDescription' => $metaDescription,
             'categories' => $categories,
             'products' => $products,
             'q' => $q,
             'categoryId' => $categoryId,
+            'activeCategory' => $activeCategory,
             'page' => $page,
             'pages' => $pages,
             'total' => $total

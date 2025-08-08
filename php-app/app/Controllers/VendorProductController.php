@@ -32,7 +32,7 @@ class VendorProductController extends Controller
         if (!$vendor) { return $this->redirect('/vendor/dashboard'); }
 
         $title = trim((string)($_POST['title'] ?? ''));
-        $slug = strtolower(preg_replace('/[^a-z0-9-]+/i', '-', $title)) . '-' . substr(bin2hex(random_bytes(3)),0,6);
+        $slug = \Core\Slug::unique('products', 'slug', $title);
         $desc = trim((string)($_POST['description'] ?? '')) ?: null;
         $categoryId = (int)($_POST['category_id'] ?? 0) ?: null;
         $priceBtc = (string)($_POST['price_btc'] ?? '0');
@@ -89,7 +89,8 @@ class VendorProductController extends Controller
         if (!$existing || (int)$existing['vendor_id'] !== (int)$vendor['id']) { http_response_code(404); return 'Product not found'; }
 
         $title = trim((string)($_POST['title'] ?? $existing['title']));
-        $slug = trim((string)($_POST['slug'] ?? $existing['slug'])) ?: $existing['slug'];
+        $slugInput = trim((string)($_POST['slug'] ?? ''));
+        $slug = $slugInput !== '' ? \Core\Slug::generate($slugInput) : $existing['slug'];
         $desc = trim((string)($_POST['description'] ?? '')) ?: null;
         $categoryId = (int)($_POST['category_id'] ?? 0) ?: null;
         $priceBtc = (string)($_POST['price_btc'] ?? (string)$existing['price_btc']);

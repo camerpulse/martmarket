@@ -18,6 +18,7 @@ require_once $baseDir . '/core/Controller.php';
 require_once $baseDir . '/core/View.php';
 require_once $baseDir . '/core/Logger.php';
 require_once $baseDir . '/core/RateLimiter.php';
+require_once $baseDir . '/core/Slug.php';
 
 use Core\Config;
 use Core\Session;

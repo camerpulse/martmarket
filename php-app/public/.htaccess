@@ -7,6 +7,7 @@ RewriteRule ^(app|core|config|vendor)/ - [F,L]
 # Pretty URLs for products and vendors
 RewriteRule ^product/([A-Za-z0-9\-]+)$ /product/view?slug=$1 [QSA,L]
 RewriteRule ^vendor/([a-z0-9\-]+)-([0-9]+)$ /vendor/view?id=$2 [QSA,L]
+RewriteRule ^category/([A-Za-z0-9\-]+)$ /catalog?category_slug=$1 [QSA,L]
 
 # Sitemap
 RewriteRule ^sitemap\.xml$ /sitemap.php [QSA,L]

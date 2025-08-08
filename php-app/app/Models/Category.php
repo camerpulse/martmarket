@@ -16,4 +16,12 @@ class Category
         DB::pdo()->prepare('INSERT INTO categories (name, slug, parent_id) VALUES (?, ?, ?)')
             ->execute([$name, $slug, $parentId]);
     }
+
+    public static function findBySlug(string $slug): ?array
+    {
+        $stmt = DB::pdo()->prepare('SELECT * FROM categories WHERE slug = ? LIMIT 1');
+        $stmt->execute([$slug]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
 }
