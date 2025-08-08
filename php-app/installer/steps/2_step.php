@@ -5,6 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     'name' => trim($_POST['name'] ?? 'MartMarket'),
     'base_url' => trim($_POST['base_url'] ?? ''),
     'timezone' => trim($_POST['timezone'] ?? 'UTC'),
+    'debug' => isset($_POST['debug']),
   ];
   $_SESSION['security'] = [
     'app_key_base64' => base64_encode(random_bytes(32))
@@ -33,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label>Site Name</label><input name="name" value="<?= h($_SESSION['app']['name'] ?? 'MartMarket') ?>" required>
     <label>Base URL (e.g., https://example.com)</label><input name="base_url" value="<?= h($_SESSION['app']['base_url'] ?? '') ?>" required>
     <label>Timezone</label><input name="timezone" value="<?= h($_SESSION['app']['timezone'] ?? 'UTC') ?>" required>
+    <label><input type="checkbox" name="debug" value="1" <?= !empty($_SESSION['app']['debug']) ? 'checked' : '' ?>> Enable debug mode (development)</label>
   </div>
   <div class="card">
     <h3>Email (optional)</h3>

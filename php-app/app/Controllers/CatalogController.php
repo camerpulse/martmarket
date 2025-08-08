@@ -20,6 +20,16 @@ public function index(): string
         } elseif ($categoryParam !== null && $categoryParam !== '') {
             if (ctype_digit((string)$categoryParam)) {
                 $categoryId = (int)$categoryParam;
+                // Redirect legacy numeric category param to slug URL for SEO
+                $cat = Category::find($categoryId);
+                if ($cat) {
+                    $qs = [];
+                    if ($q) { $qs['q'] = $q; }
+                    if ($page > 1) { $qs['page'] = $page; }
+                    $qsStr = $qs ? ('?' . http_build_query($qs)) : '';
+                    header('Location: /category/' . rawurlencode($cat['slug']) . $qsStr, true, 301);
+                    exit;
+                }
             } else {
                 $activeCategory = Category::findBySlug(trim((string)$categoryParam));
                 if ($activeCategory) { $categoryId = (int)$activeCategory['id']; }
@@ -55,6 +65,14 @@ public function index(): string
     {
         $slug = isset($_GET['slug']) ? trim((string)$_GET['slug']) : null;
         $id = (int)($_GET['id'] ?? 0);
+        // Legacy ID-based URL: redirect to canonical slug URL when possible
+        if ($id > 0 && !$slug) {
+            $p = \App\Models\Product::find($id);
+            if ($p && !empty($p['slug'])) {
+                header('Location: /product/' . rawurlencode($p['slug']), true, 301);
+                exit;
+            }
+        }
         $product = null;
         if ($slug) {
             $product = Product::findBySlug($slug);

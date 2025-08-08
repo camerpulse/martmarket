@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $root = dirname($installerRoot);
   // write config files
   if (!is_dir($root . '/config')) mkdir($root . '/config', 0755, true);
-  file_put_contents($root . '/config/app.php', "<?php\nreturn [\n  'app' => [\n    'name' => '".addslashes($_SESSION['app']['name'])."',\n    'base_url' => '".addslashes($_SESSION['app']['base_url'])."',\n    'timezone' => '".addslashes($_SESSION['app']['timezone'])."'\n  ]\n];\n");
+  file_put_contents($root . '/config/app.php', "<?php\nreturn [\n  'app' => [\n    'name' => '".addslashes($_SESSION['app']['name'])."',\n    'base_url' => '".addslashes($_SESSION['app']['base_url'])."',\n    'timezone' => '".addslashes($_SESSION['app']['timezone'])."',\n    'debug' => ".(!empty($_SESSION['app']['debug']) ? 'true' : 'false')."\n  ]\n];\n");
   file_put_contents($root . '/config/database.php', "<?php\nreturn [\n  'db' => [\n    'host' => '".addslashes($_SESSION['db']['host'])."',\n    'port' => ".(int)$_SESSION['db']['port'].",\n    'database' => '".addslashes($_SESSION['db']['database'])."',\n    'user' => '".addslashes($_SESSION['db']['user'])."',\n    'password' => '".addslashes($_SESSION['db']['password'])."'\n  ]\n];\n");
   file_put_contents($root . '/config/security.php', "<?php\nreturn [\n  'security' => [\n    'app_key_base64' => '".$_SESSION['security']['app_key_base64']."'\n  ]\n];\n");
   // optional configs

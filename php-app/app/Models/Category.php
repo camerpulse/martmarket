@@ -24,4 +24,12 @@ class Category
         $row = $stmt->fetch();
         return $row ?: null;
     }
+
+    public static function find(int $id): ?array
+    {
+        $stmt = DB::pdo()->prepare('SELECT * FROM categories WHERE id = ? LIMIT 1');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
 }
