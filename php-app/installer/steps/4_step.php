@@ -23,6 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sql = file_get_contents($installerRoot . '/migrations.sql');
     $pdo->exec($sql);
 
+    // seed default category if none exists
+    $cnt = (int)$pdo->query('SELECT COUNT(*) FROM categories')->fetchColumn();
+    if ($cnt === 0) {
+      $pdo->prepare('INSERT INTO categories (name, slug) VALUES (?, ?)')->execute(['General', 'general']);
+    }
+
     // create admin user
     $hash = password_hash($_SESSION['admin']['password'], PASSWORD_ARGON2ID);
     $code = substr(bin2hex(random_bytes(8)), 0, 16);

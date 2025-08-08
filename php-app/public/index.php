@@ -40,6 +40,14 @@ Config::load($baseDir . '/config/security.php');
 Config::load($baseDir . '/config/mail.php');
 Config::load($baseDir . '/config/payments.php');
 
+// Development error visibility (enable when app.debug is true or ?debug=1)
+$debug = (bool) (\Core\Config::get('app.debug', false) || ($_GET['debug'] ?? null) === '1');
+if ($debug) {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+}
+
 // Error & exception handling
 set_error_handler(function (int $severity, string $message, string $file, int $line) {
     \Core\Logger::log('php', 'error', 'PHP error', [
@@ -74,7 +82,7 @@ set_exception_handler(function ($e) {
 
 // Security headers
 $https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
-$csp = Config::get('security.csp', "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://blockstream.info https://blockstream.info/testnet; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
+$csp = Config::get('security.csp', "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://blockstream.info https://blockstream.info/testnet; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
 header('Content-Security-Policy: ' . $csp);
 header('X-Frame-Options: SAMEORIGIN');
 header('X-Content-Type-Options: nosniff');
@@ -85,9 +93,6 @@ if ($https) { header('Strict-Transport-Security: max-age=31536000; includeSubDom
 $router = new Router();
 
 // Routes
-$router->get('/', function() {
-    echo \Core\View::render('catalog/index', ['title' => 'Browse Products']);
-});
 
 // Auth routes
 require_once $baseDir . '/app/Controllers/AuthController.php';
@@ -136,6 +141,7 @@ $adminAffiliate = new App\Controllers\Admin\AffiliateAdminController();
 
 // Home -> Catalog
 $router->get('/', [$catalog, 'index']);
+$router->get('/home', function(){ header('Location: /', true, 302); exit; });
 
 $router->get('/login', [$auth, 'loginForm']);
 $router->post('/login', [$auth, 'login']);
