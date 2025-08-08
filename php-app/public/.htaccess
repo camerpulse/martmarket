@@ -1,4 +1,8 @@
+Options -Indexes
 RewriteEngine On
+
+# Block direct access to sensitive folders when app is under public_html
+RewriteRule ^(app|core|config|vendor)/ - [F,L]
 
 # Pretty URLs for products and vendors
 RewriteRule ^product/([A-Za-z0-9\-]+)$ /product/view?slug=$1 [QSA,L]

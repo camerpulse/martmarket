@@ -3,20 +3,21 @@
 declare(strict_types=1);
 
 // Use Composer autoload if available
-$vendorAutoload = __DIR__ . '/../vendor/autoload.php';
+$vendorAutoload = is_file(__DIR__ . '/../vendor/autoload.php') ? (__DIR__ . '/../vendor/autoload.php') : (__DIR__ . '/vendor/autoload.php');
 if (file_exists($vendorAutoload)) {
     require $vendorAutoload;
 }
 
-require_once __DIR__ . '/../core/Config.php';
-require_once __DIR__ . '/../core/Session.php';
-require_once __DIR__ . '/../core/Router.php';
-require_once __DIR__ . '/../core/DB.php';
-require_once __DIR__ . '/../core/Csrf.php';
-require_once __DIR__ . '/../core/Controller.php';
-require_once __DIR__ . '/../core/View.php';
-require_once __DIR__ . '/../core/Logger.php';
-require_once __DIR__ . '/../core/RateLimiter.php';
+$baseDir = is_file(__DIR__ . '/../core/Config.php') ? dirname(__DIR__) : __DIR__;
+require_once $baseDir . '/core/Config.php';
+require_once $baseDir . '/core/Session.php';
+require_once $baseDir . '/core/Router.php';
+require_once $baseDir . '/core/DB.php';
+require_once $baseDir . '/core/Csrf.php';
+require_once $baseDir . '/core/Controller.php';
+require_once $baseDir . '/core/View.php';
+require_once $baseDir . '/core/Logger.php';
+require_once $baseDir . '/core/RateLimiter.php';
 
 use Core\Config;
 use Core\Session;
@@ -25,18 +26,18 @@ use Core\Router;
 Session::start();
 
 // Redirect to installer if config not present
-if (!file_exists(__DIR__ . '/../config/app.php') || !file_exists(__DIR__ . '/../config/database.php') || !file_exists(__DIR__ . '/../config/security.php')) {
+if (!file_exists($baseDir . '/config/app.php') || !file_exists($baseDir . '/config/database.php') || !file_exists($baseDir . '/config/security.php')) {
     header('Location: /installer/');
     exit;
 }
 
 // Load configs
-Config::load(__DIR__ . '/../config/app.php');
-Config::load(__DIR__ . '/../config/database.php');
-Config::load(__DIR__ . '/../config/security.php');
+Config::load($baseDir . '/config/app.php');
+Config::load($baseDir . '/config/database.php');
+Config::load($baseDir . '/config/security.php');
 // Optional configs
-Config::load(__DIR__ . '/../config/mail.php');
-Config::load(__DIR__ . '/../config/payments.php');
+Config::load($baseDir . '/config/mail.php');
+Config::load($baseDir . '/config/payments.php');
 
 // Security headers
 $https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
@@ -56,27 +57,27 @@ $router->get('/', function() {
 });
 
 // Auth routes
-require_once __DIR__ . '/../app/Controllers/AuthController.php';
-require_once __DIR__ . '/../app/Controllers/ProfileController.php';
-require_once __DIR__ . '/../app/Controllers/VendorController.php';
-require_once __DIR__ . '/../app/Controllers/VendorProductController.php';
-require_once __DIR__ . '/../app/Controllers/CatalogController.php';
-require_once __DIR__ . '/../app/Controllers/OrderController.php';
-require_once __DIR__ . '/../app/Controllers/MessageController.php';
-require_once __DIR__ . '/../app/Controllers/ReviewsController.php';
-require_once __DIR__ . '/../app/Controllers/DisputeController.php';
-require_once __DIR__ . '/../app/Controllers/WishlistController.php';
-require_once __DIR__ . '/../app/Controllers/Admin/VendorAdminController.php';
-require_once __DIR__ . '/../app/Controllers/Admin/CategoryAdminController.php';
-require_once __DIR__ . '/../app/Controllers/Admin/UserAdminController.php';
-require_once __DIR__ . '/../app/Controllers/Admin/OrderAdminController.php';
-require_once __DIR__ . '/../app/Controllers/CheckoutController.php';
-require_once __DIR__ . '/../app/Controllers/Admin/PaymentSettingsController.php';
-require_once __DIR__ . '/../app/Controllers/Admin/DisputeAdminController.php';
-require_once __DIR__ . '/../app/Controllers/Admin/AdminDashboardController.php';
-require_once __DIR__ . '/../app/Controllers/Admin/TranslationAdminController.php';
-require_once __DIR__ . '/../app/Controllers/Admin/AffiliateAdminController.php';
-require_once __DIR__ . '/../app/Controllers/CronController.php';
+require_once $baseDir . '/app/Controllers/AuthController.php';
+require_once $baseDir . '/app/Controllers/ProfileController.php';
+require_once $baseDir . '/app/Controllers/VendorController.php';
+require_once $baseDir . '/app/Controllers/VendorProductController.php';
+require_once $baseDir . '/app/Controllers/CatalogController.php';
+require_once $baseDir . '/app/Controllers/OrderController.php';
+require_once $baseDir . '/app/Controllers/MessageController.php';
+require_once $baseDir . '/app/Controllers/ReviewsController.php';
+require_once $baseDir . '/app/Controllers/DisputeController.php';
+require_once $baseDir . '/app/Controllers/WishlistController.php';
+require_once $baseDir . '/app/Controllers/Admin/VendorAdminController.php';
+require_once $baseDir . '/app/Controllers/Admin/CategoryAdminController.php';
+require_once $baseDir . '/app/Controllers/Admin/UserAdminController.php';
+require_once $baseDir . '/app/Controllers/Admin/OrderAdminController.php';
+require_once $baseDir . '/app/Controllers/CheckoutController.php';
+require_once $baseDir . '/app/Controllers/Admin/PaymentSettingsController.php';
+require_once $baseDir . '/app/Controllers/Admin/DisputeAdminController.php';
+require_once $baseDir . '/app/Controllers/Admin/AdminDashboardController.php';
+require_once $baseDir . '/app/Controllers/Admin/TranslationAdminController.php';
+require_once $baseDir . '/app/Controllers/Admin/AffiliateAdminController.php';
+require_once $baseDir . '/app/Controllers/CronController.php';
 
 $auth = new App\Controllers\AuthController();
 $profile = new App\Controllers\ProfileController();
