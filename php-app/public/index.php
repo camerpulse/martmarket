@@ -99,6 +99,7 @@ require_once $baseDir . '/app/Controllers/MessageController.php';
 require_once $baseDir . '/app/Controllers/ReviewsController.php';
 require_once $baseDir . '/app/Controllers/DisputeController.php';
 require_once $baseDir . '/app/Controllers/WishlistController.php';
+require_once $baseDir . '/app/Controllers/ReferralController.php';
 require_once $baseDir . '/app/Controllers/Admin/VendorAdminController.php';
 require_once $baseDir . '/app/Controllers/Admin/CategoryAdminController.php';
 require_once $baseDir . '/app/Controllers/Admin/UserAdminController.php';
