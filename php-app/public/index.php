@@ -39,6 +39,38 @@ Config::load($baseDir . '/config/security.php');
 Config::load($baseDir . '/config/mail.php');
 Config::load($baseDir . '/config/payments.php');
 
+// Error & exception handling
+set_error_handler(function (int $severity, string $message, string $file, int $line) {
+    \Core\Logger::log('php', 'error', 'PHP error', [
+        'severity' => $severity,
+        'message' => $message,
+        'file' => $file,
+        'line' => $line,
+        'uri' => $_SERVER['REQUEST_URI'] ?? null,
+    ]);
+    if (\Core\Config::get('app.debug', false)) {
+        http_response_code(500);
+        echo "<pre>PHP error [$severity] $message in $file:$line</pre>";
+    }
+    return false; // allow normal PHP handling too
+});
+
+set_exception_handler(function ($e) {
+    \Core\Logger::log('php', 'error', 'Unhandled exception', [
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'uri' => $_SERVER['REQUEST_URI'] ?? null,
+    ]);
+    if (\Core\Config::get('app.debug', false)) {
+        http_response_code(500);
+        echo '<pre>' . htmlspecialchars((string)$e) . '</pre>';
+    } else {
+        http_response_code(500);
+        echo 'An error occurred. Please try again later.';
+    }
+});
+
 // Security headers
 $https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
 $csp = Config::get('security.csp', "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://blockstream.info https://blockstream.info/testnet; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
