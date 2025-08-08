@@ -1,0 +1,11 @@
+# Root .htaccess to route all traffic to /public and block sensitive folders
+Options -Indexes
+RewriteEngine On
+
+# Block direct access to sensitive folders if the domain points to this root
+RewriteRule ^(app|core|config|installer|storage|vendor)/ - [F,L]
+
+# If not already in /public, send everything there
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^$ public/ [L]
+RewriteRule (.*) public/$1 [L]
