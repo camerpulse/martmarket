@@ -2,6 +2,9 @@
 Options -Indexes
 RewriteEngine On
 
+# Allow installer access via /installer by rewriting to /public/installer
+RewriteRule ^installer/?$ public/installer/ [L]
+
 # Block direct access to sensitive folders if the domain points to this root
 RewriteRule ^(app|core|config|installer|storage|vendor)/ - [F,L]
 
