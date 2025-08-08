@@ -15,6 +15,8 @@ require_once __DIR__ . '/../core/DB.php';
 require_once __DIR__ . '/../core/Csrf.php';
 require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../core/View.php';
+require_once __DIR__ . '/../core/Logger.php';
+require_once __DIR__ . '/../core/RateLimiter.php';
 
 use Core\Config;
 use Core\Session;
@@ -36,10 +38,15 @@ Config::load(__DIR__ . '/../config/security.php');
 Config::load(__DIR__ . '/../config/mail.php');
 Config::load(__DIR__ . '/../config/payments.php');
 
-// Basic security headers
+// Security headers
+$https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+$csp = Config::get('security.csp', "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://blockstream.info https://blockstream.info/testnet; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
+header('Content-Security-Policy: ' . $csp);
 header('X-Frame-Options: SAMEORIGIN');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
+header("Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), vr=()");
+if ($https) { header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload'); }
 
 $router = new Router();
 

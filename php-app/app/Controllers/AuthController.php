@@ -1,17 +1,19 @@
 <?php
-namespace App\Controllers;
+namespace App.Controllers;
 
-use Core\Controller;
-use Core\Csrf;
-use Core\Session;
-use Core\Config;
-use Core\DB;
-use App\Models\User;
-use App\Models\Profile;
-use App\Models\TotpSecret;
-use App\Models\Referral as ReferralModel;
-use App\Services\TOTPService;
-use App\Models\Vendor;
+use Core.Controller;
+use Core.Csrf;
+use Core.Session;
+use Core.Config;
+use Core.DB;
+use Core.RateLimiter;
+use Core.Logger;
+use App.Models.User;
+use App.Models.Profile;
+use App.Models.TotpSecret;
+use App.Models.Referral as ReferralModel;
+use App.Services.TOTPService;
+use App.Models.Vendor;
 
 class AuthController extends Controller
 {
@@ -20,15 +22,26 @@ class AuthController extends Controller
         return $this->view('auth/login', ['title' => 'Login']);
     }
 
-    public function login(): string
+public function login(): string
     {
         if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $rl = new RateLimiter('login:' . $ip, 5, 300); // 5 attempts per 5 minutes
+        if ($rl->tooManyAttempts()) {
+            header('Retry-After: ' . max(1, $rl->resetAt() - time()));
+            http_response_code(429);
+            Logger::log('auth', 'warning', 'Rate limit exceeded for login', ['ip' => $ip]);
+            return $this->view('auth/login', ['error' => 'Too many attempts. Please try again later.']);
+        }
+        $rl->hit();
+
         $email = trim((string)($_POST['email'] ?? ''));
         $password = (string)($_POST['password'] ?? '');
         $code = trim((string)($_POST['totp'] ?? ''));
 
         $user = User::findByEmail($email);
         if (!$user || !password_verify($password, $user['password_hash'])) {
+            Logger::log('auth', 'warning', 'Invalid login credentials', ['ip' => $ip, 'email' => $email]);
             http_response_code(401);
             return $this->view('auth/login', ['error' => 'Invalid credentials']);
         }
@@ -51,6 +64,7 @@ class AuthController extends Controller
         Session::regenerate();
         $_SESSION['uid'] = (int)$user['id'];
         $_SESSION['role'] = $user['role'];
+        Logger::log('auth', 'info', 'Login success', ['ip' => $ip, 'uid' => (int)$user['id']]);
         return $this->redirect('/account/profile');
     }
 
@@ -143,9 +157,18 @@ if (($role === 'vendor')) { \App\Models\Vendor::createForUser($uid); }
         return $this->view('auth/forgot', ['title' => 'Forgot Password']);
     }
 
-    public function forgot(): string
+public function forgot(): string
     {
         if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $rl = new RateLimiter('forgot:' . $ip, 3, 900); // 3 per 15 minutes
+        if ($rl->tooManyAttempts()) {
+            header('Retry-After: ' . max(1, $rl->resetAt() - time()));
+            http_response_code(429);
+            Logger::log('auth', 'warning', 'Rate limit exceeded for password reset', ['ip' => $ip]);
+            return $this->view('auth/forgot', ['title' => 'Forgot Password', 'error' => 'Too many requests. Try again later.']);
+        }
+        $rl->hit();
         $email = trim((string)($_POST['email'] ?? ''));
         $user = $email ? User::findByEmail($email) : null;
         if ($user) {
@@ -157,6 +180,7 @@ if (($role === 'vendor')) { \App\Models\Vendor::createForUser($uid); }
             $link = ($base ?: ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']==='on' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost'))) . '/password/reset?token=' . urlencode($token);
             $body = '<p>Use the link below to reset your password. This link expires in 1 hour.</p><p><a href="'.$link.'">Reset Password</a></p>';
             \App\Services\MailService::send($email, $user['email'], 'Reset your MartMarket password', $body);
+            Logger::log('auth', 'info', 'Password reset initiated', ['ip' => $ip, 'uid' => (int)$user['id']]);
         }
         // Always show success to avoid user enumeration
         return $this->view('auth/forgot', ['title' => 'Forgot Password', 'success' => true]);
