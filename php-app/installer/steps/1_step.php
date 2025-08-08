@@ -23,6 +23,8 @@ $fsTargets = [
   'logs' => $root . '/storage/logs',
   'uploads' => $root . '/storage/uploads',
   'products' => $root . '/storage/uploads/products',
+  'public_uploads' => $root . '/public/uploads',
+  'public_products' => $root . '/public/uploads/products',
 ];
 $fsStatus = [];
 foreach ($fsTargets as $key => $path) {
@@ -81,6 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <li>/storage/logs: <strong><?= $fsStatus['logs'] ? 'Writable' : 'Not writable' ?></strong></li>
     <li>/storage/uploads: <strong><?= $fsStatus['uploads'] ? 'Writable' : 'Not writable' ?></strong></li>
     <li>/storage/uploads/products: <strong><?= $fsStatus['products'] ? 'Writable' : 'Not writable' ?></strong></li>
+    <li>/public/uploads: <strong><?= $fsStatus['public_uploads'] ? 'Writable' : 'Not writable' ?></strong></li>
+    <li>/public/uploads/products: <strong><?= $fsStatus['public_products'] ? 'Writable' : 'Not writable' ?></strong></li>
   </ul>
   <?php if(!$allGood || !$fsAllGood): ?><p style="color:#ff6b6b">Please fix the missing requirements and make folders writable before continuing.</p><?php endif; ?>
 </div>

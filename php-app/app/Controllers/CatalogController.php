@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use Core\Controller;
+use Core\Config;
 use App\Models\Category;
 use App\Models\Product;
 
@@ -47,9 +48,17 @@ public function index(): string
         $metaDescription = $activeCategory
             ? ('Browse ' . $activeCategory['name'] . ' on MartMarket. Secure Bitcoin escrow, anonymous shopping.')
             : 'Browse products on MartMarket with secure Bitcoin escrow. Search, filter categories, and shop anonymously.';
+        // Canonical URL prefers friendly category slug path when available
+        $baseUrl = rtrim(Config::get('app.base_url', ''), '/');
+        if ($baseUrl === '') {
+            $scheme = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')) ? 'https' : 'http';
+            $baseUrl = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+        }
+        $canonical = $baseUrl . ($activeCategory ? ('/category/' . $activeCategory['slug']) : '/catalog');
         return $this->view('catalog/index', [
             'title' => $title,
             'metaDescription' => $metaDescription,
+            'canonical' => $canonical,
             'categories' => $categories,
             'products' => $products,
             'q' => $q,

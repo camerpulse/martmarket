@@ -9,7 +9,7 @@ namespace App\Views; // Not a real namespace, but this file is included to layou
   <title><?= htmlspecialchars($title ?? 'MartMarket') ?></title>
   <?php $metaDescription = $metaDescription ?? 'MartMarket anonymous marketplace – browse products, vendors, and secure escrow with Bitcoin payments.'; ?>
   <meta name="description" content="<?= htmlspecialchars($metaDescription) ?>">
-  <?php $canonical = (($_SERVER['HTTPS'] ?? 'off') === 'on' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($_SERVER['REQUEST_URI'] ?? '/'); ?>
+  <?php $canonical = isset($canonical) && $canonical ? $canonical : ( (($_SERVER['HTTPS'] ?? 'off') === 'on' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($_SERVER['REQUEST_URI'] ?? '/') ); ?>
   <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
   <meta property="og:title" content="<?= htmlspecialchars($title ?? 'MartMarket') ?>">
   <meta property="og:description" content="<?= htmlspecialchars($metaDescription) ?>">
