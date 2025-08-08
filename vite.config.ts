@@ -1,13 +1,23 @@
 // Placeholder Vite configuration to satisfy tooling after archiving the React app.
 // This file is intentionally minimal and not used by the PHP application.
 import { defineConfig } from 'vite'
+import { componentTagger } from 'lovable-tagger'
+import path from 'node:path'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   server: {
+    host: '::',
     port: 8080,
   },
-  plugins: [],
-  // Prevent Vite from scanning TS/JS entries to avoid legacy React typecheck noise
+  plugins: [
+    mode === 'development' && componentTagger(),
+  ].filter(Boolean),
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  // Keep build minimal to avoid legacy React checks
   optimizeDeps: {
     entries: [],
   },
@@ -16,4 +26,4 @@ export default defineConfig({
       input: 'index.html',
     },
   },
-})
+}))
