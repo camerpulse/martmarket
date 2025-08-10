@@ -207,8 +207,13 @@ public function forgot(): string
             return $this->view('auth/reset', ['title' => 'Reset Password', 'error' => 'Invalid or expired link.']);
         }
         $hash = \Core\Hash::make($pass);
-        DB::pdo()->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([$hash, (int)$row['user_id']]);
-        \App\Models\PasswordReset::consume($token);
+        try {
+            DB::pdo()->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([$hash, (int)$row['user_id']]);
+            \App\Models\PasswordReset::consume($token);
+        } catch (\PDOException $e) {
+            Logger::log('database', 'error', 'Password reset update failed', ['error' => $e->getMessage()]);
+            return $this->view('auth/reset', ['title' => 'Reset Password', 'token' => $token, 'error' => 'Unexpected error. Please try again.']);
+        }
         return $this->redirect('/login');
     }
 

@@ -61,25 +61,39 @@ class AffiliateAdminController extends Controller
 
     private function allPayouts(): array
     {
-        $pdo = \Core\DB::pdo();
-        $stmt = $pdo->query('SELECT ap.*, u.email FROM affiliate_payouts ap JOIN users u ON u.id = ap.referrer_user_id ORDER BY ap.created_at DESC');
-        return $stmt->fetchAll();
+        try {
+            $pdo = \Core\DB::pdo();
+            $stmt = $pdo->query('SELECT ap.*, u.email FROM affiliate_payouts ap JOIN users u ON u.id = ap.referrer_user_id ORDER BY ap.created_at DESC');
+            return $stmt->fetchAll();
+        } catch (\PDOException $e) {
+            \Core\Logger::log('database', 'error', 'Fetch affiliate payouts failed', ['error' => $e->getMessage()]);
+            return [];
+        }
     }
 
     private function findPayout(int $id): ?array
     {
-        $stmt = \Core\DB::pdo()->prepare('SELECT * FROM affiliate_payouts WHERE id = ?');
-        $stmt->execute([$id]);
-        $row = $stmt->fetch();
-        return $row ?: null;
+        try {
+            $stmt = \Core\DB::pdo()->prepare('SELECT * FROM affiliate_payouts WHERE id = ?');
+            $stmt->execute([$id]);
+            $row = $stmt->fetch();
+            return $row ?: null;
+        } catch (\PDOException $e) {
+            \Core\Logger::log('database', 'error', 'Find affiliate payout failed', ['error' => $e->getMessage(), 'id' => $id]);
+            return null;
+        }
     }
 
     private function updatePayoutStatus(int $id, string $status): void
     {
-        if ($status === 'paid') {
-            \Core\DB::pdo()->prepare('UPDATE affiliate_payouts SET status = ?, paid_at = CURRENT_TIMESTAMP WHERE id = ?')->execute([$status, $id]);
-        } else {
-            \Core\DB::pdo()->prepare('UPDATE affiliate_payouts SET status = ? WHERE id = ?')->execute([$status, $id]);
+        try {
+            if ($status === 'paid') {
+                \Core\DB::pdo()->prepare('UPDATE affiliate_payouts SET status = ?, paid_at = CURRENT_TIMESTAMP WHERE id = ?')->execute([$status, $id]);
+            } else {
+                \Core\DB::pdo()->prepare('UPDATE affiliate_payouts SET status = ? WHERE id = ?')->execute([$status, $id]);
+            }
+        } catch (\PDOException $e) {
+            \Core\Logger::log('database', 'error', 'Update affiliate payout status failed', ['error' => $e->getMessage(), 'id' => $id, 'status' => $status]);
         }
     }
 }

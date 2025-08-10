@@ -184,7 +184,13 @@ class VendorProductController extends Controller
         }
 
         @chmod($path, 0644);
-        \Core\DB::pdo()->prepare('INSERT INTO product_images (product_id, image_path) VALUES (?, ?)')
-            ->execute([$productId, '/uploads/products/' . $name]);
+        try {
+            \Core\DB::pdo()->prepare('INSERT INTO product_images (product_id, image_path) VALUES (?, ?)')
+                ->execute([$productId, '/uploads/products/' . $name]);
+        } catch (\PDOException $e) {
+            @unlink($path);
+            \Core\Logger::log('uploads', 'error', 'Image record insert failed', ['error' => $e->getMessage()]);
+            return;
+        }
     }
 }
