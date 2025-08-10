@@ -119,19 +119,62 @@ class VendorProductController extends Controller
         if (empty($_FILES['image']['name'])) return;
         $f = $_FILES['image'];
         if ($f['error'] !== UPLOAD_ERR_OK) return;
+        if (!is_uploaded_file($f['tmp_name'])) return;
         if ($f['size'] > 2*1024*1024) return; // 2MB
-        $fi = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($fi, $f['tmp_name']);
-        finfo_close($fi);
-        if (!in_array($mime, ['image/jpeg','image/png'])) return;
-        $ext = $mime === 'image/png' ? 'png' : 'jpg';
+
+        $imageType = function_exists('exif_imagetype') ? @exif_imagetype($f['tmp_name']) : false;
+        if ($imageType === IMAGETYPE_JPEG) {
+            $ext = 'jpg';
+        } elseif ($imageType === IMAGETYPE_PNG) {
+            $ext = 'png';
+        } else {
+            // Fallback MIME check
+            $fi = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = $fi ? @finfo_file($fi, $f['tmp_name']) : '';
+            if ($fi) finfo_close($fi);
+            if ($mime === 'image/jpeg') { $ext = 'jpg'; $imageType = IMAGETYPE_JPEG; }
+            elseif ($mime === 'image/png') { $ext = 'png'; $imageType = IMAGETYPE_PNG; }
+            else { return; }
+        }
+
+        // Validate dimensions
+        $dim = @getimagesize($f['tmp_name']);
+        if (!$dim) return;
+        [$w, $h] = $dim;
+        if ($w < 1 || $h < 1 || $w > 6000 || $h > 6000) return;
+
         $dir = dirname(__DIR__,2) . '/public/uploads/products/';
         if (!is_dir($dir)) { @mkdir($dir, 0755, true); }
         $name = bin2hex(random_bytes(12)) . '.' . $ext;
         $path = $dir . $name;
-        if (move_uploaded_file($f['tmp_name'], $path)) {
-            \Core\DB::pdo()->prepare('INSERT INTO product_images (product_id, image_path) VALUES (?, ?)')
-                ->execute([$productId, '/uploads/products/' . $name]);
+
+        // Re-encode to strip metadata and ensure valid image structure (if GD available)
+        $reencoded = false;
+        if (extension_loaded('gd')) {
+            if ($imageType === IMAGETYPE_JPEG && function_exists('imagecreatefromjpeg')) {
+                $src = @imagecreatefromjpeg($f['tmp_name']);
+                if ($src) {
+                    @imagejpeg($src, $path, 85);
+                    imagedestroy($src);
+                    $reencoded = true;
+                }
+            } elseif ($imageType === IMAGETYPE_PNG && function_exists('imagecreatefrompng')) {
+                $src = @imagecreatefrompng($f['tmp_name']);
+                if ($src) {
+                    imagesavealpha($src, true);
+                    @imagepng($src, $path, 6);
+                    imagedestroy($src);
+                    $reencoded = true;
+                }
+            }
         }
+
+        if (!$reencoded) {
+            if (!move_uploaded_file($f['tmp_name'], $path)) { return; }
+        }
+
+        @chmod($path, 0644);
+        \Core\DB::pdo()->prepare('INSERT INTO product_images (product_id, image_path) VALUES (?, ?)')
+            ->execute([$productId, '/uploads/products/' . $name]);
     }
 }
