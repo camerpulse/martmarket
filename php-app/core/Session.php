@@ -7,7 +7,7 @@ class Session
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_set_cookie_params([
-                'lifetime' => 0,
+                'lifetime' => 86400, // 24 hours
                 'path' => '/',
                 'domain' => '',
                 'secure' => isset($_SERVER['HTTPS']),
