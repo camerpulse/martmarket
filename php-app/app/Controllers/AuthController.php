@@ -55,7 +55,11 @@ public function login(): string
         }
 
         // Rehash if needed
+try {
         User::updatePasswordIfRehashNeeded((int)$user['id'], $password, $user['password_hash']);
+        } catch (\PDOException $e) {
+            Logger::log('database', 'error', 'Password rehash failed', ['uid' => (int)$user['id'], 'error' => $e->getMessage()]);
+        }
 
         // TOTP check if enabled
         $profile = Profile::byUser((int)$user['id']);
@@ -108,6 +112,7 @@ public function register(): string
             if ($refUser) { $referredBy = $refCode; }
         }
 
+try {
 $uid = User::create($email, $password, $role === 'admin' ? 'buyer' : $role, $referredBy);
 Profile::create($uid, $display);
 if (($role === 'vendor')) { \App\Models\Vendor::createForUser($uid); }
@@ -116,6 +121,10 @@ if (($role === 'vendor')) { \App\Models\Vendor::createForUser($uid); }
         if ($refCode && isset($refUser['id'])) {
             ReferralModel::record((int)$refUser['id'], $uid, $refCode);
         }
+} catch (\PDOException $e) {
+    Logger::log('database', 'error', 'Registration failed', ['error' => $e->getMessage(), 'email' => $email]);
+    return $this->view('auth/register', ['error' => 'Unexpected error. Please try again.', 'ref' => $refCode]);
+}
 
         Session::regenerate();
         $_SESSION['uid'] = $uid;
@@ -258,5 +267,14 @@ public function reset(): string
         $ciphertext = substr($raw, 0, -16);
         $tag = substr($raw, -16);
         return openssl_decrypt($ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $nonce, $tag) ?: '';
+    }
+
+    /**
+     * Validate email format with sane length limit.
+     */
+    private static function isValidEmail(string $email): bool
+    {
+        if ($email === '' || strlen($email) > 254) { return false; }
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 }
