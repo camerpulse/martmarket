@@ -245,11 +245,6 @@ public function reset(): string
         return $this->redirect('/login');
     }
 
-    private function ensureAuth(): void
-    {
-        if (empty($_SESSION['uid'])) { $this->redirect('/login'); }
-    }
-
     private function storeEncryptedTotp(string $secret): void
     {
         $key = base64_decode(Config::get('security.app_key_base64'));
