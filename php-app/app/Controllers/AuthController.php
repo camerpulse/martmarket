@@ -84,7 +84,7 @@ public function login(): string
         $role = in_array(($_POST['role'] ?? 'buyer'), ['buyer','vendor','admin']) ? $_POST['role'] : 'buyer';
         $refCode = trim((string)($_POST['referral_code'] ?? '')) ?: null;
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8 || $display === '') {
+        if (!self::isValidEmail($email) || strlen($password) < 8 || $display === '') {
             return $this->view('auth/register', ['error' => 'Invalid input', 'ref' => $refCode]);
         }
         if (User::findByEmail($email)) {
@@ -171,7 +171,7 @@ public function forgot(): string
         }
         $rl->hit();
         $email = trim((string)($_POST['email'] ?? ''));
-        $user = $email ? User::findByEmail($email) : null;
+        $user = self::isValidEmail($email) ? User::findByEmail($email) : null;
         if ($user) {
             $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
             $expires = date('Y-m-d H:i:s', time() + 3600);
