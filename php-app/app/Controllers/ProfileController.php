@@ -52,8 +52,4 @@ class ProfileController extends Controller
         return $this->redirect('/account/profile');
     }
 
-    private function ensureAuth(): void
-    {
-        if (empty($_SESSION['uid'])) { $this->redirect('/login'); }
-    }
 }
