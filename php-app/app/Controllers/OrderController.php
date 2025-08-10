@@ -17,7 +17,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function view(): string
+    public function orderView(): string
     {
         $this->ensureAuth();
         $id = (int)($_GET['id'] ?? 0);

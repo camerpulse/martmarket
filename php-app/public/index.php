@@ -192,7 +192,7 @@ $router->post('/messages/send', [$messages, 'send']);
 
 // Orders (buyer)
 $router->get('/orders', [new App\Controllers\OrderController(), 'index']);
-$router->get('/orders/view', [new App\Controllers\OrderController(), 'view']);
+$router->get('/orders/view', [new App\Controllers\OrderController(), 'orderView']);
 $router->post('/orders/received', [new App\Controllers\OrderController(), 'markReceived']);
 
 // Reviews
