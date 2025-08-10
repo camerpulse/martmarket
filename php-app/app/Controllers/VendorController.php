@@ -32,7 +32,7 @@ class VendorController extends Controller
         return $this->redirect('/vendor/dashboard');
     }
 
-    public function view(): string
+    public function storefront(): string
     {
         $vendorId = (int)($_GET['id'] ?? 0);
         if ($vendorId <= 0) { http_response_code(404); return 'Vendor not found'; }

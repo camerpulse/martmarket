@@ -176,7 +176,7 @@ $router->get('/vendor/product/edit', [$vendorProd, 'editForm']);
 $router->post('/vendor/product/store', [$vendorProd, 'store']);
 $router->post('/vendor/product/update', [$vendorProd, 'update']);
 $router->post('/vendor/request-verification', [$vendorCtrl, 'requestVerification']);
-$router->get('/vendor/view', [$vendorCtrl, 'view']);
+$router->get('/vendor/view', [$vendorCtrl, 'storefront']);
 $router->get('/vendor/orders', [$vendorCtrl, 'orders']);
 $router->get('/vendor/orders/view', [$vendorCtrl, 'orderView']);
 $router->post('/vendor/orders/ship', [$vendorCtrl, 'markShipped']);
