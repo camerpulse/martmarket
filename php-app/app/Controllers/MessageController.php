@@ -35,7 +35,7 @@ class MessageController extends Controller
         return $this->redirect('/messages/view?id=' . $threadId);
     }
 
-    public function view(): string
+    public function threadView(): string
     {
         $this->ensureAuth();
         $id = (int)($_GET['id'] ?? 0);

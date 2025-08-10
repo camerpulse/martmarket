@@ -186,7 +186,7 @@ $router->post('/vendor/disputes/update', [$disputes, 'vendorUpdate']);
 
 // Messages
 $router->get('/messages', [$messages, 'index']);
-$router->get('/messages/view', [$messages, 'view']);
+$router->get('/messages/view', [$messages, 'threadView']);
 $router->post('/messages/start', [$messages, 'start']);
 $router->post('/messages/send', [$messages, 'send']);
 
