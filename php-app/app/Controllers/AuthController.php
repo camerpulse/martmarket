@@ -16,6 +16,9 @@ use App\Models\Referral as ReferralModel;
 use App\Services\TOTPService;
 use App\Models\Vendor;
 
+/**
+ * Authentication controller: login, registration, 2FA, and password resets.
+ */
 class AuthController extends Controller
 {
     public function loginForm(): string
@@ -23,6 +26,10 @@ class AuthController extends Controller
         return $this->view('auth/login', ['title' => 'Login']);
     }
 
+/**
+ * Handle login with rate limiting and optional TOTP verification.
+ * @return string Rendered response or redirect
+ */
 public function login(): string
     {
         if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
@@ -75,7 +82,11 @@ public function login(): string
         return $this->view('auth/register', ['title' => 'Register', 'ref' => $ref]);
     }
 
-    public function register(): string
+/**
+ * Register a new user (buyer/vendor) with optional referral code.
+ * @return string Redirect to profile or back with error
+ */
+public function register(): string
     {
         if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
         $email = trim((string)($_POST['email'] ?? ''));
@@ -158,6 +169,10 @@ if (($role === 'vendor')) { \App\Models\Vendor::createForUser($uid); }
         return $this->view('auth/forgot', ['title' => 'Forgot Password']);
     }
 
+/**
+ * Initiate password reset flow and send reset email if account exists.
+ * @return string Rendered forgot view with success state
+ */
 public function forgot(): string
     {
         if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
@@ -193,7 +208,11 @@ public function forgot(): string
         return $this->view('auth/reset', ['title' => 'Reset Password', 'token' => $token]);
     }
 
-    public function reset(): string
+/**
+ * Reset password using a valid token.
+ * @return string Redirect to login or render error
+ */
+public function reset(): string
     {
         if (!Csrf::check($_POST['_csrf'] ?? '')) { http_response_code(400); return 'Invalid CSRF'; }
         $token = (string)($_POST['token'] ?? '');

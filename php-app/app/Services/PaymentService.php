@@ -12,13 +12,23 @@ use BitWasp\Bitcoin\Key\Deterministic\HierarchicalKeyFactory;
 
 class PaymentService
 {
-    public static function getNetwork()
+/**
+ * Get configured Bitcoin network.
+ * @return \BitWasp\Bitcoin\Network\NetworkInterface
+ */
+public static function getNetwork()
     {
         $net = Settings::get('btc_network', 'testnet');
         return $net === 'mainnet' ? NetworkFactory::bitcoin() : NetworkFactory::testnet();
     }
 
-    public static function deriveAddress(string $xpub, int $index): string
+/**
+ * Derive a receive address from an XPUB at path 0/index.
+ * @param string $xpub Extended public key (XPUB/TPUB)
+ * @param int $index Child index (0..n)
+ * @return string Bitcoin address
+ */
+public static function deriveAddress(string $xpub, int $index): string
     {
         $network = self::getNetwork();
         Bitcoin::setNetwork($network);
@@ -30,7 +40,12 @@ class PaymentService
         return $addr->getAddress($network);
     }
 
-    public static function checkAddressStatus(string $address): array
+/**
+ * Check on-chain status for an address.
+ * @param string $address
+ * @return array{received_btc:string,confirmations:int,txid:?string}
+ */
+public static function checkAddressStatus(string $address): array
     {
         $provider = Settings::get('btc_provider', 'blockstream');
         $network = Settings::get('btc_network', 'testnet');

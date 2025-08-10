@@ -7,7 +7,12 @@ use PDO;
 
 class User
 {
-    public static function findByEmail(string $email): ?array
+/**
+ * Find user by email.
+ * @param string $email
+ * @return array|null
+ */
+public static function findByEmail(string $email): ?array
     {
         $stmt = DB::pdo()->prepare('SELECT * FROM users WHERE email = ? LIMIT 1');
         $stmt->execute([$email]);
@@ -23,7 +28,15 @@ class User
         return $row ?: null;
     }
 
-    public static function create(string $email, string $password, string $role, ?string $referredByCode): int
+/**
+ * Create a new user.
+ * @param string $email
+ * @param string $password
+ * @param string $role
+ * @param string|null $referredByCode
+ * @return int New user ID
+ */
+public static function create(string $email, string $password, string $role, ?string $referredByCode): int
     {
         $code = self::generateReferralCode();
         $hash = Hash::make($password);
@@ -32,7 +45,14 @@ class User
         return (int)DB::pdo()->lastInsertId();
     }
 
-    public static function updatePasswordIfRehashNeeded(int $id, string $password, string $hash): void
+/**
+ * Rehash stored password if algorithm/params have changed.
+ * @param int $id
+ * @param string $password
+ * @param string $hash
+ * @return void
+ */
+public static function updatePasswordIfRehashNeeded(int $id, string $password, string $hash): void
     {
         if (Hash::needsRehash($hash)) {
             $new = Hash::make($password);

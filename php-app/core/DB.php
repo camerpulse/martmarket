@@ -8,7 +8,11 @@ class DB
 {
     private static ?PDO $pdo = null;
 
-    public static function pdo(): PDO
+/**
+ * Get shared PDO connection (MySQL).
+ * @return \PDO
+ */
+public static function pdo(): PDO
     {
         if (!self::$pdo) {
             $cfg = [
