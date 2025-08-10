@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use Core\Hash;
 use Core\Controller;
 use Core\Csrf;
 use Core\Session;
