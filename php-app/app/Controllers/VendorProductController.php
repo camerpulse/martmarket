@@ -137,6 +137,16 @@ class VendorProductController extends Controller
             else { return; }
         }
 
+        // Cross-check MIME signature using magic bytes
+        $fi2 = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeSig = $fi2 ? @finfo_file($fi2, $f['tmp_name']) : '';
+        if ($fi2) finfo_close($fi2);
+        $expected = $imageType === IMAGETYPE_JPEG ? 'image/jpeg' : 'image/png';
+        if ($mimeSig !== $expected) { return; }
+        // Optional: also compare client-declared type (not trusted, but can signal spoofing)
+        $clientType = (string)($f['type'] ?? '');
+        if ($clientType !== '' && $clientType !== $expected) { return; }
+
         // Validate dimensions
         $dim = @getimagesize($f['tmp_name']);
         if (!$dim) return;
