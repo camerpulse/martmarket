@@ -7,11 +7,13 @@ use App\Models\User;
 
 class UserAdminController extends Controller
 {
+    private const PER_PAGE = 50;
+
     public function index(): string
     {
         $this->ensureRole('admin');
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $perPage = 50;
+        $perPage = self::PER_PAGE;
         $total = User::count();
         $offset = ($page - 1) * $perPage;
         $rows = User::all($perPage, $offset);

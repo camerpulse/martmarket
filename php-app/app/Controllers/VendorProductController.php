@@ -9,6 +9,12 @@ use App\Models\Product;
 
 class VendorProductController extends Controller
 {
+    private const MAX_UPLOAD_SIZE = 2 * 1024 * 1024; // 2MB
+    private const MAX_IMAGE_DIMENSION = 6000; // px
+    private const JPEG_QUALITY = 85;
+    private const PNG_COMPRESSION = 6;
+    private const FILENAME_RANDOM_BYTES = 12;
+
     public function index(): string
     {
         $this->ensureRole('vendor');
@@ -120,7 +126,7 @@ class VendorProductController extends Controller
         $f = $_FILES['image'];
         if ($f['error'] !== UPLOAD_ERR_OK) return;
         if (!is_uploaded_file($f['tmp_name'])) return;
-        if ($f['size'] > 2*1024*1024) return; // 2MB
+        if ($f['size'] > self::MAX_UPLOAD_SIZE) return;
 
         $imageType = function_exists('exif_imagetype') ? @exif_imagetype($f['tmp_name']) : false;
         if ($imageType === IMAGETYPE_JPEG) {
@@ -151,11 +157,11 @@ class VendorProductController extends Controller
         $dim = @getimagesize($f['tmp_name']);
         if (!$dim) return;
         [$w, $h] = $dim;
-        if ($w < 1 || $h < 1 || $w > 6000 || $h > 6000) return;
+        if ($w < 1 || $h < 1 || $w > self::MAX_IMAGE_DIMENSION || $h > self::MAX_IMAGE_DIMENSION) return;
 
         $dir = dirname(__DIR__,2) . '/public/uploads/products/';
         if (!is_dir($dir)) { @mkdir($dir, 0755, true); }
-        $name = bin2hex(random_bytes(12)) . '.' . $ext;
+        $name = bin2hex(random_bytes(self::FILENAME_RANDOM_BYTES)) . '.' . $ext;
         $path = $dir . $name;
 
         // Re-encode to strip metadata and ensure valid image structure (if GD available)
@@ -164,7 +170,7 @@ class VendorProductController extends Controller
             if ($imageType === IMAGETYPE_JPEG && function_exists('imagecreatefromjpeg')) {
                 $src = @imagecreatefromjpeg($f['tmp_name']);
                 if ($src) {
-                    @imagejpeg($src, $path, 85);
+                    @imagejpeg($src, $path, self::JPEG_QUALITY);
                     imagedestroy($src);
                     $reencoded = true;
                 }
@@ -172,7 +178,7 @@ class VendorProductController extends Controller
                 $src = @imagecreatefrompng($f['tmp_name']);
                 if ($src) {
                     imagesavealpha($src, true);
-                    @imagepng($src, $path, 6);
+                    @imagepng($src, $path, self::PNG_COMPRESSION);
                     imagedestroy($src);
                     $reencoded = true;
                 }

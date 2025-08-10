@@ -8,6 +8,8 @@ use App\Models\Product;
 
 class CatalogController extends Controller
 {
+    private const PER_PAGE = 24;
+
 public function index(): string
     {
         $categories = Category::all();
@@ -38,7 +40,7 @@ public function index(): string
         }
         $q = isset($_GET['q']) ? trim((string)$_GET['q']) : null;
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $perPage = 24;
+        $perPage = self::PER_PAGE;
         $total = Product::countSearch($categoryId, $q);
         $offset = ($page - 1) * $perPage;
         $products = Product::search($categoryId, $q, $perPage, $offset);

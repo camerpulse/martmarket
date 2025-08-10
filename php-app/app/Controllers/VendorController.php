@@ -9,6 +9,9 @@ use App\Models\Order;
 
 class VendorController extends Controller
 {
+    private const PER_PAGE = 20;
+    private const EXPORT_MAX_ROWS = 10000;
+
     public function dashboard(): string
     {
         $this->ensureRole('vendor');
@@ -52,7 +55,7 @@ class VendorController extends Controller
         $vendor = Vendor::byUser((int)$_SESSION['uid']);
         if (!$vendor) { http_response_code(403); return 'Vendor profile required'; }
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $perPage = 20; $offset = ($page - 1) * $perPage;
+        $perPage = self::PER_PAGE; $offset = ($page - 1) * $perPage;
         $status = (string)($_GET['status'] ?? '');
         $allowed = ['pending','awaiting_payment','paid','in_escrow','shipped','completed','cancelled','disputed'];
         if (!in_array($status, $allowed, true)) { $status = ''; }
@@ -104,7 +107,7 @@ class VendorController extends Controller
             'from' => trim((string)($_GET['from'] ?? '')),
             'to' => trim((string)($_GET['to'] ?? '')),
         ];
-        $rows = \App\Models\Order::byVendorFiltered((int)$vendor['id'], $filters, 10000, 0);
+        $rows = \App\Models\Order::byVendorFiltered((int)$vendor['id'], $filters, self::EXPORT_MAX_ROWS, 0);
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="vendor-orders-' . date('Ymd-His') . '.csv"');
         $out = fopen('php://output', 'w');
